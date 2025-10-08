@@ -81,6 +81,14 @@ export const translations = {
       Ukrainian: 'Захистіть Ваші Дані',
       Hindi: 'अपने डेटा को सुरक्षित करें',
     },
+    ctaButtonMobile: {
+      English: 'Secure Now!',
+      Farsi: 'امن کنید!',
+      Chinese: '立即保护!',
+      Russian: 'Защитить!',
+      Ukrainian: 'Захистити!',
+      Hindi: 'सुरक्षित करें!',
+    },
   },
 
   // Page 3 - Blocked Services and Censorship

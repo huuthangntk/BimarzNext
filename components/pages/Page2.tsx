@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useCallback, memo } from 'react';
+import React, { useEffect, useRef, useCallback, memo, useState } from 'react';
 import {
   motion,
   useMotionValue,
@@ -29,6 +29,20 @@ interface Entity {
   label: string;
 }
 
+// Character pools for Matrix rain
+const MATRIX_CHARS = {
+  chinese: '的一是在不了有和人这中大为上个国我以要他时来用们生到作地于出就分对成会可主发年动同工也能下过子说产种面而方后多定行学法所民得经十三之进着等部度家电力里如水化高自二理起小物现实加量都两体制机当使点从业本去把性好应开它合还因由其些然前外天政四日那社义事平形相全表间样与关各重新线内数正心反你明看原又么利比或但质气第向道命此变条只没结解问意建月公无系军很情者最立代想已通并提直题党程展五果料象员革位入常文总次品式活设及管特件长求老头基资边流路级少图山统接知较将组见计别她手角期根论运农指几九区强放决西被干做必战先回则任取据处队南给色光门即保治北造百规热领七海口东导器压志世金增争济阶油思术极交受联什认六共权收证改清己美再采转更单风切打白教速花带安场身车例真务具万每目至达走积示议声报斗完类八离华名确才科张信马节话米整空元况今集温传土许步群广石记需段研界拉林律叫且究观越织装影算低持音众书布复容儿须际商非验连断深难近矿千周委素技备半办青省列习响约支般史感劳便团往酸历市克何除消构府称太准精值号率族维划选标写存候毛亲快效斯院查江型眼王按格养易置派层片始却专状育厂京识适属圆包火住调满县局照参红细引听该铁价严';
+  english: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+  symbols: '@#$%&*+=<>[]{}|\\/',
+};
+
+// Generate random character from pool
+const getRandomChar = () => {
+  const pools = [MATRIX_CHARS.chinese, MATRIX_CHARS.english, MATRIX_CHARS.symbols];
+  const pool = pools[Math.floor(Math.random() * pools.length)];
+  return pool[Math.floor(Math.random() * pool.length)];
+};
+
 // Memoized Scanlines Overlay Component
 const Scanlines = memo(({ isDark }: { isDark: boolean }) => (
   <motion.div
@@ -55,7 +69,7 @@ const Scanlines = memo(({ isDark }: { isDark: boolean }) => (
 
 Scanlines.displayName = 'Scanlines';
 
-// Memoized Tracking Reticle Component
+// Memoized Tracking Reticle Component - Follows the text
 const TrackingReticle = memo(({ x, y, isDark }: { x: number; y: number; isDark: boolean }) => {
   const reticleColor = isDark ? '#EF4444' : '#DC2626';
 
@@ -76,9 +90,9 @@ const TrackingReticle = memo(({ x, y, isDark }: { x: number; y: number; isDark: 
         ease: [0.4, 0, 0.2, 1],
       }}
     >
-      {/* Crosshair */}
+      {/* Square brackets with pulsing center dot */}
       <div className="relative w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48">
-        {/* Center dot */}
+        {/* Center pulsing dot */}
         <motion.div
           className="absolute left-1/2 top-1/2 w-2 h-2 rounded-full"
           style={{
@@ -96,7 +110,7 @@ const TrackingReticle = memo(({ x, y, isDark }: { x: number; y: number; isDark: 
           }}
         />
 
-        {/* Corner brackets */}
+        {/* Corner brackets (square edges only) */}
         {[
           { rotation: 0, x: 0, y: 0 },
           { rotation: 90, x: 100, y: 0 },
@@ -124,26 +138,6 @@ const TrackingReticle = memo(({ x, y, isDark }: { x: number; y: number; isDark: 
             }}
           />
         ))}
-
-        {/* Scanning circle */}
-        <motion.div
-          className="absolute left-1/2 top-1/2 rounded-full"
-          style={{
-            width: '140%',
-            height: '140%',
-            border: `1px solid ${reticleColor}`,
-            transform: 'translate(-50%, -50%)',
-          }}
-          animate={{
-            scale: [0.8, 1.2, 0.8],
-            opacity: [0.8, 0.2, 0.8],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
       </div>
     </motion.div>
   );
@@ -151,44 +145,84 @@ const TrackingReticle = memo(({ x, y, isDark }: { x: number; y: number; isDark: 
 
 TrackingReticle.displayName = 'TrackingReticle';
 
-// Memoized Data Stream Component
-const DataStream = memo(({ isDark }: { isDark: boolean }) => {
-  const particles = Array.from({ length: 12 }, (_, i) => ({
-    id: i,
-    delay: i * 0.3,
-    x: Math.random() * 100,
-    duration: 3 + Math.random() * 2,
-  }));
-
+// Matrix-style Binary Rain Component
+const MatrixRain = memo(({ isDark }: { isDark: boolean }) => {
+  const columns = 15; // Number of falling columns
+  
   return (
     <div className="absolute inset-0 pointer-events-none z-5 overflow-hidden">
-      {particles.map((particle) => (
-        <motion.div
-          key={particle.id}
-          className="absolute w-1 h-16 md:h-20 lg:h-24"
-          style={{
-            left: `${particle.x}%`,
-            background: isDark
-              ? 'linear-gradient(to bottom, transparent, rgba(99, 102, 241, 0.4), transparent)'
-              : 'linear-gradient(to bottom, transparent, rgba(79, 70, 229, 0.3), transparent)',
-          }}
-          animate={{
-            top: ['-10%', '110%'],
-            opacity: [0, 1, 1, 0],
-          }}
-          transition={{
-            duration: particle.duration,
-            delay: particle.delay,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        />
+      {Array.from({ length: columns }).map((_, colIndex) => (
+        <MatrixColumn key={colIndex} index={colIndex} isDark={isDark} />
       ))}
     </div>
   );
 });
 
-DataStream.displayName = 'DataStream';
+MatrixRain.displayName = 'MatrixRain';
+
+// Single Matrix column component
+const MatrixColumn = memo(({ index, isDark }: { index: number; isDark: boolean }) => {
+  const [chars, setChars] = useState(() => 
+    Array.from({ length: 8 }, () => getRandomChar())
+  );
+  
+  const columnX = (index / 15) * 100; // Distribute across width
+  const duration = 3 + Math.random() * 2; // Random fall speed
+  const delay = index * 0.3; // Stagger start
+
+  // Rapidly change characters
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setChars(Array.from({ length: 8 }, () => getRandomChar()));
+    }, 80); // Change every 80ms for rapid effect
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <motion.div
+      className="absolute flex flex-col items-center gap-1"
+      style={{
+        left: `${columnX}%`,
+        color: isDark ? 'rgba(16, 185, 129, 0.6)' : 'rgba(5, 150, 105, 0.5)',
+        textShadow: isDark 
+          ? '0 0 8px rgba(16, 185, 129, 0.8)' 
+          : '0 0 6px rgba(5, 150, 105, 0.6)',
+        fontSize: 'clamp(10px, 1.5vw, 14px)',
+        fontFamily: 'monospace',
+        fontWeight: 'bold',
+      }}
+      animate={{
+        top: ['-20%', '120%'],
+        opacity: [0, 1, 1, 0],
+      }}
+      transition={{
+        duration,
+        delay,
+        repeat: Infinity,
+        ease: 'linear',
+      }}
+    >
+      {chars.map((char, i) => (
+        <motion.span
+          key={i}
+          animate={{
+            opacity: [0.3, 1, 0.3],
+          }}
+          transition={{
+            duration: 0.3,
+            delay: i * 0.05,
+            repeat: Infinity,
+          }}
+        >
+          {char}
+        </motion.span>
+      ))}
+    </motion.div>
+  );
+});
+
+MatrixColumn.displayName = 'MatrixColumn';
 
 // Memoized Warning Pulse Component
 const WarningPulse = memo(({ distance, isDark }: { distance: number; isDark: boolean }) => {
@@ -229,6 +263,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   const heroText = getTranslation('page2.hero', language);
   const orbitalWords = getTranslationArray('page2.surveillance', language);
   const ctaButtonText = getTranslation('page2.ctaButton', language);
+  const ctaButtonMobileText = getTranslation('page2.ctaButtonMobile', language);
   const policeText = getTranslation('page2.entities.police', language);
   const hackerText = getTranslation('page2.entities.hacker', language);
   const ispText = getTranslation('page2.entities.isp', language);
@@ -460,8 +495,8 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
         }}
       />
 
-      {/* Data Stream Particles */}
-      {!shouldReduceMotion && <DataStream isDark={isDark} />}
+      {/* Matrix Binary Rain */}
+      {!shouldReduceMotion && <MatrixRain isDark={isDark} />}
 
       {/* Scanlines Overlay */}
       {!shouldReduceMotion && <Scanlines isDark={isDark} />}
@@ -473,7 +508,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
 
       {/* Content Container */}
       <div className="relative z-10 w-full h-full px-5 lg:px-20">
-        {/* Tracking Reticle */}
+        {/* Tracking Reticle - Follows YOUR DATA text */}
         {!shouldReduceMotion && (
           <TrackingReticle x={mainTextX.get()} y={mainTextY.get()} isDark={isDark} />
         )}
@@ -780,7 +815,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           })}
         </div>
 
-        {/* CTA Button - Fixed at bottom center */}
+        {/* CTA Button - Fixed at bottom center with responsive text */}
         <div className="absolute bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 z-20">
           <motion.button
             onClick={onScrollToPage7}
@@ -818,7 +853,9 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
               />
             </svg>
-            <span>{ctaButtonText}</span>
+            {/* Responsive text - "Secure Now!" on small screens, full text on larger */}
+            <span className="hidden md:inline">{ctaButtonText}</span>
+            <span className="md:hidden">{ctaButtonMobileText}</span>
           </motion.button>
         </div>
       </div>
