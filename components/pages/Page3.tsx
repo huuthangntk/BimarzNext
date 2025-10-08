@@ -12,7 +12,13 @@ interface Page3Props {
 
 export default function Page3({ isActive = true }: Page3Props) {
   return (
-    <div className="relative w-full h-full overflow-hidden bg-gradient-to-br from-purple-950 via-gray-900 to-slate-900">
+    <motion.div 
+      className="relative w-full h-full overflow-hidden bg-gradient-to-br from-purple-950 via-gray-900 to-slate-900"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       {/* Foggy Overlapping Rectangles */}
       {[...Array(8)].map((_, i) => (
         <motion.div
@@ -159,7 +165,7 @@ export default function Page3({ isActive = true }: Page3Props) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/contexts/ThemeContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -20,21 +21,10 @@ const TOTAL_PAGES = 7;
 export default function MainPageContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [mountedPages, setMountedPages] = useState(new Set([1]));
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
   const { ripplePosition, isRippling } = useTheme();
-
-  // Update mounted pages when current page changes (current + adjacent)
-  useEffect(() => {
-    const pagesToMount = new Set([
-      currentPage,
-      Math.max(1, currentPage - 1),
-      Math.min(TOTAL_PAGES, currentPage + 1),
-    ]);
-    setMountedPages(pagesToMount);
-  }, [currentPage]);
 
   const navigateToPage = (pageNumber: number) => {
     if (pageNumber < 1 || pageNumber > TOTAL_PAGES || isTransitioning) return;
@@ -227,15 +217,27 @@ export default function MainPageContent() {
     };
   }, [currentPage, isTransitioning]);
 
-  const pages = [
-    { id: 1, component: <Page1 isActive={currentPage === 1} onScrollToPage7={smoothScrollToPage7} /> },
-    { id: 2, component: <Page2 isActive={currentPage === 2} onScrollToPage7={smoothScrollToPage7} /> },
-    { id: 3, component: <Page3 isActive={currentPage === 3} /> },
-    { id: 4, component: <Page4 isActive={currentPage === 4} /> },
-    { id: 5, component: <Page5 isActive={currentPage === 5} /> },
-    { id: 6, component: <Page6 isActive={currentPage === 6} /> },
-    { id: 7, component: <Page7 isActive={currentPage === 7} /> },
-  ];
+  // Render only the active page - complete unmount on page change
+  const renderActivePage = () => {
+    switch (currentPage) {
+      case 1:
+        return <Page1 key="page-1" isActive={true} onScrollToPage7={smoothScrollToPage7} />;
+      case 2:
+        return <Page2 key="page-2" isActive={true} onScrollToPage7={smoothScrollToPage7} />;
+      case 3:
+        return <Page3 key="page-3" isActive={true} />;
+      case 4:
+        return <Page4 key="page-4" isActive={true} />;
+      case 5:
+        return <Page5 key="page-5" isActive={true} />;
+      case 6:
+        return <Page6 key="page-6" isActive={true} />;
+      case 7:
+        return <Page7 key="page-7" isActive={true} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div ref={containerRef} className="relative w-full h-screen overflow-hidden">
@@ -249,22 +251,11 @@ export default function MainPageContent() {
       />
       <ScrollIndicator currentPage={currentPage} />
 
-      {/* Page Container */}
-      <div
-        className="relative w-full h-full transition-transform duration-800 ease-in-out"
-        style={{
-          transform: `translateY(-${(currentPage - 1) * 100}vh)`,
-        }}
-      >
-        {pages.map((page) => (
-          <div
-            key={page.id}
-            className="w-full h-screen"
-          >
-            {/* Only mount current + adjacent pages for performance */}
-            {mountedPages.has(page.id) ? page.component : null}
-          </div>
-        ))}
+      {/* Page Container - Only render active page */}
+      <div className="relative w-full h-full">
+        <AnimatePresence mode="wait">
+          {renderActivePage()}
+        </AnimatePresence>
       </div>
     </div>
   );

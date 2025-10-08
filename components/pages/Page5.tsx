@@ -30,7 +30,13 @@ export default function Page5({ isActive = true }: Page5Props) {
   const ANIMATION_DURATION = isMobile ? 3 : 2;
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-gradient-to-br from-slate-900 via-cyan-950 to-teal-900">
+    <motion.div 
+      className="relative w-full h-full overflow-hidden bg-gradient-to-br from-slate-900 via-cyan-950 to-teal-900"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       {/* Flowing Aurora Waves */}
       <motion.div
         className="absolute inset-0"
@@ -179,7 +185,7 @@ export default function Page5({ isActive = true }: Page5Props) {
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

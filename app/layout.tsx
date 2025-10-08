@@ -92,7 +92,7 @@ export default function RootLayout({
           }
         ` }} />
       </head>
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning>
         {/* Static loading screen - shows immediately before React loads */}
         <div id="static-loading-screen">
           <img 

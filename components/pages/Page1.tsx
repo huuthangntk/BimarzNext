@@ -125,7 +125,13 @@ export default function Page1({ isActive = true, onScrollToPage7 }: Page1Props) 
   const streakColor = isDark ? 'bg-red-500' : 'bg-red-600';
 
   return (
-    <div className={`relative w-full h-full overflow-hidden ${bgGradient}`}>
+    <motion.div 
+      className={`relative w-full h-full overflow-hidden ${bgGradient}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       {/* Animated Background */}
       <div className="absolute inset-0">
         {/* Pulsing red vignettes */}
@@ -424,6 +430,6 @@ export default function Page1({ isActive = true, onScrollToPage7 }: Page1Props) 
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

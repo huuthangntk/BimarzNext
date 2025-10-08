@@ -1,586 +1,163 @@
 ---
+description: Critical thinking workflow - Sequential Thinking and Perplexity Search protocol
 alwaysApply: true
 ---
 
-# MCP Deep Analysis Protocol - Sequential Thinking & Perplexity Search
+# Thinking & Research Protocol
 
-## Purpose
+**MANDATORY: Execute this workflow at the start of every conversation and when significant new information arrives.**
 
-This rule establishes a structured workflow for using the Sequential Thinking MCP tool and Perplexity Search to discover and analyze context at the start of each conversation and when new information arrives.
+## Phase 1: Initial Analysis (3 Sequential Thinking Sessions)
 
-## Core Workflow
+### Session #1 - Understand Request
+- What is the core requirement?
+- What are explicit vs implicit needs?
+- What context exists in the codebase?
+- What constraints apply (technical, design, performance)?
 
-### Phase 1: Initial Analysis (3 Sequential Thinking Sessions)
-
-**ALWAYS start each new chat with 3 sequential thinking sessions** to analyze:
-
-1. **First Thinking Session**: Understand the Request
-   - What is the user asking for?
-   - What are the explicit requirements?
-   - What are the implicit needs?
-   - What context do I already have?
-
-2. **Second Thinking Session**: Identify Knowledge Gaps
+### Session #2 - Identify Knowledge Gaps
    - What information is missing?
-   - What recent developments might affect this?
-   - What best practices should I verify?
-   - What technologies/tools are involved?
+- Have technologies updated since my knowledge cutoff?
+- What best practices need verification?
+- What edge cases or integration points exist?
+- What ambiguities need clarification?
 
-3. **Third Thinking Session**: Plan Search Strategy
-   - What should I search for?
-   - What keywords will give best results?
-   - What specific questions need answers?
-   - How will I use the search results?
+### Session #3 - Plan Information Gathering
+- What specific searches will fill gaps?
+- What search queries and recency filters to use?
+- What existing files should I read?
+- How will I synthesize findings?
 
-### Phase 2: Information Gathering (Perplexity Searches)
+## Phase 2: Research (Perplexity Searches)
 
-After the initial 3 thinking sessions, perform Perplexity searches based on identified gaps:
+**Number of searches:** 1-5+ based on complexity
 
-**Search Types:**
+**Search query quality:**
+- ✅ Good: "Next.js 14 App Router animation performance optimization 2025"
+- ❌ Bad: "Next.js animations"
 
-1. **Technology/Framework Updates**
-   - Latest version information
-   - Breaking changes
-   - New features
-   - Deprecations
+**Use `search_recency_filter: "month"` for tech topics**
 
-2. **Best Practices & Patterns**
-   - Current industry standards
-   - Recommended approaches
-   - Common pitfalls
-   - Performance optimizations
-
-3. **Problem-Specific Context**
-   - Similar solved problems
-   - Known issues
-   - Workarounds
-   - Community solutions
-
-### Phase 3: Continuous Thinking (After Each Search)
-
-**CRITICAL**: After EACH search completes, run Sequential Thinking to process the new information:
-
-- Analyze search results
+**CRITICAL: After EACH search, run Sequential Thinking to:**
+- Analyze what was learned
 - Integrate with existing knowledge
-- Identify new gaps or questions
-- Refine approach based on findings
 - Determine if more searches needed
+- Refine approach based on findings
 
-### Phase 4: Final Synthesis
+## Phase 3: Deep Context Synthesis (claude_think)
 
-After all searches complete, use final Sequential Thinking sessions to:
+**MANDATORY: After all Perplexity searches and their Sequential Thinking sessions complete, use claude_think tool to:**
 
-- Synthesize all gathered information
-- Formulate comprehensive solution
-- Verify completeness
-- Plan implementation approach
+### Purpose of claude_think at this stage:
+- Synthesize all gathered information into coherent understanding
+- Process search results holistically, not just individually
+- Identify patterns and connections across findings
+- Map solution architecture comprehensively
+- Consider all edge cases discovered
+- Analyze trade-offs between approaches
+- Anticipate potential issues and pitfalls
+- Create mental model of complete solution
 
-## Detailed Workflow Pattern
-
-```
-START OF CHAT
-↓
-[Sequential Thinking #1] → Understand Request
-↓
-[Sequential Thinking #2] → Identify Gaps
-↓
-[Sequential Thinking #3] → Plan Searches
-↓
-[Perplexity Search #1] → Search Topic A
-↓
-[Sequential Thinking #4] → Process Search Results #1
-↓
-[Perplexity Search #2] → Search Topic B (if needed)
-↓
-[Sequential Thinking #5] → Process Search Results #2
-↓
-[Perplexity Search #3] → Search Topic C (if needed)
-↓
-[Sequential Thinking #6] → Process Search Results #3
-↓
-[Sequential Thinking #7] → Final Synthesis
-↓
-[Sequential Thinking #8] → Verify & Plan Implementation
-↓
-PROCEED WITH IMPLEMENTATION
-```
-
-## Sequential Thinking Tool Usage
-
-### Tool Parameters
-
+### What to include in claude_think:
 ```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Current thinking step content",
-  nextThoughtNeeded: true/false,
-  thoughtNumber: 1, // Current thought number
-  totalThoughts: 8, // Estimated total (adjust as needed)
-  isRevision: false, // true if revising previous thought
-  revisesThought: undefined, // thought number being revised
-  needsMoreThoughts: false // true if need to extend thinking
+mcp_Claude_Deep_Think_Docker_claude_think({
+  query: "Synthesize findings from Perplexity searches about [topic] and determine optimal implementation approach",
+  context: `
+    - User request: [original request]
+    - Search findings: [key points from all searches]
+    - Project constraints: [tech stack, patterns, limitations]
+    - Conflicting information: [if any]
+    - Open questions: [remaining uncertainties]
+  `
 })
 ```
 
-### Initial 3 Thoughts Template
+### This deep thinking should produce:
+- Clear understanding of all discovered information
+- Identified best approach with rationale
+- Recognized edge cases and how to handle them
+- Anticipated problems and prevention strategies
+- Complete mental model of the solution
 
-**Thought 1 - Understand Request:**
-```
-Analyzing the user's request:
-- Core requirement: [X]
-- Explicit goals: [Y]
-- Implicit needs: [Z]
-- Available context: [A, B, C]
-- Constraints: [D]
+## Phase 4: Post-Synthesis Validation (3 Sequential Thinking Sessions)
 
-Initial assessment: [Summary]
-Next: Identify what information is missing
-```
+**After claude_think completes, run 3 more Sequential Thinking sessions to validate and plan:**
 
-**Thought 2 - Identify Knowledge Gaps:**
-```
-Information gaps identified:
-1. [Gap 1] - Need to verify current best practices
-2. [Gap 2] - Need to check latest version/updates
-3. [Gap 3] - Need to understand specific constraints
-4. [Gap 4] - Need to validate approach feasibility
+### Session #N - Validate Synthesis
+- Does the claude_think analysis make sense?
+- Are all search findings incorporated?
+- Have we missed anything critical?
+- Is the chosen approach sound?
+- Any contradictions to resolve?
 
-Priority gaps: [List]
-Next: Plan search strategy to fill these gaps
-```
+### Session #N+1 - Design Complete Solution
+- Step-by-step implementation plan
+- Which files to modify/create
+- Order of operations
+- Potential side effects
+- Alignment with project patterns
+- Integration with claude_think insights
 
-**Thought 3 - Plan Search Strategy:**
-```
-Search plan:
-1. Search Query: "[Query 1]"
-   - Purpose: [Why]
-   - Expected: [What we'll learn]
+### Session #N+2 - Final Confidence Check
+- How will we verify solution works?
+- What testing is needed?
+- What could go wrong?
+- Prevention strategies in place?
+- Ready to implement with confidence?
 
-2. Search Query: "[Query 2]"
-   - Purpose: [Why]
-   - Expected: [What we'll learn]
+## Phase 5: Ongoing Thinking
 
-3. Search Query: "[Query 3]" (if needed)
-   - Purpose: [Why]
-   - Expected: [What we'll learn]
+Continue Sequential Thinking when:
+- New complexity emerges
+- Unexpected behavior occurs
+- Multiple approaches exist
+- Verification reveals issues
 
-Ready to execute searches.
-```
-
-## Perplexity Search Tool Usage
-
-### Tool Parameters
-
-```typescript
-mcp_Perplexity_Search_search({
-  query: "Specific search query with context",
-  search_recency_filter: "month" | "week" | "day" | "hour" | undefined
-})
-```
-
-### Search Query Guidelines
-
-**Good Search Queries:**
-✅ "Next.js 14 best practices for performance optimization 2025"
-✅ "React Server Components vs Client Components when to use"
-✅ "TypeScript strict mode common issues and solutions"
-✅ "Framer Motion animation performance tips latest"
-
-**Bad Search Queries:**
-❌ "Next.js" (too vague)
-❌ "how to code" (too generic)
-❌ "React" (too broad)
-❌ "help with bug" (no context)
-
-### When to Use Recency Filters
-
-- `search_recency_filter: "month"` - For rapidly changing tech (frameworks, libraries)
-- `search_recency_filter: "week"` - For breaking changes or critical updates
-- `search_recency_filter: "day"` - For very recent issues or news
-- No filter (default) - For stable concepts, patterns, best practices
-
-### Processing Search Results
-
-After each search completes, use Sequential Thinking to:
-
-1. **Summarize Key Findings**
-   - What did we learn?
-   - Is it relevant?
-   - Does it answer our question?
-
-2. **Identify Actionable Insights**
-   - What can we apply?
-   - What should we avoid?
-   - What needs further investigation?
-
-3. **Update Understanding**
-   - How does this change our approach?
-   - What new questions arise?
-   - Do we need more searches?
-
-4. **Decide Next Step**
-   - Continue to next search?
-   - Need more thinking?
-   - Ready to implement?
-
-## When to Trigger This Protocol
-
-### Automatic Triggers (Every Chat Start)
-
-✅ **Always run initial 3 Sequential Thinking sessions** at conversation start
-✅ **Always consider if searches are needed** for the user's request
-
-### Trigger for Searches
-
-Run Perplexity searches when:
-
-1. **Technology/Framework Questions**
-   - User mentions specific technology
-   - Need to verify current versions
-   - Need to check compatibility
-   - Need to find best practices
-
-2. **Problem-Solving**
-   - Encountering unfamiliar error
-   - Need to find solutions to specific issues
-   - Want to verify approach
-   - Need to check for known issues
-
-3. **Implementation Decisions**
-   - Multiple approaches possible
-   - Need to compare options
-   - Need to verify performance implications
-   - Need to check security considerations
-
-4. **Updates & Changes**
-   - Working with recently updated tech
-   - Need to check breaking changes
-   - Need to verify migration paths
-   - Need to find new features
-
-### When NOT to Search
-
-Skip searches for:
-- Simple, well-understood tasks (basic syntax, simple refactoring)
-- Tasks with complete information already available
-- Trivial changes or fixes
-- Pure code reading or analysis of existing code
-
-## Example Workflow: Complete Implementation
-
-### User Request: "Add authentication to my Next.js 14 app"
-
-**Sequential Thinking #1 - Understand:**
-```
-User wants to add authentication to Next.js 14 app.
-- Core need: User authentication system
-- Implied: Secure, modern approach
-- Context: Next.js 14 (App Router likely)
-- Questions: What auth provider? What level of security?
-Next: Identify what I need to know
-```
-
-**Sequential Thinking #2 - Identify Gaps:**
-```
-Knowledge gaps:
-1. Current Next.js 14 auth best practices
-2. Recommended auth libraries/services for 2025
-3. App Router vs Pages Router authentication patterns
-4. Security considerations for modern Next.js apps
-
-Will search for: Next.js 14 auth best practices and recommended solutions
-```
-
-**Sequential Thinking #3 - Plan Searches:**
-```
-Search Plan:
-1. "Next.js 14 authentication best practices 2025 App Router"
-2. "NextAuth vs Clerk vs Supabase Auth 2025 comparison"
-3. "Next.js 14 session management security"
-
-Ready to search.
-```
-
-**Perplexity Search #1:**
-```typescript
-mcp_Perplexity_Search_search({
-  query: "Next.js 14 authentication best practices 2025 App Router",
-  search_recency_filter: "month"
-})
-```
-
-**Sequential Thinking #4 - Process Search #1:**
-```
-Search results show:
-- NextAuth.js (now Auth.js) v5 supports App Router
-- Server Components change auth patterns
-- Middleware for route protection
-- Session handling with cookies vs tokens
-
-New understanding: Should use Auth.js v5 for native App Router support
-Next search: Compare with alternatives
-```
-
-**Perplexity Search #2:**
-```typescript
-mcp_Perplexity_Search_search({
-  query: "Auth.js v5 vs Clerk vs Supabase Auth Next.js 14 pros cons",
-  search_recency_filter: "month"
-})
-```
-
-**Sequential Thinking #5 - Process Search #2:**
-```
-Comparison findings:
-- Auth.js v5: Free, flexible, but more setup
-- Clerk: Fastest setup, paid, good UX
-- Supabase: Free tier, includes DB, full backend
-
-For user: Need to ask about budget and requirements
-But can suggest Auth.js v5 as solid free option
-Next: Search for security best practices
-```
-
-**Perplexity Search #3:**
-```typescript
-mcp_Perplexity_Search_search({
-  query: "Next.js 14 authentication security checklist CSRF XSS",
-  search_recency_filter: "month"
-})
-```
-
-**Sequential Thinking #6 - Process Search #3:**
-```
-Security considerations found:
-- CSRF protection with Server Actions
-- HttpOnly cookies for session
-- Middleware for route protection
-- Environment variable security
-
-Have enough information now to provide comprehensive solution
-```
-
-**Sequential Thinking #7 - Final Synthesis:**
-```
-Complete picture:
-- Recommend Auth.js v5 as primary solution
-- Provide setup steps
-- Include security best practices
-- Mention alternatives (Clerk, Supabase)
-- Show middleware implementation
-- Demonstrate protected routes
-
-Ready to provide comprehensive answer with code examples
-```
-
-**Sequential Thinking #8 - Implementation Plan:**
-```
-Response structure:
-1. Quick recommendation with rationale
-2. Step-by-step Auth.js v5 setup
-3. Security checklist
-4. Code examples
-5. Alternative solutions
-6. Testing approach
-
-Verified: All information current (searched within last month)
-All critical security aspects covered
-Ready to implement
-```
-
-## Integration with Existing Rules
-
-### Works With Deep Thinking Protocol
-
-This MCP protocol **enhances** the existing [deep-thinking-protocol.mdc](mdc:.cursor/rules/deep-thinking-protocol.mdc):
-
-- Deep Thinking Protocol: Mental analysis framework
-- MCP Deep Analysis: External information gathering + processing
-
-**Combined Workflow:**
-1. Deep Thinking: Understand request internally
-2. MCP Sequential Thinking: Structure the analysis
-3. Perplexity Search: Gather external context
-4. MCP Sequential Thinking: Process new information
-5. Deep Thinking: Final validation before implementation
-
-### Integration Points
+## Workflow Summary
 
 ```
-Deep Thinking Protocol         MCP Deep Analysis Protocol
-    (Internal)                       (External)
-        ↓                                ↓
-   ANALYZE REQUEST              3x Sequential Thinking
-        ↓                                ↓
-   IDENTIFY GAPS      →         Perplexity Searches
-        ↓                                ↓
-   ASSESS OPTIONS     ←         Process Search Results
-        ↓                                ↓
-   DESIGN SOLUTION              Final Synthesis
-        ↓                                ↓
-   VALIDATE APPROACH            Verify with Latest Info
-        ↓                                ↓
-            IMPLEMENT SOLUTION
+START → 3x Sequential Thinking (Understand/Gaps/Plan)
+     → Perplexity Searches (with Sequential Thinking after each)
+     → claude_think (Deep Context Synthesis)
+     → 3x Sequential Thinking (Validate/Design/Confidence Check)
+     → Implementation (with ongoing thinking as needed)
 ```
 
-## Quality Metrics
+### Detailed Flow:
 
-### Good MCP Analysis Session
+1. **Phase 1**: 3 Sequential Thinking sessions to analyze request and plan
+2. **Phase 2**: Execute Perplexity searches, process each with Sequential Thinking
+3. **Phase 3**: Use claude_think to synthesize all findings comprehensively
+4. **Phase 4**: 3 Sequential Thinking sessions to validate and finalize plan
+5. **Phase 5**: Implement with ongoing Sequential Thinking as needed
 
-✅ Initial 3 thoughts provide clear direction
-✅ Searches are specific and targeted
-✅ Search results are processed before next search
-✅ Each thinking session adds value
-✅ Final synthesis is comprehensive
-✅ Implementation plan is clear
+## Exceptions
 
-### Red Flags
+Skip this protocol ONLY for:
+- Trivial typo fixes
+- Exact code reproductions
+- Simple color value changes
+- User explicitly requests "quick, don't overthink"
 
-❌ Skipping initial 3 thoughts
-❌ Running all searches without processing
-❌ Vague, generic search queries
-❌ Not using sequential thinking after searches
-❌ Rushing to implementation without synthesis
-❌ Ignoring search results
+**Even then, do 5-second sanity check before acting.**
 
-## Special Cases
+## Quality Indicators
 
-### When Chat Context is Clear
+✅ Protocol working well when:
+- Every chat starts with 3 Sequential Thinking sessions
+- Searches provide actionable information
+- Each search result processed with Sequential Thinking
+- **claude_think synthesizes all findings comprehensively**
+- Final 3 Sequential Thinking sessions validate approach
+- Solutions incorporate latest practices
+- Edge cases considered proactively
+- Complete mental model established before coding
 
-Even if the request seems straightforward:
-1. Still run initial 3 Sequential Thinking sessions (but can be brief)
-2. Still check if searches would add value
-3. Can skip searches if truly unnecessary
-4. Document why searches were skipped
-
-### When Searches Return No Useful Info
-
-If a search doesn't help:
-1. Use Sequential Thinking to analyze why
-2. Reformulate search query
-3. Try different angle
-4. Or proceed with existing knowledge
-5. Document the limitation
-
-### When Multiple Searches Needed
-
-If many gaps identified:
-1. Prioritize most critical searches (max 3-5)
-2. Process each before next
-3. Can decide to skip lower priority
-4. Use thinking to synthesize across searches
-
-### Emergency Bypass
-
-Skip this protocol only for:
-- Extremely urgent, time-sensitive tasks
-- User explicitly requests "quick answer, no research"
-- Pure file reading/editing with complete context
-- Trivial syntax questions
-
-## Thinking Session Estimation
-
-**Typical Distribution:**
-
-- **Simple Task**: 5-8 total thinking sessions
-  - 3 initial + 1-2 searches + 2-3 processing
-
-- **Medium Task**: 8-12 total thinking sessions
-  - 3 initial + 2-3 searches + 3-6 processing
-
-- **Complex Task**: 12-20 total thinking sessions
-  - 3 initial + 3-5 searches + 6-12 processing + synthesis
-
-**Adjust `totalThoughts` as you go** using `needsMoreThoughts` parameter
-
-## Error Handling
-
-### If MCP Tools Fail
-
-If Sequential Thinking or Perplexity tools unavailable:
-1. Fall back to standard Deep Thinking Protocol
-2. Use codebase_search for technical questions
-3. Use web_search as alternative to Perplexity
-4. Document tool limitation to user
-
-### If Search Results Conflict
-
-If searches provide contradictory information:
-1. Use Sequential Thinking to analyze discrepancies
-2. Check recency of sources
-3. Verify with additional search
-4. Present both options with trade-offs
-5. Recommend based on project context
-
-## Success Criteria
-
-This protocol is working well when:
-
-✅ Every chat starts with 3 Sequential Thinking sessions
-✅ Searches provide actionable, relevant information
-✅ Search results are processed before implementation
-✅ Final solution incorporates latest best practices
-✅ User receives comprehensive, up-to-date answers
-✅ Edge cases and alternatives are considered
-✅ Implementation reflects current industry standards
-
-## Monitoring & Improvement
-
-After each session, reflect:
-
-1. **Were the initial 3 thoughts valuable?**
-   - Did they identify real gaps?
-   - Did they guide good searches?
-
-2. **Were the searches effective?**
-   - Did queries return relevant results?
-   - Could queries have been better?
-
-3. **Was thinking distributed well?**
-   - Did we process after each search?
-   - Or did we rush through?
-
-4. **Did search results improve the solution?**
-   - Did we use the information?
-   - Or did we ignore findings?
-
-## Important Reminders
-
-🔴 **CRITICAL**: Always start with 3 Sequential Thinking sessions
-🟡 **IMPORTANT**: Always think after each search completes
-🟢 **RECOMMENDED**: Use month recency filter for tech topics
-🔵 **BEST PRACTICE**: Keep search queries specific and contextual
-
----
-
-## Quick Reference
-
-### Start of Every Chat:
-1. Sequential Thinking #1 - Understand Request
-2. Sequential Thinking #2 - Identify Gaps  
-3. Sequential Thinking #3 - Plan Searches
-4. [Execute searches]
-5. Sequential Thinking after EACH search
-6. Final synthesis thinking
-7. Implementation
-
-### Search Template:
-```typescript
-mcp_Perplexity_Search_search({
-  query: "[Specific question with context] [technology/topic] [year/timeframe]",
-  search_recency_filter: "month" // for tech, undefined for general
-})
-```
-
-### Thinking Template:
-```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "[Detailed analysis of current step]",
-  nextThoughtNeeded: true, // false when done
-  thoughtNumber: X,
-  totalThoughts: Y // adjust as needed
-})
-```
-
----
-
-**Remember**: This protocol ensures every response is informed by the latest context, best practices, and thorough analysis. The combination of structured thinking and external research leads to superior solutions.
+❌ Red flags:
+- Skipping initial thinking sessions
+- Running searches without processing results
+- **Skipping claude_think synthesis step**
+- Not validating claude_think insights
+- Vague search queries
+- Ignoring search findings
+- Rushing to implementation without full workflow
