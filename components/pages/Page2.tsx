@@ -288,9 +288,10 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   const entity0Target = useMotionValue(0);
   const entity1Target = useMotionValue(2);
   const entity2Target = useMotionValue(4);
-  const entity0TargetSpring = useSpring(entity0Target, { stiffness: 50, damping: 15 });
-  const entity1TargetSpring = useSpring(entity1Target, { stiffness: 50, damping: 15 });
-  const entity2TargetSpring = useSpring(entity2Target, { stiffness: 50, damping: 15 });
+  // Lower stiffness and higher damping for gradual, smooth movement
+  const entity0TargetSpring = useSpring(entity0Target, { stiffness: 30, damping: 25 });
+  const entity1TargetSpring = useSpring(entity1Target, { stiffness: 30, damping: 25 });
+  const entity2TargetSpring = useSpring(entity2Target, { stiffness: 30, damping: 25 });
 
   // Refs for animation control
   const isCenterRef = useRef(true);
@@ -438,7 +439,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
       entity0Target.set((entity0Target.get() + 1) % orbitalWords.length);
       entity1Target.set((entity1Target.get() + 1) % orbitalWords.length);
       entity2Target.set((entity2Target.get() + 1) % orbitalWords.length);
-    }, 2000); // Move every 2 seconds for better visibility
+    }, 3500); // Move every 3.5 seconds - gives time for gradual smooth movement
 
     // Start animations
     runCycle();
