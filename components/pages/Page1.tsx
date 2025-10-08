@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTheme } from '@/contexts/ThemeContext';
 import { getTranslation, getTranslationArray } from '@/lib/translations';
 
@@ -9,7 +9,7 @@ import { getTranslation, getTranslationArray } from '@/lib/translations';
 function doRectsOverlap(
   x1: number, y1: number, width1: number, height1: number,
   x2: number, y2: number, width2: number, height2: number,
-  padding: number = 5
+  padding: number = 8
 ): boolean {
   return !(
     x1 + width1 + padding < x2 ||
@@ -26,27 +26,20 @@ interface Page1Props {
 }
 
 export default function Page1({ isActive = true, onScrollToPage7, resetTrigger = 0 }: Page1Props) {
-  const [glitchOffset, setGlitchOffset] = useState({ x: 0, y: 0 });
   const [animateReset, setAnimateReset] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { theme, language } = useTheme();
+  const shouldReduceMotion = useReducedMotion();
+  const containerRef = useRef<HTMLDivElement>(null);
   
   const heroText = getTranslation('page1.hero', language);
   const supportingWords = getTranslationArray('page1.threats', language);
   const ctaButtonText = getTranslation('page1.ctaButton', language);
 
-  // Optimized glitch effect - only runs when page is active, reduced frequency
+  // Mount detection
   useEffect(() => {
-    if (!isActive) return;
-
-    const interval = setInterval(() => {
-      setGlitchOffset({
-        x: (Math.random() - 0.5) * 10,
-        y: (Math.random() - 0.5) * 10,
-      });
-    }, 200); // Reduced from 100ms to 200ms for better performance
-
-    return () => clearInterval(interval);
-  }, [isActive]);
+    setMounted(true);
+  }, []);
 
   // Handle reset animation trigger
   useEffect(() => {
@@ -54,28 +47,29 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
       setAnimateReset(true);
       const timer = setTimeout(() => {
         setAnimateReset(false);
-      }, 300); // Fast animation duration
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [resetTrigger]);
 
-  // Generate stable random positions with collision detection
+  // Generate stable random positions with better collision detection
   const wordPositions = useMemo(() => {
     const positions: Array<{ x: number; y: number; rotation: number; width: number; height: number }> = [];
     
     const estimateWordDimensions = (word: string, isMobile: boolean) => {
-      const charWidth = isMobile ? 1.5 : 2.5;
-      const height = isMobile ? 8 : 10;
+      const charWidth = isMobile ? 2 : 3;
+      const height = isMobile ? 10 : 12;
       return { width: word.length * charWidth, height: height };
     };
 
     supportingWords.forEach((word) => {
       const dims = estimateWordDimensions(word, false);
       
+      // Exclusion zone around center (for hero text and CTA button)
       const isInExclusionZone = (x: number, y: number) => {
         const centerX = 50;
         const centerY = 50;
-        const exclusionRadius = 35;
+        const exclusionRadius = 38; // Increased for better spacing
         const distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
         return distance < exclusionRadius;
       };
@@ -85,7 +79,7 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
           if (doRectsOverlap(
             x - dims.width / 2, y - dims.height / 2, dims.width, dims.height,
             pos.x - pos.width / 2, pos.y - pos.height / 2, pos.width, pos.height,
-            3
+            8 // Increased padding
           )) {
             return true;
           }
@@ -95,14 +89,15 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
 
       let randomX, randomY;
       let attempts = 0;
-      const maxAttempts = 100;
+      const maxAttempts = 150;
       
       do {
         randomX = Math.random() * 60 + 20;
         randomY = Math.random() * 60 + 20;
         attempts++;
         
-        if (attempts > 50) {
+        if (attempts > 70) {
+          // Expand search area
           randomX = Math.random() * 80 + 10;
           randomY = Math.random() * 80 + 10;
         }
@@ -123,6 +118,18 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
     return positions;
   }, [supportingWords.length]);
 
+  // Floating danger particles (symbols)
+  const dangerParticles = useMemo(() => {
+    const symbols = ['⚠', '⚡', '⚠', '⚡', '⚠', '⚡', '👁', '🔒', '⚠', '⚡'];
+    return symbols.map((symbol, i) => ({
+      symbol,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: i * 0.8,
+      duration: 8 + Math.random() * 4,
+    }));
+  }, []);
+
   // Theme-aware colors
   const isDark = theme === 'dark';
   const bgGradient = isDark 
@@ -130,16 +137,22 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
     : 'bg-gradient-to-br from-red-100 via-gray-200 to-red-50';
   
   const heroTextColor = isDark ? '#FFFFFF' : '#1F2937';
-  const heroFlashColor = isDark ? '#EF4444' : '#DC2626';
+  const heroGlitchColor1 = isDark ? '#FF0055' : '#DC2626'; // Red channel
+  const heroGlitchColor2 = isDark ? '#00FFFF' : '#0EA5E9'; // Cyan channel
   const supportingWordColor = isDark ? 'text-red-500' : 'text-red-700';
   const vignetteColor = isDark 
     ? 'rgba(239, 68, 68, 0.3)' 
     : 'rgba(220, 38, 38, 0.2)';
   const streakColor = isDark ? 'bg-red-500' : 'bg-red-600';
+  const scanlineColor = isDark ? 'rgba(0, 255, 255, 0.03)' : 'rgba(220, 38, 38, 0.03)';
 
   return (
     <motion.div 
+      ref={containerRef}
       className={`relative w-full h-full overflow-hidden ${bgGradient}`}
+      style={{
+        willChange: 'transform, opacity',
+      }}
       initial={{ opacity: 0 }}
       animate={{ 
         opacity: 1,
@@ -153,11 +166,14 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
         y: { duration: 0.15, ease: 'easeOut' },
       }}
     >
-      {/* Animated Background */}
+      {/* =========================== */}
+      {/* BACKGROUND EFFECTS LAYER */}
+      {/* =========================== */}
       <div className="absolute inset-0">
         {/* Pulsing red vignettes */}
         <motion.div
-          className="absolute inset-0"
+          className="absolute inset-0 pointer-events-none"
+          style={{ willChange: 'transform' }}
           animate={{
             background: [
               `radial-gradient(circle at 20% 30%, ${vignetteColor} 0%, transparent 50%)`,
@@ -168,14 +184,15 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         />
 
-        {/* Diagonal streaks */}
-        {[...Array(5)].map((_, i) => (
+        {/* Diagonal danger streaks */}
+        {!shouldReduceMotion && [...Array(5)].map((_, i) => (
           <motion.div
-            key={i}
-            className={`absolute h-[2px] w-full ${streakColor} opacity-30`}
+            key={`streak-${i}`}
+            className={`absolute h-[2px] w-full ${streakColor} opacity-30 pointer-events-none`}
             style={{
               top: `${i * 20}%`,
               transform: `rotate(-45deg)`,
+              willChange: 'transform, opacity',
             }}
             animate={{
               x: ['-100%', '200%'],
@@ -190,77 +207,181 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
           />
         ))}
 
-        {/* Viewport shake effect */}
-        <motion.div
-          className={isDark ? 'absolute inset-0 bg-black/10' : 'absolute inset-0 bg-gray-900/5'}
-          animate={{
-            x: [0, -2, 2, -2, 0],
-            y: [0, 2, -2, 2, 0],
-          }}
-          transition={{
-            duration: 0.5,
-            repeat: Infinity,
-            repeatDelay: 3,
+        {/* CRT Scanlines Overlay */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-50"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              0deg,
+              ${scanlineColor} 0px,
+              transparent 1px,
+              transparent 2px,
+              ${scanlineColor} 3px
+            )`,
+            animation: shouldReduceMotion ? 'none' : 'scanlines 8s linear infinite',
           }}
         />
-      </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex items-center justify-center h-full px-5 lg:px-20">
-        <div className="text-center flex flex-col items-center">
-          {/* Hero Text with Glitch */}
-          <motion.h1
-            className="text-6xl md:text-8xl lg:text-[96px] font-bold mb-8 md:mb-12"
+        {/* Digital Noise Texture */}
+        {!shouldReduceMotion && (
+          <motion.div
+            className="absolute inset-0 pointer-events-none opacity-20"
             style={{
-              color: heroTextColor,
-              textShadow: isDark
-                ? `
-                  ${glitchOffset.x}px ${glitchOffset.y}px 0 rgba(239, 68, 68, 0.8),
-                  ${-glitchOffset.x}px ${-glitchOffset.y}px 0 rgba(59, 130, 246, 0.8)
-                `
-                : `
-                  ${glitchOffset.x}px ${glitchOffset.y}px 0 rgba(220, 38, 38, 0.6),
-                  ${-glitchOffset.x}px ${-glitchOffset.y}px 0 rgba(37, 99, 235, 0.6)
-                `,
-              transform: `translate(${glitchOffset.x}px, ${glitchOffset.y}px)`,
+              backgroundImage: isDark
+                ? 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' opacity=\'0.3\'/%3E%3C/svg%3E")'
+                : 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'3\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' opacity=\'0.2\'/%3E%3C/svg%3E")',
+              backgroundSize: '256px 256px',
+              willChange: 'transform',
             }}
             animate={{
-              color: [heroTextColor, heroFlashColor, heroTextColor],
+              opacity: [0.15, 0.25, 0.15],
             }}
             transition={{
-              duration: 0.3,
+              duration: 0.5,
               repeat: Infinity,
-              repeatType: 'reverse',
+              ease: 'linear',
+            }}
+          />
+        )}
+
+        {/* Floating Danger Particles */}
+        {!shouldReduceMotion && mounted && dangerParticles.map((particle, i) => (
+          <motion.div
+            key={`particle-${i}`}
+            className="absolute text-2xl md:text-3xl pointer-events-none select-none"
+            style={{
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              willChange: 'transform, opacity',
+            }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{
+              opacity: [0, 0.3, 0.6, 0.3, 0],
+              scale: [0.5, 1, 1.2, 1, 0.5],
+              y: [0, -30, -60, -90, -120],
+              x: [0, Math.sin(i) * 20, Math.sin(i + 1) * 20, Math.sin(i + 2) * 20, 0],
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: particle.duration,
+              delay: particle.delay,
+              repeat: Infinity,
+              ease: 'easeInOut',
             }}
           >
-            {heroText}
-          </motion.h1>
+            <span className={isDark ? 'text-red-500/40' : 'text-red-600/30'}>
+              {particle.symbol}
+            </span>
+          </motion.div>
+        ))}
+      </div>
 
-          {/* CTA Button with Powerful Glow */}
+      {/* =========================== */}
+      {/* CONTENT LAYER */}
+      {/* =========================== */}
+      <div className="relative z-10 flex items-center justify-center h-full px-6 sm:px-8 md:px-12 lg:px-20">
+        <div className="text-center flex flex-col items-center w-full max-w-7xl">
+          {/* Hero Text with Advanced RGB Split Glitch */}
+          <div className="relative mb-10 md:mb-16">
+            <motion.h1
+              data-text={heroText}
+              className="hero-glitch-text relative text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[96px] font-bold select-none"
+              style={{
+                color: heroTextColor,
+                willChange: 'transform, filter',
+              }}
+              initial={{ opacity: 0, y: -30 }}
+              animate={{ 
+                opacity: 1, 
+                y: 0,
+              }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              {heroText}
+              
+              {/* RGB Split Layers using pseudo-element technique */}
+              {!shouldReduceMotion && (
+                <>
+                  {/* Red Channel */}
+                  <motion.span
+                    className="absolute inset-0 pointer-events-none select-none"
+                    style={{
+                      color: heroGlitchColor1,
+                      mixBlendMode: isDark ? 'screen' : 'multiply',
+                      willChange: 'transform',
+                    }}
+                    animate={{
+                      x: [-2, 2, -1, 3, -2, 1, -2],
+                      y: [1, -1, 2, -2, 1, -1, 1],
+                      opacity: [0.7, 0.9, 0.6, 0.8, 0.7, 0.85, 0.7],
+                    }}
+                    transition={{
+                      duration: 0.15,
+                      repeat: Infinity,
+                      repeatType: 'mirror',
+                      ease: 'easeInOut',
+                    }}
+                  >
+                    {heroText}
+                  </motion.span>
+
+                  {/* Cyan Channel */}
+                  <motion.span
+                    className="absolute inset-0 pointer-events-none select-none"
+                    style={{
+                      color: heroGlitchColor2,
+                      mixBlendMode: isDark ? 'screen' : 'multiply',
+                      willChange: 'transform',
+                    }}
+                    animate={{
+                      x: [2, -2, 1, -3, 2, -1, 2],
+                      y: [-1, 1, -2, 2, -1, 1, -1],
+                      opacity: [0.7, 0.85, 0.6, 0.8, 0.7, 0.9, 0.7],
+                    }}
+                    transition={{
+                      duration: 0.15,
+                      repeat: Infinity,
+                      repeatType: 'mirror',
+                      ease: 'easeInOut',
+                      delay: 0.05,
+                    }}
+                  >
+                    {heroText}
+                  </motion.span>
+                </>
+              )}
+            </motion.h1>
+          </div>
+
+          {/* CTA Button with Enhanced Glow */}
           <motion.button
             onClick={onScrollToPage7}
             className={`
-              relative z-20 px-8 py-4 md:px-10 md:py-5 
-              text-xl md:text-2xl lg:text-3xl font-bold 
+              relative z-30 px-8 py-4 sm:px-10 sm:py-5 md:px-12 md:py-6
+              text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold 
               text-white rounded-full 
               transition-all duration-300
               ${isDark 
-                ? 'bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-400 hover:to-green-400 cta-glow-dark' 
-                : 'bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 cta-glow-light'
+                ? 'bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-400 hover:to-green-400 shadow-[0_0_30px_rgba(16,185,129,0.5),0_0_60px_rgba(16,185,129,0.3),0_0_90px_rgba(16,185,129,0.1)]' 
+                : 'bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 shadow-[0_0_25px_rgba(5,150,105,0.4),0_0_50px_rgba(5,150,105,0.2)]'
               }
+              hover:shadow-[0_0_40px_rgba(16,185,129,0.7),0_0_80px_rgba(16,185,129,0.4)]
               hover:scale-105 active:scale-95
               cursor-pointer select-none
               flex items-center justify-center gap-3
             `}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+            style={{
+              willChange: 'transform',
+            }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.5, type: 'spring', stiffness: 200 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             {/* Gift Box Icon */}
             <svg 
-              className="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10" 
+              className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -275,7 +396,7 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
             <span>{ctaButtonText}</span>
           </motion.button>
 
-          {/* Desktop Supporting Words - MORE FREQUENT + STRONGER GLITCH */}
+          {/* Desktop Supporting Words - Enhanced with Clip-path Tearing */}
           <div className="hidden md:block">
             {supportingWords.map((word, index) => {
               const pos = wordPositions[index];
@@ -283,70 +404,76 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
               return (
                 <motion.div
                   key={`desktop-${word}-${index}`}
-                  className={`absolute text-4xl font-bold ${supportingWordColor} pointer-events-none`}
+                  className={`absolute text-3xl lg:text-4xl xl:text-5xl font-bold ${supportingWordColor} pointer-events-none select-none`}
                   style={{
                     left: `${pos.x}%`,
                     top: `${pos.y}%`,
                     transform: 'translate(-50%, -50%)',
                     whiteSpace: 'nowrap',
+                    willChange: 'transform, opacity, filter',
                   }}
                   initial={{
                     opacity: 0,
                     scale: 0.3,
-                    rotate: pos.rotation - 45,
-                    x: -30,
-                    y: -30,
+                    rotate: pos.rotation - 50,
+                    x: -40,
+                    y: -40,
                   }}
-                  animate={{
-                    // STRONGER GLITCH ANIMATIONS with more keyframes
-                    opacity: [0, 0.2, 0, 0.4, 1, 1, 1, 0.6, 0.2, 0],
+                  animate={shouldReduceMotion ? {
+                    opacity: 0.6,
+                    scale: 1,
+                    rotate: pos.rotation,
+                    x: 0,
+                    y: 0,
+                  } : {
+                    opacity: [0, 0.15, 0, 0.3, 0.8, 1, 1, 0.7, 0.3, 0],
                     scale: [0.3, 0.5, 0.7, 0.9, 1.15, 1, 1, 0.85, 0.5, 0.3],
                     rotate: [
-                      pos.rotation - 45,
-                      pos.rotation + 20,
-                      pos.rotation - 15,
-                      pos.rotation + 8,
+                      pos.rotation - 50,
+                      pos.rotation + 25,
+                      pos.rotation - 20,
+                      pos.rotation + 10,
                       pos.rotation - 5,
                       pos.rotation,
                       pos.rotation,
-                      pos.rotation + 10,
-                      pos.rotation - 25,
-                      pos.rotation - 50,
+                      pos.rotation + 12,
+                      pos.rotation - 28,
+                      pos.rotation - 55,
                     ],
-                    x: [-30, 20, -15, 10, -5, 0, 0, 8, 15, 30],
-                    y: [-30, -20, 15, -10, 5, 0, 0, -5, 12, 30],
+                    x: [-40, 25, -20, 12, -6, 0, 0, 10, 20, 40],
+                    y: [-40, -25, 18, -12, 6, 0, 0, -7, 15, 40],
                     filter: isDark
                       ? [
-                          'blur(15px) brightness(0.2) contrast(1.5)',
-                          'blur(10px) brightness(0.5) contrast(1.8)',
-                          'blur(12px) brightness(0.3) contrast(1.6)',
-                          'blur(6px) brightness(0.9) contrast(1.4)',
-                          'blur(2px) brightness(1.3) drop-shadow(0 0 25px rgba(239, 68, 68, 1)) contrast(1.2)',
-                          'blur(0px) brightness(1.4) drop-shadow(0 0 35px rgba(239, 68, 68, 1)) drop-shadow(0 0 50px rgba(239, 68, 68, 0.9))',
-                          'blur(0px) brightness(1.4) drop-shadow(0 0 35px rgba(239, 68, 68, 1)) drop-shadow(0 0 50px rgba(239, 68, 68, 0.9))',
-                          'blur(4px) brightness(1.1) drop-shadow(0 0 20px rgba(239, 68, 68, 0.8)) contrast(1.3)',
-                          'blur(10px) brightness(0.6) contrast(1.5)',
-                          'blur(15px) brightness(0.2) contrast(1.6)',
+                          'blur(18px) brightness(0.2) contrast(1.6)',
+                          'blur(12px) brightness(0.5) contrast(1.9)',
+                          'blur(14px) brightness(0.3) contrast(1.7)',
+                          'blur(7px) brightness(0.9) contrast(1.5)',
+                          'blur(2px) brightness(1.3) drop-shadow(0 0 30px rgba(239, 68, 68, 1)) contrast(1.2)',
+                          'blur(0px) brightness(1.5) drop-shadow(0 0 40px rgba(239, 68, 68, 1)) drop-shadow(0 0 60px rgba(239, 68, 68, 0.9))',
+                          'blur(0px) brightness(1.5) drop-shadow(0 0 40px rgba(239, 68, 68, 1)) drop-shadow(0 0 60px rgba(239, 68, 68, 0.9))',
+                          'blur(5px) brightness(1.1) drop-shadow(0 0 25px rgba(239, 68, 68, 0.8)) contrast(1.3)',
+                          'blur(12px) brightness(0.6) contrast(1.6)',
+                          'blur(18px) brightness(0.2) contrast(1.7)',
                         ]
                       : [
-                          'blur(15px) brightness(0.3) contrast(1.5)',
-                          'blur(10px) brightness(0.6) contrast(1.7)',
-                          'blur(12px) brightness(0.4) contrast(1.6)',
-                          'blur(6px) brightness(1.0) contrast(1.3)',
-                          'blur(2px) brightness(1.3) drop-shadow(0 0 22px rgba(220, 38, 38, 1)) contrast(1.2)',
-                          'blur(0px) brightness(1.4) drop-shadow(0 0 30px rgba(220, 38, 38, 1)) drop-shadow(0 0 45px rgba(220, 38, 38, 0.9))',
-                          'blur(0px) brightness(1.4) drop-shadow(0 0 30px rgba(220, 38, 38, 1)) drop-shadow(0 0 45px rgba(220, 38, 38, 0.9))',
-                          'blur(4px) brightness(1.1) drop-shadow(0 0 18px rgba(220, 38, 38, 0.8)) contrast(1.3)',
-                          'blur(10px) brightness(0.7) contrast(1.5)',
-                          'blur(15px) brightness(0.3) contrast(1.6)',
+                          'blur(18px) brightness(0.3) contrast(1.6)',
+                          'blur(12px) brightness(0.6) contrast(1.8)',
+                          'blur(14px) brightness(0.4) contrast(1.7)',
+                          'blur(7px) brightness(1.0) contrast(1.4)',
+                          'blur(2px) brightness(1.3) drop-shadow(0 0 26px rgba(220, 38, 38, 1)) contrast(1.2)',
+                          'blur(0px) brightness(1.5) drop-shadow(0 0 35px rgba(220, 38, 38, 1)) drop-shadow(0 0 55px rgba(220, 38, 38, 0.9))',
+                          'blur(0px) brightness(1.5) drop-shadow(0 0 35px rgba(220, 38, 38, 1)) drop-shadow(0 0 55px rgba(220, 38, 38, 0.9))',
+                          'blur(5px) brightness(1.1) drop-shadow(0 0 22px rgba(220, 38, 38, 0.8)) contrast(1.3)',
+                          'blur(12px) brightness(0.7) contrast(1.6)',
+                          'blur(18px) brightness(0.3) contrast(1.7)',
                         ],
                   }}
                   transition={{
-                    duration: 2.5,
-                    delay: index * 0.6, // REDUCED from 1s - MORE FREQUENT!
+                    duration: 2.8,
+                    delay: index * 0.5,
                     repeat: Infinity,
-                    repeatDelay: 1.5, // REDUCED from 3s - MUCH MORE FREQUENT!
-                    ease: [0.45, 0.05, 0.55, 0.95], // Aggressive glitch easing
+                    repeatDelay: 1.2,
+                    ease: [0.45, 0.05, 0.55, 0.95],
                     times: [0, 0.1, 0.15, 0.25, 0.35, 0.5, 0.65, 0.8, 0.9, 1],
                   }}
                 >
@@ -356,7 +483,7 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
             })}
           </div>
 
-          {/* Mobile Supporting Words - MORE FREQUENT + STRONGER GLITCH */}
+          {/* Mobile Supporting Words - Optimized */}
           <div className="md:hidden">
             {supportingWords.map((word, index) => {
               const pos = wordPositions[index];
@@ -364,84 +491,84 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
               return (
                 <motion.div
                   key={`mobile-${word}-${index}`}
-                  className={`absolute text-2xl font-bold ${supportingWordColor} pointer-events-none`}
+                  className={`absolute text-xl sm:text-2xl font-bold ${supportingWordColor} pointer-events-none select-none`}
                   style={{
                     left: `${pos.x}%`,
                     top: `${pos.y}%`,
                     transform: 'translate(-50%, -50%)',
                     whiteSpace: 'nowrap',
                     zIndex: 5,
+                    willChange: 'transform, opacity, filter',
                   }}
                   initial={{
                     opacity: 0,
                     scale: 0.3,
-                    rotate: pos.rotation - 45,
-                    x: -25,
-                    y: -25,
+                    rotate: pos.rotation - 50,
+                    x: -30,
+                    y: -30,
                   }}
-                  animate={{
-                    // EXTREME GLITCH with flickering and displacement
-                    opacity: [
-                      0, 0.3, 0, 0.5, 0.2, 1, 1, 1, 0.7, 0.3, 0.1, 0
-                    ],
-                    scale: [
-                      0.3, 0.6, 0.4, 0.8, 0.9, 1.12, 1, 1, 0.9, 0.6, 0.4, 0.3
-                    ],
+                  animate={shouldReduceMotion ? {
+                    opacity: 0.6,
+                    scale: 1,
+                    rotate: pos.rotation,
+                    x: 0,
+                    y: 0,
+                  } : {
+                    opacity: [0, 0.2, 0, 0.4, 0.15, 0.9, 1, 1, 0.8, 0.4, 0.1, 0],
+                    scale: [0.3, 0.6, 0.4, 0.8, 0.9, 1.1, 1, 1, 0.9, 0.6, 0.4, 0.3],
                     rotate: [
-                      pos.rotation - 45,
-                      pos.rotation + 25,
-                      pos.rotation - 20,
-                      pos.rotation + 12,
-                      pos.rotation - 8,
-                      pos.rotation + 3,
-                      pos.rotation,
-                      pos.rotation,
-                      pos.rotation + 8,
-                      pos.rotation - 18,
-                      pos.rotation - 30,
                       pos.rotation - 50,
+                      pos.rotation + 28,
+                      pos.rotation - 22,
+                      pos.rotation + 14,
+                      pos.rotation - 9,
+                      pos.rotation + 4,
+                      pos.rotation,
+                      pos.rotation,
+                      pos.rotation + 10,
+                      pos.rotation - 20,
+                      pos.rotation - 32,
+                      pos.rotation - 55,
                     ],
-                    x: [-25, 18, -12, 15, -8, 5, 0, 0, -6, 10, 18, 25],
-                    y: [-25, -15, 12, -8, 10, -4, 0, 0, 6, -10, 15, 25],
+                    x: [-30, 22, -15, 18, -10, 6, 0, 0, -8, 12, 22, 30],
+                    y: [-30, -18, 15, -10, 12, -5, 0, 0, 8, -12, 18, 30],
                     filter: isDark
                       ? [
-                          'blur(18px) brightness(0.2) contrast(1.6)',
-                          'blur(12px) brightness(0.5) contrast(1.9)',
-                          'blur(15px) brightness(0.3) contrast(1.7)',
-                          'blur(8px) brightness(0.8) contrast(1.5)',
-                          'blur(4px) brightness(1.1) drop-shadow(0 0 15px rgba(239, 68, 68, 0.8)) contrast(1.3)',
-                          'blur(1px) brightness(1.3) drop-shadow(0 0 25px rgba(239, 68, 68, 1)) contrast(1.2)',
-                          'blur(0px) brightness(1.45) drop-shadow(0 0 30px rgba(239, 68, 68, 1)) drop-shadow(0 0 50px rgba(239, 68, 68, 0.9)) drop-shadow(0 0 70px rgba(239, 68, 68, 0.7))',
-                          'blur(0px) brightness(1.45) drop-shadow(0 0 30px rgba(239, 68, 68, 1)) drop-shadow(0 0 50px rgba(239, 68, 68, 0.9)) drop-shadow(0 0 70px rgba(239, 68, 68, 0.7))',
-                          'blur(3px) brightness(1.2) drop-shadow(0 0 20px rgba(239, 68, 68, 0.9)) contrast(1.3)',
-                          'blur(8px) brightness(0.7) contrast(1.5)',
-                          'blur(12px) brightness(0.4) contrast(1.7)',
-                          'blur(18px) brightness(0.2) contrast(1.8)',
+                          'blur(20px) brightness(0.2) contrast(1.7)',
+                          'blur(14px) brightness(0.5) contrast(2.0)',
+                          'blur(17px) brightness(0.3) contrast(1.8)',
+                          'blur(9px) brightness(0.8) contrast(1.6)',
+                          'blur(5px) brightness(1.1) drop-shadow(0 0 18px rgba(239, 68, 68, 0.9)) contrast(1.3)',
+                          'blur(1px) brightness(1.35) drop-shadow(0 0 28px rgba(239, 68, 68, 1)) contrast(1.2)',
+                          'blur(0px) brightness(1.5) drop-shadow(0 0 35px rgba(239, 68, 68, 1)) drop-shadow(0 0 60px rgba(239, 68, 68, 0.9)) drop-shadow(0 0 80px rgba(239, 68, 68, 0.7))',
+                          'blur(0px) brightness(1.5) drop-shadow(0 0 35px rgba(239, 68, 68, 1)) drop-shadow(0 0 60px rgba(239, 68, 68, 0.9)) drop-shadow(0 0 80px rgba(239, 68, 68, 0.7))',
+                          'blur(4px) brightness(1.25) drop-shadow(0 0 24px rgba(239, 68, 68, 0.9)) contrast(1.3)',
+                          'blur(10px) brightness(0.7) contrast(1.6)',
+                          'blur(14px) brightness(0.4) contrast(1.8)',
+                          'blur(20px) brightness(0.2) contrast(1.9)',
                         ]
                       : [
-                          'blur(18px) brightness(0.3) contrast(1.6)',
-                          'blur(12px) brightness(0.6) contrast(1.8)',
-                          'blur(15px) brightness(0.4) contrast(1.7)',
-                          'blur(8px) brightness(0.9) contrast(1.4)',
-                          'blur(4px) brightness(1.1) drop-shadow(0 0 12px rgba(220, 38, 38, 0.8)) contrast(1.3)',
-                          'blur(1px) brightness(1.3) drop-shadow(0 0 22px rgba(220, 38, 38, 1)) contrast(1.2)',
-                          'blur(0px) brightness(1.45) drop-shadow(0 0 28px rgba(220, 38, 38, 1)) drop-shadow(0 0 45px rgba(220, 38, 38, 0.9)) drop-shadow(0 0 65px rgba(220, 38, 38, 0.7))',
-                          'blur(0px) brightness(1.45) drop-shadow(0 0 28px rgba(220, 38, 38, 1)) drop-shadow(0 0 45px rgba(220, 38, 38, 0.9)) drop-shadow(0 0 65px rgba(220, 38, 38, 0.7))',
-                          'blur(3px) brightness(1.2) drop-shadow(0 0 18px rgba(220, 38, 38, 0.9)) contrast(1.3)',
-                          'blur(8px) brightness(0.7) contrast(1.5)',
-                          'blur(12px) brightness(0.4) contrast(1.7)',
-                          'blur(18px) brightness(0.3) contrast(1.8)',
+                          'blur(20px) brightness(0.3) contrast(1.7)',
+                          'blur(14px) brightness(0.6) contrast(1.9)',
+                          'blur(17px) brightness(0.4) contrast(1.8)',
+                          'blur(9px) brightness(0.9) contrast(1.5)',
+                          'blur(5px) brightness(1.1) drop-shadow(0 0 15px rgba(220, 38, 38, 0.9)) contrast(1.3)',
+                          'blur(1px) brightness(1.35) drop-shadow(0 0 25px rgba(220, 38, 38, 1)) contrast(1.2)',
+                          'blur(0px) brightness(1.5) drop-shadow(0 0 32px rgba(220, 38, 38, 1)) drop-shadow(0 0 55px rgba(220, 38, 38, 0.9)) drop-shadow(0 0 75px rgba(220, 38, 38, 0.7))',
+                          'blur(0px) brightness(1.5) drop-shadow(0 0 32px rgba(220, 38, 38, 1)) drop-shadow(0 0 55px rgba(220, 38, 38, 0.9)) drop-shadow(0 0 75px rgba(220, 38, 38, 0.7))',
+                          'blur(4px) brightness(1.25) drop-shadow(0 0 22px rgba(220, 38, 38, 0.9)) contrast(1.3)',
+                          'blur(10px) brightness(0.7) contrast(1.6)',
+                          'blur(14px) brightness(0.4) contrast(1.8)',
+                          'blur(20px) brightness(0.3) contrast(1.9)',
                         ],
                   }}
                   transition={{
-                    duration: 3,
-                    delay: index * 0.5, // REDUCED from 1.2s - MORE FREQUENT!
+                    duration: 3.2,
+                    delay: index * 0.45,
                     repeat: Infinity,
-                    repeatDelay: 1, // REDUCED from 4s - MUCH MORE FREQUENT!
-                    ease: [0.45, 0.05, 0.55, 0.95], // Aggressive glitch easing
-                    times: [
-                      0, 0.08, 0.12, 0.2, 0.28, 0.36, 0.5, 0.64, 0.75, 0.85, 0.93, 1
-                    ],
+                    repeatDelay: 0.8,
+                    ease: [0.45, 0.05, 0.55, 0.95],
+                    times: [0, 0.08, 0.12, 0.2, 0.28, 0.36, 0.5, 0.64, 0.75, 0.85, 0.93, 1],
                   }}
                 >
                   {word}
@@ -451,6 +578,24 @@ export default function Page1({ isActive = true, onScrollToPage7, resetTrigger =
           </div>
         </div>
       </div>
+
+      {/* CSS Animations defined inline for scanlines */}
+      <style jsx>{`
+        @keyframes scanlines {
+          0% {
+            transform: translateY(0);
+          }
+          100% {
+            transform: translateY(3px);
+          }
+        }
+
+        .hero-glitch-text {
+          text-rendering: optimizeLegibility;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+      `}</style>
     </motion.div>
   );
 }
