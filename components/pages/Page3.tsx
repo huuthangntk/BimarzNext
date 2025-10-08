@@ -750,7 +750,7 @@ export default function Page3({ isActive = true }: Page3Props) {
           {/* Cards Grid - Centered with max-width */}
           <div className="w-full max-w-7xl mx-auto flex justify-center">
             <div className={`
-              grid gap-3 sm:gap-4 md:gap-5 lg:gap-6
+              grid gap-4 sm:gap-5 md:gap-6 lg:gap-8
               grid-cols-2
               ${displayCount > 4 ? 'md:grid-cols-3' : 'md:grid-cols-2'}
               ${displayCount > 6 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}
@@ -758,14 +758,20 @@ export default function Page3({ isActive = true }: Page3Props) {
               {displayedServices.map((service, index) => (
                 <div
                   key={service.id}
-                  className="aspect-[4/3] w-full"
+                  className="w-full"
+                  style={{
+                    minHeight: '200px',
+                    height: 'auto',
+                  }}
                 >
-                  <ServiceCard
-                    service={service}
-                    language={language}
-                    theme={theme}
-                    delay={index * 150}
-                  />
+                  <div className="w-full h-full min-h-[200px] sm:min-h-[240px] md:min-h-[280px] lg:min-h-[320px]">
+                    <ServiceCard
+                      service={service}
+                      language={language}
+                      theme={theme}
+                      delay={index * 150}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
