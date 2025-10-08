@@ -69,25 +69,21 @@ const Scanlines = memo(({ isDark }: { isDark: boolean }) => (
 
 Scanlines.displayName = 'Scanlines';
 
-// Memoized Tracking Reticle Component - Follows the text
-const TrackingReticle = memo(({ x, y, isDark }: { x: number; y: number; isDark: boolean }) => {
+// Memoized Tracking Reticle Component - Follows the text in real-time
+const TrackingReticle = memo(({ x, y, isDark }: { x: any; y: any; isDark: boolean }) => {
   const reticleColor = isDark ? '#EF4444' : '#DC2626';
+
+  // Convert motion values to percentage strings for CSS
+  const leftPos = useTransform(x, (v) => `${v}%`);
+  const topPos = useTransform(y, (v) => `${v}%`);
 
   return (
     <motion.div
       className="absolute pointer-events-none z-20"
       style={{
-        left: `${x}%`,
-        top: `${y}%`,
+        left: leftPos,
+        top: topPos,
         transform: 'translate(-50%, -50%)',
-      }}
-      animate={{
-        left: `${x}%`,
-        top: `${y}%`,
-      }}
-      transition={{
-        duration: 0.3,
-        ease: [0.4, 0, 0.2, 1],
       }}
     >
       {/* Square brackets with pulsing center dot */}
@@ -508,9 +504,9 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
 
       {/* Content Container */}
       <div className="relative z-10 w-full h-full px-5 lg:px-20">
-        {/* Tracking Reticle - Follows YOUR DATA text */}
+        {/* Tracking Reticle - Follows YOUR DATA text in real-time */}
         {!shouldReduceMotion && (
-          <TrackingReticle x={mainTextX.get()} y={mainTextY.get()} isDark={isDark} />
+          <TrackingReticle x={mainTextX} y={mainTextY} isDark={isDark} />
         )}
 
         {/* Main Hero Text with Glitch */}
