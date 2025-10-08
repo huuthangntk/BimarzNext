@@ -9,6 +9,7 @@ import {
   useMotionTemplate,
   useWillChange,
   useReducedMotion,
+  animate,
 } from 'framer-motion';
 import { useTheme } from '@/contexts/ThemeContext';
 import { getTranslation, getTranslationArray } from '@/lib/translations';
@@ -288,10 +289,6 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   const entity0Target = useMotionValue(0);
   const entity1Target = useMotionValue(2);
   const entity2Target = useMotionValue(4);
-  // Lower stiffness and higher damping for gradual, smooth movement
-  const entity0TargetSpring = useSpring(entity0Target, { stiffness: 30, damping: 25 });
-  const entity1TargetSpring = useSpring(entity1Target, { stiffness: 30, damping: 25 });
-  const entity2TargetSpring = useSpring(entity2Target, { stiffness: 30, damping: 25 });
 
   // Refs for animation control
   const isCenterRef = useRef(true);
@@ -345,9 +342,9 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   const calculateMinDistance = useCallback(
     (textX: number, textY: number, rot: number) => {
       const entityIndices = [
-        entity0TargetSpring.get(),
-        entity1TargetSpring.get(),
-        entity2TargetSpring.get(),
+        entity0Target.get(),
+        entity1Target.get(),
+        entity2Target.get(),
       ];
       let minDist = 100;
 
@@ -361,7 +358,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
 
       return minDist;
     },
-    [orbitalWords.length, followX, followY, calculateOrbitPosition, entity0TargetSpring, entity1TargetSpring, entity2TargetSpring]
+    [orbitalWords.length, followX, followY, calculateOrbitPosition, entity0Target, entity1Target, entity2Target]
   );
 
   // Consolidated animation loop using single rAF
@@ -433,13 +430,27 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    // Entity movement interval - cycle through all purple dots
+    // Entity movement interval - cycle through all purple dots with smooth animation
     const entityInterval = setInterval(() => {
-      // Move each entity to the next purple dot position
-      entity0Target.set((entity0Target.get() + 1) % orbitalWords.length);
-      entity1Target.set((entity1Target.get() + 1) % orbitalWords.length);
-      entity2Target.set((entity2Target.get() + 1) % orbitalWords.length);
-    }, 3500); // Move every 3.5 seconds - gives time for gradual smooth movement
+      // Calculate next position for each entity
+      const nextEntity0 = (entity0Target.get() + 1) % orbitalWords.length;
+      const nextEntity1 = (entity1Target.get() + 1) % orbitalWords.length;
+      const nextEntity2 = (entity2Target.get() + 1) % orbitalWords.length;
+      
+      // Animate smoothly to next position with easeInOut for natural motion
+      animate(entity0Target, nextEntity0, { 
+        duration: 3.0, 
+        ease: [0.45, 0.05, 0.55, 0.95] // Custom easeInOut for smooth start and end
+      });
+      animate(entity1Target, nextEntity1, { 
+        duration: 3.0, 
+        ease: [0.45, 0.05, 0.55, 0.95]
+      });
+      animate(entity2Target, nextEntity2, { 
+        duration: 3.0, 
+        ease: [0.45, 0.05, 0.55, 0.95]
+      });
+    }, 3500); // Move every 3.5 seconds - 3s smooth movement + 0.5s pause
 
     // Start animations
     runCycle();
@@ -675,10 +686,10 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
         {/* Moving Entities - Desktop */}
         <div className="hidden md:block">
           {entities.map((entity, entityIndex) => {
-            // Get the appropriate spring value for this entity
-            const targetSpring = entityIndex === 0 ? entity0TargetSpring : entityIndex === 1 ? entity1TargetSpring : entity2TargetSpring;
+            // Get the appropriate target motion value for this entity
+            const targetMotionValue = entityIndex === 0 ? entity0Target : entityIndex === 1 ? entity1Target : entity2Target;
             const angle = useTransform(
-              [rotation, targetSpring],
+              [rotation, targetMotionValue],
               ([r, target]) => ((target / orbitalWords.length) * 360 + r) % 360
             );
             const radius = 18;
@@ -765,10 +776,10 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
         {/* Moving Entities - Mobile */}
         <div className="md:hidden">
           {entities.map((entity, entityIndex) => {
-            // Get the appropriate spring value for this entity
-            const targetSpring = entityIndex === 0 ? entity0TargetSpring : entityIndex === 1 ? entity1TargetSpring : entity2TargetSpring;
+            // Get the appropriate target motion value for this entity
+            const targetMotionValue = entityIndex === 0 ? entity0Target : entityIndex === 1 ? entity1Target : entity2Target;
             const angle = useTransform(
-              [rotation, targetSpring],
+              [rotation, targetMotionValue],
               ([r, target]) => ((target / orbitalWords.length) * 360 + r) % 360
             );
             const radius = 25;
