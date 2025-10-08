@@ -659,28 +659,16 @@ export default function Page3({ isActive = true }: Page3Props) {
   const { language, theme } = useTheme();
   const isRTL = language === 'Farsi';
   
-  // Determine number of cards based on screen size and orientation
+  // Determine number of cards based on screen size
   const [displayCount, setDisplayCount] = useState(4);
   
   useEffect(() => {
     const updateCount = () => {
       const width = window.innerWidth;
-      const height = window.innerHeight;
-      const isPortrait = height > width;
-      
-      // Portrait mode: 6 cards (3 rows x 2 cols)
-      if (isPortrait) {
-        setDisplayCount(6);
-      }
-      // Landscape mode
-      else {
-        // Small landscape: 4 cards (2x2)
-        if (width < 768) setDisplayCount(4);
-        // Medium landscape: 6 cards (2x3)
-        else if (width < 1024) setDisplayCount(6);
-        // Large landscape: 8 cards (2x4)
-        else setDisplayCount(8);
-      }
+      // Mobile: 4 cards (2x2), Tablet: 6 cards (2x3), Desktop: 8 cards (2x4)
+      if (width < 768) setDisplayCount(4);
+      else if (width < 1024) setDisplayCount(6);
+      else setDisplayCount(8);
     };
     
     updateCount();
@@ -726,17 +714,17 @@ export default function Page3({ isActive = true }: Page3Props) {
         }}
       />
 
-      {/* Main content - Centered horizontally and vertically adjusted */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12">
-        {/* Center content with proper padding */}
-        <div className="w-full flex flex-col items-center justify-center py-20 md:py-24 lg:py-28">
+      {/* Main content - Adjusted positioning to prevent footer overlap */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-start px-4 sm:px-6 md:px-8 lg:px-12">
+        {/* Reduced top padding on large screens, ensure content fits above footer */}
+        <div className="w-full h-full flex flex-col items-center justify-start pt-24 pb-20 md:pt-20 md:pb-24 lg:pt-16 lg:pb-28">
           
-          {/* Hero Text - Centered */}
+          {/* Hero Text */}
           <motion.h1
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 md:mb-8 lg:mb-10 tracking-wider text-center"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 md:mb-8 lg:mb-10 tracking-wider"
             style={{
               color: theme === 'dark' ? '#ff4444' : '#cc0000',
               textShadow: theme === 'dark' 
@@ -747,10 +735,10 @@ export default function Page3({ isActive = true }: Page3Props) {
             {heroText}
           </motion.h1>
 
-          {/* Cards Grid - Centered with max-width */}
-          <div className="w-full max-w-7xl mx-auto flex justify-center">
+          {/* Cards Grid - More compact on large screens */}
+          <div className="w-full max-w-7xl mx-auto">
             <div className={`
-              grid gap-4 sm:gap-5 md:gap-6 lg:gap-8
+              grid gap-3 sm:gap-4 md:gap-5 lg:gap-6
               grid-cols-2
               ${displayCount > 4 ? 'md:grid-cols-3' : 'md:grid-cols-2'}
               ${displayCount > 6 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}
@@ -758,20 +746,14 @@ export default function Page3({ isActive = true }: Page3Props) {
               {displayedServices.map((service, index) => (
                 <div
                   key={service.id}
-                  className="w-full"
-                  style={{
-                    minHeight: '200px',
-                    height: 'auto',
-                  }}
+                  className="aspect-[4/3] w-full"
                 >
-                  <div className="w-full h-full min-h-[200px] sm:min-h-[240px] md:min-h-[280px] lg:min-h-[320px]">
-                    <ServiceCard
-                      service={service}
-                      language={language}
-                      theme={theme}
-                      delay={index * 150}
-                    />
-                  </div>
+                  <ServiceCard
+                    service={service}
+                    language={language}
+                    theme={theme}
+                    delay={index * 150}
+                  />
                 </div>
               ))}
             </div>

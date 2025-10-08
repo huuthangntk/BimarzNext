@@ -253,13 +253,13 @@ mcp_Clear_Thought_1_5_clear_thought({
 
 ---
 
-## Phase 4: Implementation & GitHub Automation
+## Phase 4: Implementation with Clear Thought
 
-**MANDATORY: After implementation, ALWAYS use GitHub MCP to commit and push changes automatically.**
+**Continue using Clear Thought during implementation to maintain quality.**
 
-### Implementation with Ongoing Clear Thought
+### Implementation Guidance
 
-Continue using Clear Thought during implementation:
+Use Clear Thought when needed during coding:
 
 ```typescript
 // When encountering issues
@@ -281,117 +281,14 @@ mcp_Clear_Thought_1_5_clear_thought({
     revisesThought: 14
   }
 })
-```
 
-### GitHub Automation Workflow
-
-**CRITICAL: ALWAYS commit and push changes to GitHub after implementation.**
-
-**Account:** huuthangntk  
-**Branch:** main (unless specified otherwise)
-
-#### Method 1: Push Multiple Files (Recommended)
-
-Use this when modifying multiple files at once:
-
-```typescript
-mcp_github_push_files({
-  owner: "huuthangntk",
-  repo: "claude",  // Current repository
-  branch: "main",
-  files: [
-    {
-      path: ".cursor/rules/mcp-deep-analysis.mdc",
-      content: "[Complete file content]"
-    },
-    {
-      path: "components/NewComponent.tsx",
-      content: "[Component code]"
-    }
-  ],
-  message: "feat: descriptive commit message explaining changes"
-})
-```
-
-#### Method 2: Create or Update Single File
-
-Use for single file operations:
-
-```typescript
-// First, get the current file SHA if updating
-const fileInfo = await mcp_github_get_file_contents({
-  owner: "huuthangntk",
-  repo: "claude",
-  path: ".cursor/rules/mcp-deep-analysis.mdc"
-})
-
-// Then update
-mcp_github_create_or_update_file({
-  owner: "huuthangntk",
-  repo: "claude",
-  path: ".cursor/rules/mcp-deep-analysis.mdc",
-  content: "[Complete file content]",
-  message: "feat: updated MCP deep analysis protocol",
-  branch: "main",
-  sha: fileInfo.sha  // Required for updates
-})
-```
-
-### Commit Message Guidelines
-
-Follow conventional commits format:
-
-- `feat:` - New features
-- `fix:` - Bug fixes
-- `docs:` - Documentation changes
-- `refactor:` - Code refactoring
-- `perf:` - Performance improvements
-- `test:` - Adding tests
-- `chore:` - Maintenance tasks
-
-**Examples:**
-- `feat: add comprehensive MCP protocol with Clear Thought, Exa, and GitHub integration`
-- `fix: resolve scroll animation performance issue on mobile`
-- `docs: update API documentation with latest examples`
-- `refactor: improve component structure for better maintainability`
-
-### Complete GitHub Workflow Example
-
-```typescript
-// 1. Make code changes (write/search_replace)
-
-// 2. Use Clear Thought to verify changes
+// When implementation complete
 mcp_Clear_Thought_1_5_clear_thought({
   operation: "sequential_thinking",
-  prompt: "Verifying implementation: Changes made, tested locally, ready to commit. Summary: [what was changed and why].",
+  prompt: "Implementation complete. Changes made: [summary]. Testing performed: [results]. Ready for user review.",
   parameters: {
-    thoughtNumber: 25,
-    totalThoughts: 25,
-    nextThoughtNeeded: false
-  }
-})
-
-// 3. Push to GitHub
-mcp_github_push_files({
-  owner: "huuthangntk",
-  repo: "claude",
-  branch: "main",
-  files: [
-    {
-      path: ".cursor/rules/mcp-deep-analysis.mdc",
-      content: newFileContent
-    }
-  ],
-  message: "feat: rewrite MCP protocol with Clear Thought, Exa, and GitHub integration"
-})
-
-// 4. Confirm with Clear Thought
-mcp_Clear_Thought_1_5_clear_thought({
-  operation: "sequential_thinking",
-  prompt: "GitHub push successful. Changes committed to main branch. Task complete.",
-  parameters: {
-    thoughtNumber: 26,
-    totalThoughts: 26,
+    thoughtNumber: 22,
+    totalThoughts: 22,
     nextThoughtNeeded: false
   }
 })
@@ -476,27 +373,14 @@ mcp_Clear_Thought_1_5_clear_thought({
 })
 ```
 
-### Phase 4: Implementation & GitHub
+### Phase 4: Implementation
 ```typescript
 // Implement code (write/search_replace operations)
-
-// Commit to GitHub
-mcp_github_push_files({
-  owner: "huuthangntk",
-  repo: "claude",
-  branch: "main",
-  files: [
-    { path: "hooks/useScrollAnimation.ts", content: hookCode },
-    { path: "components/pages/Page1.tsx", content: page1Code },
-    { path: "package.json", content: updatedPackageJson }
-  ],
-  message: "feat: add scroll animations with Framer Motion for pages 1-6"
-})
 
 // Confirm completion
 mcp_Clear_Thought_1_5_clear_thought({
   operation: "sequential_thinking",
-  prompt: "Complete. Scroll animations implemented using researched best practices. Committed to GitHub. Task finished successfully.",
+  prompt: "Complete. Scroll animations implemented using researched best practices. All files updated. Task finished successfully.",
   parameters: {thoughtNumber: 10, totalThoughts: 10, nextThoughtNeeded: false}
 })
 ```
@@ -540,9 +424,9 @@ mcp_Clear_Thought_1_5_clear_thought({
 **Phase 4 - Implementation:**
 - Clear Thought continues during coding
 - Issues trigger immediate Sequential Thinking
-- GitHub operations executed after implementation
-- Proper commit messages following conventions
-- Changes successfully pushed to main branch
+- Implementation follows research-backed patterns
+- Testing performed before completion
+- Changes confirmed with Sequential Thinking
 
 **Overall Success Indicators:**
 - Solutions incorporate latest practices from research
@@ -551,7 +435,7 @@ mcp_Clear_Thought_1_5_clear_thought({
 - Code patterns from research adapted appropriately
 - Performance considerations integrated
 - Implementation confidence high
-- **Automatic GitHub commits for all changes**
+- Clear confirmation of completion
 
 ### ❌ Critical Red Flags - Protocol Failure:
 
@@ -588,10 +472,8 @@ mcp_Clear_Thought_1_5_clear_thought({
 - Not using Clear Thought when issues arise
 - Copying code without understanding
 - Ignoring best practices found in research
-- **Not committing changes to GitHub**
-- **Not pushing to main branch**
-- Poor commit messages
-- Not using Sequential Thinking to confirm completion
+- Skipping testing before completion
+- Not confirming completion with Sequential Thinking
 
 **Cross-Phase Violations:**
 - Sequential Thinking not used frequently enough
@@ -601,7 +483,7 @@ mcp_Clear_Thought_1_5_clear_thought({
 - Rushing through protocol phases
 - Incomplete integration of findings
 - Low confidence due to insufficient research
-- **Forgetting GitHub automation**
+- Skipping confirmation steps
 
 ---
 
@@ -640,17 +522,6 @@ Skip this protocol ONLY for:
 
 **Problem:** web_search_exa returning old information
 **Solution:** Add year (2024/2025) to query for latest content
-
-### GitHub Issues
-
-**Problem:** Push fails with authentication error
-**Solution:** Verify GitHub token configured correctly in MCP settings
-
-**Problem:** File SHA mismatch error
-**Solution:** Always get current file SHA before updating
-
-**Problem:** Commit message rejected
-**Solution:** Follow conventional commits format (feat:, fix:, etc.)
 
 ---
 
@@ -727,80 +598,95 @@ mcp_exa_web_search_exa({
 })
 ```
 
-### GitHub Workflow Best Practices
-
-**Commit Frequently:**
-- Commit logical chunks of work
-- Don't wait until everything is perfect
-- Makes rollback easier if needed
-
-**Descriptive Messages:**
-- Explain WHAT changed and WHY
-- Reference issues/tasks if applicable
-- Follow team conventions
-
-**Branch Strategy:**
-- Main branch for tested, working code
-- Feature branches for experimental work
-- Can specify branch in push_files
-
 ---
 
 ## Summary
 
-This protocol creates a complete AI-powered workflow:
+This protocol creates a complete research-driven development workflow:
 
 1. **Think First** - Clear Thought Sequential Thinking to understand
 2. **Research Deep** - Exa to find latest information and documentation
 3. **Think Again** - Clear Thought to process and synthesize findings
 4. **Plan Thoroughly** - Clear Thought to validate and design solution
-5. **Implement Confidently** - Write code with ongoing Clear Thought
-6. **Commit Automatically** - GitHub MCP to push changes to repository
+5. **Implement Confidently** - Write code with ongoing Clear Thought guidance
 
 **Remember:**
-> "Sequential Thinking → Research → Synthesize → Plan → Implement → Commit"
+> "Sequential Thinking → Research → Synthesize → Plan → Implement"
 
 > "ALWAYS use Clear Thought before, during, and after"
 
-> "ALWAYS commit changes to GitHub"
+> "ALWAYS execute Exa searches for non-trivial tasks"
 
-> "This protocol turns you into a methodical, research-driven, and systematic developer"
+> "This protocol turns you into a methodical, research-driven developer"
 
 ---
 
 ## Quick Reference
 
-### Essential Tools
+### Essential MCP Tools
 
 ```typescript
-// Understanding
-mcp_Clear_Thought_1_5_clear_thought({operation: "sequential_thinking", prompt: "...", parameters: {...}})
+// Phase 0: Understanding
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Understand request, identify gaps, plan research",
+  parameters: {thoughtNumber: 1, totalThoughts: 5, nextThoughtNeeded: true}
+})
 
-// Research
-mcp_exa_get_code_context_exa({query: "API documentation query", tokensNum: 5000})
-mcp_exa_web_search_exa({query: "latest practices query", numResults: 5})
+// Phase 1: Research
+mcp_exa_get_code_context_exa({
+  query: "Specific API/library documentation with context",
+  tokensNum: 5000
+})
 
-// Synthesis
-mcp_Clear_Thought_1_5_clear_thought({operation: "mental_model", prompt: "...", parameters: {}})
+mcp_exa_web_search_exa({
+  query: "Latest practices and trends with year 2024/2025",
+  numResults: 5
+})
 
-// GitHub
-mcp_github_push_files({owner: "huuthangntk", repo: "claude", branch: "main", files: [...], message: "..."})
+// Phase 2: Synthesis
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "mental_model",
+  prompt: "Integrate all Exa findings, compare approaches, select best",
+  parameters: {}
+})
+
+// Phase 3: Planning
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Plan implementation with specifics from research",
+  parameters: {thoughtNumber: 8, totalThoughts: 10, nextThoughtNeeded: false}
+})
 ```
 
 ### Workflow Checklist
 
-- [ ] Start with Clear Thought Sequential Thinking
-- [ ] Identify knowledge gaps
-- [ ] Plan research strategy
-- [ ] Execute Exa searches (get_code_context_exa and/or web_search_exa)
-- [ ] Process EACH search result with Sequential Thinking immediately
-- [ ] Synthesize findings with Clear Thought
-- [ ] Validate approach with Sequential Thinking
-- [ ] Plan implementation with Sequential Thinking
-- [ ] Implement with ongoing Clear Thought support
-- [ ] Commit and push to GitHub with push_files
+**Phase 0: Understanding**
+- [ ] Start with Clear Thought Sequential Thinking (minimum 3 sessions)
+- [ ] Identify knowledge gaps clearly
+- [ ] Plan which Exa searches are needed
+
+**Phase 1: Research**
+- [ ] Execute mcp_exa_get_code_context_exa for API docs
+- [ ] Execute mcp_exa_web_search_exa for best practices
+- [ ] Process EACH Exa result with Sequential Thinking IMMEDIATELY
+- [ ] Cross-reference multiple Exa sources
+
+**Phase 2: Synthesis**
+- [ ] Pre-synthesis Sequential Thinking to prepare
+- [ ] Use Mental Model or Systems Thinking to integrate findings
+- [ ] Post-synthesis Sequential Thinking to validate
+
+**Phase 3: Planning**
+- [ ] Validation Sequential Thinking before coding
+- [ ] Plan implementation with research-backed specifics
+- [ ] Final confidence check with risk mitigation
+
+**Phase 4: Implementation**
+- [ ] Implement using patterns from Exa research
+- [ ] Use Clear Thought if issues arise
 - [ ] Confirm completion with Sequential Thinking
 
 ---
 
-**This protocol ensures every task is approached with deep thinking, thorough research, and automatic version control. Use it consistently for best results.**
+**This protocol ensures every task is approached with deep thinking and thorough research. Use it consistently for best results.**
