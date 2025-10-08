@@ -3,29 +3,26 @@
 /**
  * PAGE 3: BLOCKED - Internet Censorship Visualization
  * 
- * Emotion: CHAOS, FRUSTRATION, OPPRESSION (NOT hope)
- * - Individual random card rotation (each card has own timing 3-8 seconds)
- * - Morphing text animation (BLOCKED → CENSORED → RESTRICTED)
- * - Authentic app UI replicas
- * - Dynamic height calculations (NO overflow)
- * - Dark, oppressive styling
- * - CHAOTIC, UNPREDICTABLE animations
+ * COMPLETELY REDESIGNED FROM SCRATCH
+ * 
+ * Animation Timeline:
+ * - Stage 1 (0-2s): Card enters, shows authentic mock app UI
+ * - Stage 2 (2-3.5s): App interaction simulation (scrolling, playing, etc)
+ * - Stage 3 (3.5-4.5s): Restriction begins (loading, buffering, or warning)
+ * - Stage 4 (4.5s+): Full restriction overlay (BLOCKED/RESTRICTED/CENSORED/UNAVAILABLE)
+ * 
+ * Restriction Types:
+ * - BLOCKED: Hard block with red overlay and X icon
+ * - RESTRICTED: Blur effect with partial access message
+ * - CENSORED: Black bars/pixelation with warning
+ * - UNAVAILABLE: Gray overlay with service unavailable message
  */
 
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useTheme } from '@/contexts/ThemeContext';
 import { translations } from '@/lib/translations';
-import { CreditCard, XCircle, Send } from 'lucide-react';
-import InstagramCard from './Page3/cards/InstagramCard';
-import YouTubeCard from './Page3/cards/YouTubeCard';
-import NetflixCard from './Page3/cards/NetflixCard';
-import SpotifyCard from './Page3/cards/SpotifyCard';
-import TwitterCard from './Page3/cards/TwitterCard';
-import SoundCloudCard from './Page3/cards/SoundCloudCard';
-import FacebookCard from './Page3/cards/FacebookCard';
-import MorphingText from './Page3/MorphingText';
+import { XCircle, AlertTriangle, Shield, Ban } from 'lucide-react';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -35,306 +32,457 @@ interface Page3Props {
   isActive?: boolean;
 }
 
-type ServiceId = 'youtube' | 'spotify' | 'twitter' | 'netflix' | 'paypal' | 'instagram' | 'telegram' | 'facebook' | 'soundcloud';
+type RestrictionType = 'blocked' | 'restricted' | 'censored' | 'unavailable';
 
-interface BlockedService {
-  id: ServiceId;
-  iconPath: string; // Path to SVG icon
-  effectType: 'tvStatic' | 'equalizer' | 'redaction' | 'buffering' | 'declined' | 'chat' | 'social';
-  primaryColor: string;
-  brandColors?: {
-    primary: string;
-    secondary?: string;
-    background?: string;
-  };
-}
-
-interface CardSlot {
+interface ServiceApp {
   id: string;
-  service: BlockedService | null;
-  nextChangeTime: number;
+  name: string;
+  iconPath: string;
+  primaryColor: string;
+  backgroundColor: string;
+  restrictionType: RestrictionType;
+  // Mock UI elements
+  showLogo: boolean;
+  showInteraction: boolean; // e.g., scrolling, playing
 }
 
 // ============================================================================
 // SERVICE DATA
 // ============================================================================
 
-const BLOCKED_SERVICES: BlockedService[] = [
+const SERVICES: ServiceApp[] = [
   {
     id: 'youtube',
+    name: 'YouTube',
     iconPath: '/icons/services/youtube.svg',
-    effectType: 'tvStatic',
     primaryColor: '#FF0000',
-    brandColors: { primary: '#FF0000', background: '#0F0F0F' },
-  },
-  {
-    id: 'spotify',
-    iconPath: '/icons/services/spotify.svg',
-    effectType: 'equalizer',
-    primaryColor: '#1DB954',
-    brandColors: { primary: '#1DB954', background: '#121212' },
-  },
-  {
-    id: 'telegram',
-    iconPath: '/icons/services/telegram.svg',
-    effectType: 'chat',
-    primaryColor: '#0088CC',
-    brandColors: { primary: '#0088CC', secondary: '#0077B3', background: '#0f1419' },
+    backgroundColor: '#0F0F0F',
+    restrictionType: 'blocked',
+    showLogo: true,
+    showInteraction: true,
   },
   {
     id: 'instagram',
+    name: 'Instagram',
     iconPath: '/icons/services/instagram.svg',
-    effectType: 'social',
     primaryColor: '#E4405F',
-    brandColors: { primary: '#E4405F', background: '#000000' },
+    backgroundColor: '#000000',
+    restrictionType: 'restricted',
+    showLogo: true,
+    showInteraction: true,
   },
   {
-    id: 'facebook',
-    iconPath: '/icons/services/facebook.svg',
-    effectType: 'social',
-    primaryColor: '#1877F2',
-    brandColors: { primary: '#1877F2', background: '#18191A' },
-  },
-  {
-    id: 'twitter',
-    iconPath: '/icons/services/twitter.svg',
-    effectType: 'redaction',
-    primaryColor: '#1DA1F2',
-    brandColors: { primary: '#1DA1F2', background: '#000000' },
+    id: 'spotify',
+    name: 'Spotify',
+    iconPath: '/icons/services/spotify.svg',
+    primaryColor: '#1DB954',
+    backgroundColor: '#121212',
+    restrictionType: 'blocked',
+    showLogo: true,
+    showInteraction: true,
   },
   {
     id: 'netflix',
+    name: 'Netflix',
     iconPath: '/icons/services/netflix.svg',
-    effectType: 'buffering',
     primaryColor: '#E50914',
-    brandColors: { primary: '#E50914', background: '#141414' },
+    backgroundColor: '#141414',
+    restrictionType: 'unavailable',
+    showLogo: true,
+    showInteraction: true,
   },
   {
-    id: 'paypal',
-    iconPath: '/icons/services/facebook.svg', // Placeholder - no PayPal icon
-    effectType: 'declined',
-    primaryColor: '#00457C',
-    brandColors: { primary: '#00457C', background: '#003087' },
+    id: 'twitter',
+    name: 'X',
+    iconPath: '/icons/services/twitter.svg',
+    primaryColor: '#FFFFFF',
+    backgroundColor: '#000000',
+    restrictionType: 'censored',
+    showLogo: true,
+    showInteraction: true,
+  },
+  {
+    id: 'facebook',
+    name: 'Facebook',
+    iconPath: '/icons/services/facebook.svg',
+    primaryColor: '#1877F2',
+    backgroundColor: '#18191A',
+    restrictionType: 'restricted',
+    showLogo: true,
+    showInteraction: true,
+  },
+  {
+    id: 'telegram',
+    name: 'Telegram',
+    iconPath: '/icons/services/telegram.svg',
+    primaryColor: '#0088CC',
+    backgroundColor: '#0f1419',
+    restrictionType: 'blocked',
+    showLogo: true,
+    showInteraction: true,
   },
   {
     id: 'soundcloud',
+    name: 'SoundCloud',
     iconPath: '/icons/services/soundcloud.svg',
-    effectType: 'equalizer',
     primaryColor: '#FF5500',
-    brandColors: { primary: '#FF5500', background: '#000000' },
+    backgroundColor: '#000000',
+    restrictionType: 'unavailable',
+    showLogo: true,
+    showInteraction: true,
   },
 ];
 
 // ============================================================================
-// HELPER FUNCTIONS
+// ANIMATION VARIANTS
 // ============================================================================
 
-// Random delay between 3-8 seconds for chaotic feel
-const getRandomDelay = () => Math.random() * 5000 + 3000; // 3000-8000ms
-
-// Get random service excluding currently visible ones
-const getRandomService = (excludeIds: ServiceId[]): BlockedService => {
-  const available = BLOCKED_SERVICES.filter(s => !excludeIds.includes(s.id));
-  return available[Math.floor(Math.random() * available.length)] || BLOCKED_SERVICES[0];
-};
-
-// Get initial random services
-const getInitialServices = (count: number): BlockedService[] => {
-  const shuffled = [...BLOCKED_SERVICES].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
-};
-
-// ============================================================================
-// CARD GLITCH VARIANTS - More dramatic
-// ============================================================================
-
-const cardGlitchVariants = {
+// Card container animation
+const cardVariants = {
   hidden: {
     opacity: 0,
-    scale: 0.7,
-    rotateY: -90,
-    filter: 'blur(20px) brightness(0.3)',
+    scale: 0.9,
+    y: 20,
   },
   visible: {
     opacity: 1,
     scale: 1,
-    rotateY: 0,
-    filter: 'blur(0px) brightness(1)',
+    y: 0,
     transition: {
       duration: 0.6,
       ease: [0.22, 1, 0.36, 1],
+      delayChildren: 0.3,
+      staggerChildren: 0.15,
     },
   },
   exit: {
     opacity: 0,
-    scale: 0.7,
-    rotateY: 90,
-    filter: 'blur(20px) brightness(0.3)',
+    scale: 0.9,
+    y: -20,
+    transition: {
+      duration: 0.4,
+    },
+  },
+};
+
+// Mock app content animation
+const contentVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
     transition: {
       duration: 0.5,
+      ease: 'easeOut',
+    },
+  },
+};
+
+// Restriction overlay animation
+const restrictionOverlayVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 1.1,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.8,
       ease: [0.22, 1, 0.36, 1],
+      delay: 4.5, // Show after 4.5 seconds
     },
   },
 };
 
 // ============================================================================
-// TV STATIC EFFECT
+// MOCK APP UI COMPONENTS
 // ============================================================================
 
-const TVStaticEffect: React.FC<{ isBlocked: boolean }> = ({ isBlocked }) => {
-  const [noise, setNoise] = useState('');
-
-  useEffect(() => {
-    const generateNoise = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 200;
-      canvas.height = 200;
-      const ctx = canvas.getContext('2d');
-      
-      if (ctx) {
-        const imageData = ctx.createImageData(200, 200);
-        for (let i = 0; i < imageData.data.length; i += 4) {
-          const value = Math.random() * 255;
-          imageData.data[i] = value;
-          imageData.data[i + 1] = value;
-          imageData.data[i + 2] = value;
-          imageData.data[i + 3] = 255;
-        }
-        ctx.putImageData(imageData, 0, 0);
-        setNoise(canvas.toDataURL());
-      }
-    };
-
-    if (isBlocked) {
-      const interval = setInterval(generateNoise, 50);
-      return () => clearInterval(interval);
-    }
-  }, [isBlocked]);
-
-  if (!isBlocked) return null;
-
+// Generic mock app with logo and interaction
+const MockAppUI: React.FC<{ 
+  service: ServiceApp; 
+  theme: 'light' | 'dark';
+}> = ({ service, theme }) => {
   return (
-    <div className="absolute inset-0 pointer-events-none">
-      <svg className="w-full h-full opacity-80">
-        <defs>
-          <filter id="static-filter">
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.9"
-              numOctaves="4"
-              result="noise"
-            >
-              <animate
-                attributeName="baseFrequency"
-                from="0.9"
-                to="0.95"
-                dur="0.1s"
-                repeatCount="indefinite"
-              />
-            </feTurbulence>
-            <feColorMatrix type="saturate" values="0" />
-          </filter>
-        </defs>
-        <rect width="200" height="200" filter="url(#static-filter)" />
-        <g dangerouslySetInnerHTML={{ __html: noise }} />
-      </svg>
-    </div>
-  );
-};
-
-// Telegram Chat UI
-const TelegramChatUI: React.FC<{ language: any; isBlocked: boolean }> = ({ language, isBlocked }) => {
-  const telegramData = (translations.page3 as any).telegram || {};
-  const message = telegramData.message?.[language] || 'Hey! Check out this article...';
-  const typing = telegramData.typing?.[language] || 'Type a message...';
-
-  return (
-    <div className="relative w-full h-full bg-[#0f1419] rounded-lg overflow-hidden">
-      {/* Telegram header */}
-      <div className="flex items-center gap-3 p-3 bg-[#0088cc]">
-        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-          <Image src="/icons/services/telegram.svg" alt="Telegram" width={20} height={20} />
-        </div>
-        <div className="flex-1">
-          <div className="font-semibold text-white text-sm">Telegram</div>
-          <div className="text-xs text-white/70">online</div>
-        </div>
-      </div>
-
-      {/* Chat messages */}
-      <div className="p-4 min-h-[150px] relative">
-        <motion.div 
-          className="bg-[#0088cc] rounded-2xl rounded-tl-none p-3 mb-2 max-w-[85%]"
-          animate={isBlocked ? { filter: 'blur(8px)' } : {}}
-          transition={{ duration: 0.8 }}
+    <div 
+      className="w-full h-full relative overflow-hidden rounded-lg"
+      style={{ backgroundColor: service.backgroundColor }}
+    >
+      {/* App Header */}
+      <motion.div
+        variants={contentVariants}
+        className="absolute top-0 left-0 right-0 px-4 py-3 flex items-center gap-3"
+        style={{
+          background: `linear-gradient(to bottom, ${service.backgroundColor}, transparent)`,
+        }}
+      >
+        <div className="w-8 h-8 rounded-full flex items-center justify-center"
+          style={{ backgroundColor: `${service.primaryColor}20` }}
         >
-          <p className="text-sm text-white">{message}</p>
-          <span className="text-xs text-white/70">12:34</span>
-        </motion.div>
-      </div>
-
-      {/* Input bar */}
-      <div className="absolute bottom-0 left-0 right-0 flex items-center gap-2 p-2 bg-[#0088cc]">
-        <div className="flex-1 bg-[#0077b3] rounded-full px-4 py-2">
-          <input 
-            type="text" 
-            placeholder={typing}
-            className="bg-transparent w-full outline-none text-sm text-white placeholder-white/50"
-            disabled
+          <img 
+            src={service.iconPath} 
+            alt={service.name}
+            className="w-5 h-5 object-contain"
           />
         </div>
-      </div>
+        <span className="text-white font-semibold text-sm">{service.name}</span>
+      </motion.div>
+
+      {/* Mock Content - Animated bars representing content */}
+      <motion.div
+        variants={contentVariants}
+        className="absolute top-16 left-0 right-0 bottom-0 px-4 space-y-3"
+      >
+        {[...Array(4)].map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{
+              opacity: [0, 1, 1],
+              x: [-20, 0, 0],
+            }}
+            transition={{
+              duration: 1.5,
+              delay: 1 + i * 0.2, // Stagger appearance
+              repeat: Infinity,
+              repeatDelay: 2,
+            }}
+            className="rounded"
+            style={{
+              height: `${Math.random() * 40 + 30}px`,
+              backgroundColor: `${service.primaryColor}30`,
+              backdropFilter: 'blur(10px)',
+            }}
+          />
+        ))}
+      </motion.div>
+
+      {/* Interaction indicator (e.g., scrolling) */}
+      {service.showInteraction && (
+        <motion.div
+          initial={{ y: 0 }}
+          animate={{ y: [0, -80, 0] }}
+          transition={{
+            duration: 3,
+            delay: 2,
+            ease: 'easeInOut',
+          }}
+          className="absolute inset-0 pointer-events-none"
+        />
+      )}
+
+      {/* Loading indicator that appears before restriction */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{
+          duration: 1,
+          delay: 3.5, // Show at 3.5s before restriction
+        }}
+        className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+          className="w-10 h-10 border-4 border-t-transparent rounded-full"
+          style={{ borderColor: `${service.primaryColor} transparent transparent transparent` }}
+        />
+      </motion.div>
     </div>
   );
 };
 
-// PayPal Declined
-const PayPalDeclined: React.FC<{ isBlocked: boolean }> = ({ isBlocked }) => {
+// ============================================================================
+// RESTRICTION OVERLAY COMPONENTS
+// ============================================================================
+
+// BLOCKED overlay (hard block with red X)
+const BlockedOverlay: React.FC<{ service: ServiceApp; language: string }> = ({ service, language }) => {
+  const text = translations.page3.services[service.id as keyof typeof translations.page3.services]?.blocked?.[language as keyof typeof translations.page3.services.youtube.blocked] || 'BLOCKED';
+  
   return (
-    <div className="relative w-full h-full p-6 bg-[#003087]">
-      <div className="text-white">
-        <div className="flex items-center gap-2 mb-4">
-          <CreditCard className="w-6 h-6" />
-          <span className="font-semibold">PayPal</span>
-        </div>
-        
-        <div className="bg-white/10 rounded p-4 mb-4">
-          <div className="text-2xl tracking-widest mb-2">•••• •••• •••• 1234</div>
-          <div className="flex justify-between text-sm">
-            <span>VISA</span>
-            <span>12/25</span>
-          </div>
-        </div>
+    <motion.div
+      variants={restrictionOverlayVariants}
+      initial="hidden"
+      animate="visible"
+      className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-lg"
+      style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.95)',
+        backdropFilter: 'blur(10px)',
+      }}
+    >
+      <motion.div
+        animate={{
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      >
+        <XCircle className="w-20 h-20 text-red-500" strokeWidth={2} />
+      </motion.div>
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="text-red-500 text-2xl font-bold tracking-wider"
+      >
+        {text}
+      </motion.p>
+    </motion.div>
+  );
+};
 
-        {!isBlocked && (
+// RESTRICTED overlay (blur with partial access)
+const RestrictedOverlay: React.FC<{ service: ServiceApp; language: string }> = ({ service, language }) => {
+  const text = translations.page3.services[service.id as keyof typeof translations.page3.services]?.restricted?.[language as keyof typeof translations.page3.services.youtube.blocked] || 'RESTRICTED';
+  
+  return (
+    <motion.div
+      variants={restrictionOverlayVariants}
+      initial="hidden"
+      animate="visible"
+      className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-lg"
+      style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        backdropFilter: 'blur(20px)',
+      }}
+    >
+      <motion.div
+        animate={{
+          rotate: [0, 10, -10, 0],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      >
+        <AlertTriangle className="w-16 h-16 text-yellow-500" strokeWidth={2} />
+      </motion.div>
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="text-yellow-500 text-xl font-bold tracking-wider"
+      >
+        {text}
+      </motion.p>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="text-gray-300 text-sm"
+      >
+        Limited Access
+      </motion.p>
+    </motion.div>
+  );
+};
+
+// CENSORED overlay (black bars/pixelation)
+const CensoredOverlay: React.FC<{ service: ServiceApp; language: string }> = ({ service, language }) => {
+  const text = translations.page3.services[service.id as keyof typeof translations.page3.services]?.censored?.[language as keyof typeof translations.page3.services.youtube.blocked] || 'CENSORED';
+  
+  return (
+    <motion.div
+      variants={restrictionOverlayVariants}
+      initial="hidden"
+      animate="visible"
+      className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-lg"
+      style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+      }}
+    >
+      {/* Censor bars */}
+      <div className="absolute inset-0 flex flex-col justify-around py-4">
+        {[...Array(6)].map((_, i) => (
           <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: '100%' }}
-            transition={{ duration: 1.5 }}
-            className="h-2 bg-blue-500 rounded-full"
+            key={i}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
+            className="w-full bg-black"
+            style={{ height: '12%' }}
           />
-        )}
+        ))}
       </div>
+      
+      <motion.div
+        animate={{
+          scale: [1, 1.05, 1],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+        }}
+        className="relative z-10"
+      >
+        <Shield className="w-16 h-16 text-gray-400" strokeWidth={2} />
+      </motion.div>
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="text-gray-400 text-xl font-bold tracking-wider relative z-10"
+      >
+        {text}
+      </motion.p>
+    </motion.div>
+  );
+};
 
-      <AnimatePresence>
-        {isBlocked && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ 
-              scale: 1, 
-              opacity: 1,
-              x: [-10, 10, -10, 10, 0],
-            }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute inset-0 flex flex-col items-center justify-center bg-black/90"
-          >
-            <XCircle className="w-24 h-24 text-red-500 mb-4" />
-            <p className="text-white text-sm mt-2">Payment blocked</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+// UNAVAILABLE overlay (gray with service unavailable)
+const UnavailableOverlay: React.FC<{ service: ServiceApp; language: string }> = ({ service, language }) => {
+  const text = translations.page3.services[service.id as keyof typeof translations.page3.services]?.unavailable?.[language as keyof typeof translations.page3.services.youtube.blocked] || 'UNAVAILABLE';
+  
+  return (
+    <motion.div
+      variants={restrictionOverlayVariants}
+      initial="hidden"
+      animate="visible"
+      className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-lg"
+      style={{
+        backgroundColor: 'rgba(60, 60, 60, 0.95)',
+        backdropFilter: 'blur(8px)',
+      }}
+    >
+      <motion.div
+        animate={{
+          opacity: [1, 0.5, 1],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      >
+        <Ban className="w-16 h-16 text-gray-400" strokeWidth={2} />
+      </motion.div>
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="text-gray-300 text-xl font-bold tracking-wider"
+      >
+        {text}
+      </motion.p>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="text-gray-400 text-sm"
+      >
+        Service Not Available
+      </motion.p>
+    </motion.div>
   );
 };
 
@@ -343,83 +491,58 @@ const PayPalDeclined: React.FC<{ isBlocked: boolean }> = ({ isBlocked }) => {
 // ============================================================================
 
 interface ServiceCardProps {
-  service: BlockedService;
-  language: any;
-  isRTL: boolean;
+  service: ServiceApp;
+  language: string;
+  theme: 'light' | 'dark';
+  delay: number;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = React.memo(({ service, language, isRTL }) => {
-  const [isBlocked, setIsBlocked] = useState(false);
-  const serviceData = translations.page3.services[service.id as keyof typeof translations.page3.services];
-  const blockedMessage = (serviceData?.blocked as any)?.[language] || 'BLOCKED';
+const ServiceCard: React.FC<ServiceCardProps> = ({ service, language, theme, delay }) => {
+  const prefersReducedMotion = useReducedMotion();
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsBlocked(true), 1500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const renderContent = () => {
-    // Use enhanced card components for specific services
-    switch (service.id) {
-      case 'youtube':
-        return <YouTubeCard language={language} isRTL={isRTL} />;
-      case 'instagram':
-        return <InstagramCard language={language} isRTL={isRTL} />;
-      case 'netflix':
-        return <NetflixCard language={language} isRTL={isRTL} />;
-      case 'spotify':
-        return <SpotifyCard language={language} isRTL={isRTL} />;
-      case 'twitter':
-        return <TwitterCard language={language} isRTL={isRTL} />;
-      case 'soundcloud':
-        return <SoundCloudCard language={language} isRTL={isRTL} />;
-      case 'facebook':
-        return <FacebookCard language={language} isRTL={isRTL} />;
-      case 'telegram':
-        return <TelegramChatUI language={language} isBlocked={isBlocked} />;
-      case 'paypal':
-        return <PayPalDeclined isBlocked={isBlocked} />;
+  const renderRestrictionOverlay = () => {
+    switch (service.restrictionType) {
+      case 'blocked':
+        return <BlockedOverlay service={service} language={language} />;
+      case 'restricted':
+        return <RestrictedOverlay service={service} language={language} />;
+      case 'censored':
+        return <CensoredOverlay service={service} language={language} />;
+      case 'unavailable':
+        return <UnavailableOverlay service={service} language={language} />;
       default:
-        return (
-          <div className="flex items-center justify-center h-full bg-gray-900">
-            <Image 
-              src={service.iconPath} 
-              alt={service.id} 
-              width={64} 
-              height={64}
-              className="opacity-50"
-            />
-          </div>
-        );
+        return null;
     }
   };
 
   return (
-    <motion.div 
-      variants={cardGlitchVariants}
+    <motion.div
+      variants={cardVariants}
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="relative w-full h-full rounded-lg overflow-hidden"
+      transition={{ delay }}
+      className="relative w-full h-full rounded-lg overflow-hidden shadow-2xl"
       style={{
-        backgroundColor: service.brandColors?.background || '#000',
-        boxShadow: isBlocked ? `0 0 30px ${service.primaryColor}40` : '0 4px 6px rgba(0, 0, 0, 0.1)',
+        border: `1px solid ${service.primaryColor}40`,
       }}
     >
-      {renderContent()}
+      {/* Mock App UI */}
+      <MockAppUI service={service} theme={theme} />
 
-      {/* Scanline overlay */}
+      {/* Restriction Overlay */}
+      {!prefersReducedMotion && renderRestrictionOverlay()}
+
+      {/* Subtle glow effect */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-10"
+        className="absolute inset-0 pointer-events-none opacity-20"
         style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px)',
+          boxShadow: `inset 0 0 40px ${service.primaryColor}30`,
         }}
       />
     </motion.div>
   );
-});
-
-ServiceCard.displayName = 'ServiceCard';
+};
 
 // ============================================================================
 // MAIN PAGE 3 COMPONENT
@@ -429,190 +552,115 @@ export default function Page3({ isActive = true }: Page3Props) {
   const { language, theme } = useTheme();
   const isRTL = language === 'Farsi';
   
-  // Determine card count based on screen size
-  const [cardCount, setCardCount] = useState(2);
+  // Determine number of cards based on screen size
+  const [displayCount, setDisplayCount] = useState(4);
   
   useEffect(() => {
-    const updateCardCount = () => {
+    const updateCount = () => {
       const width = window.innerWidth;
-      // Mobile: 2 cards (vertical), Desktop: 4 cards (2x2 grid)
-      setCardCount(width < 768 ? 2 : 4);
+      // Mobile: 4 cards (2x2), Tablet: 6 cards (2x3), Desktop: 8 cards (2x4)
+      if (width < 768) setDisplayCount(4);
+      else if (width < 1024) setDisplayCount(6);
+      else setDisplayCount(8);
     };
     
-    updateCardCount();
-    window.addEventListener('resize', updateCardCount);
-    return () => window.removeEventListener('resize', updateCardCount);
+    updateCount();
+    window.addEventListener('resize', updateCount);
+    return () => window.removeEventListener('resize', updateCount);
   }, []);
 
-  // Individual card slots with independent timing
-  const [cardSlots, setCardSlots] = useState<CardSlot[]>([]);
-  const slotTimersRef = useRef<{ [key: string]: ReturnType<typeof setTimeout> }>({});
-  const isMountedRef = useRef(true);
-
-  // Initialize card slots
+  // Get random services to display
+  const [displayedServices, setDisplayedServices] = useState<ServiceApp[]>([]);
+  
   useEffect(() => {
-    const initialServices = getInitialServices(cardCount);
-    const slots: CardSlot[] = initialServices.map((service, index) => ({
-      id: `slot-${index}`,
-      service,
-      nextChangeTime: Date.now() + getRandomDelay(),
-    }));
-    setCardSlots(slots);
-  }, [cardCount]);
+    const shuffled = [...SERVICES].sort(() => Math.random() - 0.5);
+    setDisplayedServices(shuffled.slice(0, displayCount));
+  }, [displayCount]);
 
-  // Individual timer for each card slot
-  const scheduleSlotChange = useCallback((slotId: string) => {
-    // Clear existing timer for this slot
-    if (slotTimersRef.current[slotId]) {
-      clearTimeout(slotTimersRef.current[slotId]);
-    }
-    
-    const delay = getRandomDelay();
-    
-    slotTimersRef.current[slotId] = setTimeout(() => {
-      // Don't update if component is unmounted
-      if (!isMountedRef.current || !isActive) return;
-      
-      setCardSlots(prev => {
-        const currentSlot = prev.find(s => s.id === slotId);
-        if (!currentSlot) return prev;
-
-        // Get currently visible service IDs
-        const visibleIds = prev.map(s => s.service?.id).filter(Boolean) as ServiceId[];
-        
-        // Get new random service (excluding current ones)
-        const newService = getRandomService(visibleIds);
-        
-        // Update this specific slot
-        return prev.map(slot => 
-          slot.id === slotId
-            ? { ...slot, service: newService, nextChangeTime: Date.now() + getRandomDelay() }
-            : slot
-        );
-      });
-      
-      // Schedule next change for this slot only if still active and mounted
-      if (isActive && isMountedRef.current) {
-        scheduleSlotChange(slotId);
-      }
-    }, delay);
-  }, [isActive]);
-
-  // Start individual timers for each slot
-  useEffect(() => {
-    isMountedRef.current = true;
-    
-    if (!isActive || cardSlots.length === 0) return;
-
-    // Start timer for each slot
-    cardSlots.forEach(slot => {
-      scheduleSlotChange(slot.id);
-    });
-
-    // Cleanup all timers
-    return () => {
-      isMountedRef.current = false;
-      Object.values(slotTimersRef.current).forEach(timer => clearTimeout(timer));
-      slotTimersRef.current = {};
-    };
-  }, [isActive, cardSlots.length, scheduleSlotChange]);
+  const heroText = translations.page3.hero[language as keyof typeof translations.page3.hero] || 'BLOCKED';
 
   return (
     <motion.div
       dir={isRTL ? 'rtl' : 'ltr'}
       className="relative w-full h-full overflow-hidden"
-      style={{
-        background: theme === 'dark' 
-          ? 'linear-gradient(to bottom, #0a0a0a, #000000)'
-          : 'linear-gradient(to bottom, #2a2a2a, #1a1a1a)',
-      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      {/* Background - Theme aware */}
+      {/* Theme-aware background */}
       <div 
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 transition-all duration-500"
         style={{
           background: theme === 'dark'
-            ? 'linear-gradient(to bottom, #1a1a1a 0%, #0a0a0a 50%, #000000 100%)'
-            : 'linear-gradient(to bottom, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%)',
+            ? 'linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 25%, #0a0a1a 50%, #0a1a0a 75%, #0a0a0a 100%)'
+            : 'linear-gradient(135deg, #2a2a2a 0%, #3a2a2a 25%, #2a2a3a 50%, #2a3a2a 75%, #2a2a2a 100%)',
         }}
       />
 
-      {/* Static noise overlay for chaos */}
+      {/* Animated grain texture */}
       <motion.div
         className="absolute inset-0 z-0 pointer-events-none opacity-10"
         animate={{ opacity: [0.05, 0.15, 0.05] }}
-        transition={{ duration: 0.2, repeat: Infinity }}
+        transition={{ duration: 0.3, repeat: Infinity }}
         style={{
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' /%3E%3C/svg%3E")',
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`,
         }}
       />
 
-      {/* Scanlines */}
-      <motion.div
-        className="absolute inset-0 z-0 pointer-events-none opacity-5"
-        style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)',
-        }}
-        animate={{ y: ['0%', '100%'] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-      />
+      {/* Main content - Moved higher on large screens */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-start px-4 sm:px-6 md:px-8 lg:px-12">
+        {/* Adjusted padding - higher on large screens to prevent footer overlap */}
+        <div className="w-full h-full flex flex-col items-center justify-center pt-24 pb-20 md:pt-20 md:pb-20 lg:pt-16 lg:pb-16">
+          
+          {/* Hero Text */}
+          <motion.h1
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-8 md:mb-12 lg:mb-16 tracking-wider"
+            style={{
+              color: theme === 'dark' ? '#ff4444' : '#cc0000',
+              textShadow: theme === 'dark' 
+                ? '0 0 20px rgba(255, 68, 68, 0.5), 0 0 40px rgba(255, 68, 68, 0.3)'
+                : '0 0 20px rgba(204, 0, 0, 0.4), 0 0 40px rgba(204, 0, 0, 0.2)',
+            }}
+          >
+            {heroText}
+          </motion.h1>
 
-      {/* Content - Proper spacing for header (80px desktop, 64px mobile) and footer (60px desktop, hidden mobile) */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12">
-        {/* Add top padding for header and bottom padding for footer */}
-        <div className="w-full h-full flex flex-col items-center justify-center pt-20 pb-16 md:pt-24 md:pb-20 lg:pt-28 lg:pb-24">
-          {/* Morphing text - Proper spacing from header */}
-          <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12 w-full">
-            <MorphingText language={language} isRTL={isRTL} />
-          </div>
-
-          {/* Service cards grid - Responsive sizing to prevent footer overlap */}
-          <div className={`
-            w-full max-w-6xl mx-auto
-            grid gap-4 sm:gap-5 md:gap-6 lg:gap-8
-            ${cardCount === 2 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}
-            auto-rows-fr
-          `}>
-            {cardSlots.map((slot) => (
-              <div
-                key={slot.id}
-                className="w-full"
-                style={{
-                  minHeight: cardCount === 2 ? '200px' : '180px',
-                  maxHeight: cardCount === 2 ? '280px' : '240px',
-                  height: cardCount === 2 ? 'auto' : '240px',
-                }}
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  {slot.service && (
-                    <motion.div
-                      key={`service-${slot.service.id}`}
-                      className="w-full h-full"
-                    >
-                      <ServiceCard
-                        service={slot.service}
-                        language={language}
-                        isRTL={isRTL}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+          {/* Cards Grid - Responsive */}
+          <div className="w-full max-w-7xl mx-auto">
+            <div className={`
+              grid gap-4 sm:gap-5 md:gap-6 lg:gap-8
+              grid-cols-2
+              ${displayCount > 4 ? 'md:grid-cols-3' : 'md:grid-cols-2'}
+              ${displayCount > 6 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}
+            `}>
+              {displayedServices.map((service, index) => (
+                <div
+                  key={service.id}
+                  className="aspect-[4/3] w-full"
+                >
+                  <ServiceCard
+                    service={service}
+                    language={language}
+                    theme={theme}
+                    delay={index * 0.1}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Dark vignette for oppression - Theme aware */}
+      {/* Theme-aware vignette */}
       <div
-        className="absolute inset-0 pointer-events-none z-20"
+        className="absolute inset-0 pointer-events-none z-20 transition-all duration-500"
         style={{
           background: theme === 'dark'
-            ? 'radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.7) 100%)'
-            : 'radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.5) 100%)',
+            ? 'radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 0.8) 100%)'
+            : 'radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 0.6) 100%)',
         }}
       />
     </motion.div>
