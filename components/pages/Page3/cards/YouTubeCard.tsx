@@ -12,12 +12,12 @@ interface YouTubeCardProps {
 const YouTubeCard = React.memo(({ language, isRTL }: YouTubeCardProps) => {
   const getBlockedMessage = () => {
     const messages: Record<Language, string> = {
-      en: 'NO SIGNAL',
-      fa: 'بدون سیگنال',
-      zh: '无信号',
-      ru: 'НЕТ СИГНАЛА',
-      uk: 'НЕМАЄ СИГНАЛУ',
-      hi: 'कोई सिग्नल नहीं',
+      English: 'NO SIGNAL',
+      Farsi: 'بدون سیگنال',
+      Chinese: '无信号',
+      Russian: 'НЕТ СИГНАЛА',
+      Ukrainian: 'НЕМАЄ СИГНАЛУ',
+      Hindi: 'कोई सिग्नल नहीं',
     };
     return messages[language];
   };
@@ -114,12 +114,12 @@ const YouTubeCard = React.memo(({ language, isRTL }: YouTubeCardProps) => {
           >
             <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse"></div>
             <span className="text-red-600 text-sm uppercase tracking-widest font-bold">
-              {language === 'en' && 'Connection Lost'}
-              {language === 'fa' && 'اتصال قطع شد'}
-              {language === 'zh' && '连接丢失'}
-              {language === 'ru' && 'Соединение потеряно'}
-              {language === 'uk' && 'З\'єднання втрачено'}
-              {language === 'hi' && 'कनेक्शन खो गया'}
+              {language === 'English' && 'Connection Lost'}
+              {language === 'Farsi' && 'اتصال قطع شد'}
+              {language === 'Chinese' && '连接丢失'}
+              {language === 'Russian' && 'Соединение потеряно'}
+              {language === 'Ukrainian' && 'З\'єднання втрачено'}
+              {language === 'Hindi' && 'कनेक्शन खो गया'}
             </span>
           </motion.div>
         </motion.div>

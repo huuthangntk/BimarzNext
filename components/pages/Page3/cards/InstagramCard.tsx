@@ -12,12 +12,12 @@ interface InstagramCardProps {
 const InstagramCard = React.memo(({ language, isRTL }: InstagramCardProps) => {
   const getBlockedMessage = () => {
     const messages: Record<Language, string> = {
-      en: 'RESTRICTED',
-      fa: 'محدود شده',
-      zh: '受限',
-      ru: 'ОГРАНИЧЕНО',
-      uk: 'ОБМЕЖЕНО',
-      hi: 'प्रतिबंधित',
+      English: 'RESTRICTED',
+      Farsi: 'محدود شده',
+      Chinese: '受限',
+      Russian: 'ОГРАНИЧЕНО',
+      Ukrainian: 'ОБМЕЖЕНО',
+      Hindi: 'प्रतिबंधित',
     };
     return messages[language];
   };
@@ -119,12 +119,12 @@ const InstagramCard = React.memo(({ language, isRTL }: InstagramCardProps) => {
             }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            {language === 'en' && 'Content Not Available'}
-            {language === 'fa' && 'محتوا در دسترس نیست'}
-            {language === 'zh' && '内容不可用'}
-            {language === 'ru' && 'Контент недоступен'}
-            {language === 'uk' && 'Контент недоступний'}
-            {language === 'hi' && 'सामग्री उपलब्ध नहीं'}
+            {language === 'English' && 'Content Not Available'}
+            {language === 'Farsi' && 'محتوا در دسترس نیست'}
+            {language === 'Chinese' && '内容不可用'}
+            {language === 'Russian' && 'Контент недоступен'}
+            {language === 'Ukrainian' && 'Контент недоступний'}
+            {language === 'Hindi' && 'सामग्री उपलब्ध नहीं'}
           </motion.div>
         </motion.div>
 

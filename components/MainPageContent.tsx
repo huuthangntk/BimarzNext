@@ -24,7 +24,7 @@ export default function MainPageContent() {
   const [resetPage1, setResetPage1] = useState(0); // Trigger for page 1 reset animation
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
-  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { ripplePosition, isRippling } = useTheme();
 
   const navigateToPage = (pageNumber: number) => {

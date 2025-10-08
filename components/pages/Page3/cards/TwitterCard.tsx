@@ -13,12 +13,12 @@ const TwitterCard = React.memo(({ language, isRTL }: TwitterCardProps) => {
   // Translation keys - using generic blocked messages
   const getBlockedMessage = () => {
     const messages: Record<Language, string> = {
-      en: 'CENSORED',
-      fa: 'سانسور شده',
-      zh: '已审查',
-      ru: 'ЦЕНЗУРА',
-      uk: 'ЦЕНЗУРА',
-      hi: 'सेंसर किया गया',
+      English: 'CENSORED',
+      Farsi: 'سانسور شده',
+      Chinese: '已审查',
+      Russian: 'ЦЕНЗУРА',
+      Ukrainian: 'ЦЕНЗУРА',
+      Hindi: 'सेंसर किया गया',
     };
     return messages[language];
   };
@@ -139,12 +139,12 @@ const TwitterCard = React.memo(({ language, isRTL }: TwitterCardProps) => {
             }}
             transition={{ duration: 2.5, repeat: Infinity }}
           >
-            {language === 'en' && 'Content Not Available'}
-            {language === 'fa' && 'محتوا در دسترس نیست'}
-            {language === 'zh' && '内容不可用'}
-            {language === 'ru' && 'Контент недоступен'}
-            {language === 'uk' && 'Контент недоступний'}
-            {language === 'hi' && 'सामग्री उपलब्ध नहीं'}
+            {language === 'English' && 'Content Not Available'}
+            {language === 'Farsi' && 'محتوا در دسترس نیست'}
+            {language === 'Chinese' && '内容不可用'}
+            {language === 'Russian' && 'Контент недоступен'}
+            {language === 'Ukrainian' && 'Контент недоступний'}
+            {language === 'Hindi' && 'सामग्री उपलब्ध नहीं'}
           </motion.div>
         </motion.div>
 

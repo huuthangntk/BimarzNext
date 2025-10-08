@@ -13,12 +13,12 @@ const SoundCloudCard = React.memo(({ language, isRTL }: SoundCloudCardProps) => 
   // Translation keys - SoundCloud uses generic service.blocked messages
   const getBlockedMessage = () => {
     const messages: Record<Language, string> = {
-      en: 'ACCESS DENIED',
-      fa: 'دسترسی مسدود شده',
-      zh: '访问被拒绝',
-      ru: 'ДОСТУП ЗАПРЕЩЕН',
-      uk: 'ДОСТУП ЗАБОРОНЕНО',
-      hi: 'पहुँच अस्वीकृत',
+      English: 'ACCESS DENIED',
+      Farsi: 'دسترسی مسدود شده',
+      Chinese: '访问被拒绝',
+      Russian: 'ДОСТУП ЗАПРЕЩЕН',
+      Ukrainian: 'ДОСТУП ЗАБОРОНЕНО',
+      Hindi: 'पहुँच अस्वीकृत',
     };
     return messages[language];
   };
@@ -144,12 +144,12 @@ const SoundCloudCard = React.memo(({ language, isRTL }: SoundCloudCardProps) => 
             }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            {language === 'en' && 'Music Streaming Blocked'}
-            {language === 'fa' && 'پخش موسیقی مسدود شد'}
-            {language === 'zh' && '音乐流被屏蔽'}
-            {language === 'ru' && 'Музыкальная трансляция заблокирована'}
-            {language === 'uk' && 'Музичне мовлення заблоковано'}
-            {language === 'hi' && 'संगीत स्ट्रीमिंग अवरुद्ध'}
+            {language === 'English' && 'Music Streaming Blocked'}
+            {language === 'Farsi' && 'پخش موسیقی مسدود شد'}
+            {language === 'Chinese' && '音乐流被屏蔽'}
+            {language === 'Russian' && 'Музыкальная трансляция заблокирована'}
+            {language === 'Ukrainian' && 'Музичне мовлення заблоковано'}
+            {language === 'Hindi' && 'संगीत स्ट्रीमिंग अवरुद्ध'}
           </motion.div>
         </motion.div>
 

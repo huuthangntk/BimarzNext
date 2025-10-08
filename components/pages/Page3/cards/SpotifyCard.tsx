@@ -12,12 +12,12 @@ interface SpotifyCardProps {
 const SpotifyCard = React.memo(({ language, isRTL }: SpotifyCardProps) => {
   const getBlockedMessage = () => {
     const messages: Record<Language, string> = {
-      en: 'MUTED',
-      fa: 'بی‌صدا شده',
-      zh: '静音',
-      ru: 'ЗАГЛУШЕНО',
-      uk: 'ПРИГЛУШЕНО',
-      hi: 'म्यूट',
+      English: 'MUTED',
+      Farsi: 'بی‌صدا شده',
+      Chinese: '静音',
+      Russian: 'ЗАГЛУШЕНО',
+      Ukrainian: 'ПРИГЛУШЕНО',
+      Hindi: 'म्यूट',
     };
     return messages[language];
   };
@@ -143,12 +143,12 @@ const SpotifyCard = React.memo(({ language, isRTL }: SpotifyCardProps) => {
             }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            {language === 'en' && 'Music Streaming Blocked'}
-            {language === 'fa' && 'پخش موسیقی مسدود شد'}
-            {language === 'zh' && '音乐流被屏蔽'}
-            {language === 'ru' && 'Музыкальная трансляция заблокирована'}
-            {language === 'uk' && 'Музичне мовлення заблоковано'}
-            {language === 'hi' && 'संगीत स्ट्रीमिंग अवरुद्ध'}
+            {language === 'English' && 'Music Streaming Blocked'}
+            {language === 'Farsi' && 'پخش موسیقی مسدود شد'}
+            {language === 'Chinese' && '音乐流被屏蔽'}
+            {language === 'Russian' && 'Музыкальная трансляция заблокирована'}
+            {language === 'Ukrainian' && 'Музичне мовлення заблоковано'}
+            {language === 'Hindi' && 'संगीत स्ट्रीमिंग अवरुद्ध'}
           </motion.div>
         </motion.div>
 

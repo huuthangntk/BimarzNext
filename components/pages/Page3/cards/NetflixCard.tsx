@@ -12,12 +12,12 @@ interface NetflixCardProps {
 const NetflixCard = React.memo(({ language, isRTL }: NetflixCardProps) => {
   const getBlockedMessage = () => {
     const messages: Record<Language, string> = {
-      en: 'REGION BLOCKED',
-      fa: 'منطقه مسدود شده',
-      zh: '地区被封锁',
-      ru: 'РЕГИОН ЗАБЛОКИРОВАН',
-      uk: 'РЕГІОН ЗАБЛОКОВАНО',
-      hi: 'क्षेत्र अवरुद्ध',
+      English: 'REGION BLOCKED',
+      Farsi: 'منطقه مسدود شده',
+      Chinese: '地区被封锁',
+      Russian: 'РЕГИОН ЗАБЛОКИРОВАН',
+      Ukrainian: 'РЕГІОН ЗАБЛОКОВАНО',
+      Hindi: 'क्षेत्र अवरुद्ध',
     };
     return messages[language];
   };
@@ -91,12 +91,12 @@ const NetflixCard = React.memo(({ language, isRTL }: NetflixCardProps) => {
           </motion.div>
 
           <p className="text-gray-400 text-base mb-6 max-w-md">
-            {language === 'en' && 'This content is not available in your region'}
-            {language === 'fa' && 'این محتوا در منطقه شما در دسترس نیست'}
-            {language === 'zh' && '此内容在您所在地区不可用'}
-            {language === 'ru' && 'Этот контент недоступен в вашем регионе'}
-            {language === 'uk' && 'Цей контент недоступний у вашому регіоні'}
-            {language === 'hi' && 'यह सामग्री आपके क्षेत्र में उपलब्ध नहीं है'}
+            {language === 'English' && 'This content is not available in your region'}
+            {language === 'Farsi' && 'این محتوا در منطقه شما در دسترس نیست'}
+            {language === 'Chinese' && '此内容在您所在地区不可用'}
+            {language === 'Russian' && 'Этот контент недоступен в вашем регионе'}
+            {language === 'Ukrainian' && 'Цей контент недоступний у вашому регіоні'}
+            {language === 'Hindi' && 'यह सामग्री आपके क्षेत्र में उपलब्ध नहीं है'}
           </p>
 
           {/* Error code */}
