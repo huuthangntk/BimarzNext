@@ -13,12 +13,12 @@ const MorphingText: React.FC<MorphingTextProps> = ({ language, isRTL }) => {
   
   // Words cycle in all languages
   const words: Record<Language, string[]> = {
-    en: ['BLOCKED', 'CENSORED', 'RESTRICTED'],
-    fa: ['مسدود شده', 'سانسور شده', 'محدود شده'],
-    zh: ['已屏蔽', '已审查', '受限'],
-    ru: ['ЗАБЛОКИРОВАНО', 'ЦЕНЗУРА', 'ОГРАНИЧЕНО'],
-    uk: ['ЗАБЛОКОВАНО', 'ЦЕНЗУРА', 'ОБМЕЖЕНО'],
-    hi: ['अवरुद्ध', 'सेंसर किया गया', 'प्रतिबंधित'],
+    English: ['BLOCKED', 'CENSORED', 'RESTRICTED'],
+    Farsi: ['مسدود شده', 'سانسور شده', 'محدود شده'],
+    Chinese: ['已屏蔽', '已审查', '受限'],
+    Russian: ['ЗАБЛОКИРОВАНО', 'ЦЕНЗУРА', 'ОГРАНИЧЕНО'],
+    Ukrainian: ['ЗАБЛОКОВАНО', 'ЦЕНЗУРА', 'ОБМЕЖЕНО'],
+    Hindi: ['अवरुद्ध', 'सेंसर किया गया', 'प्रतिबंधित'],
   };
 
   const currentWords = words[language];
