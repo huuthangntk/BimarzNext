@@ -21,6 +21,7 @@ const TOTAL_PAGES = 7;
 export default function MainPageContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [resetPage1, setResetPage1] = useState(0); // Trigger for page 1 reset animation
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -35,6 +36,17 @@ export default function MainPageContent() {
     setTimeout(() => {
       setIsTransitioning(false);
     }, 800);
+  };
+
+  // Handle logo click
+  const handleLogoClick = () => {
+    if (currentPage === 1) {
+      // Trigger a quick reset animation on page 1
+      setResetPage1(prev => prev + 1);
+    } else {
+      // Navigate to page 1 from any other page
+      navigateToPage(1);
+    }
   };
 
   // Smooth scroll from page 1 or 2 to page 7 with animation through all pages
@@ -221,7 +233,7 @@ export default function MainPageContent() {
   const renderActivePage = () => {
     switch (currentPage) {
       case 1:
-        return <Page1 key="page-1" isActive={true} onScrollToPage7={smoothScrollToPage7} />;
+        return <Page1 key="page-1" isActive={true} onScrollToPage7={smoothScrollToPage7} resetTrigger={resetPage1} />;
       case 2:
         return <Page2 key="page-2" isActive={true} onScrollToPage7={smoothScrollToPage7} />;
       case 3:
@@ -242,7 +254,7 @@ export default function MainPageContent() {
   return (
     <div ref={containerRef} className="relative w-full h-screen overflow-hidden">
       <ThemeRipple isActive={isRippling} position={ripplePosition || { x: 0, y: 0 }} />
-      <Header />
+      <Header currentPage={currentPage} onLogoClick={handleLogoClick} />
       <Footer />
       <PageIndicator
         currentPage={currentPage}

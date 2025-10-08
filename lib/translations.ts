@@ -83,6 +83,269 @@ export const translations = {
     },
   },
 
+  // Page 3 - Blocked Services and Censorship
+  page3: {
+    hero: {
+      English: 'BLOCKED',
+      Farsi: 'مسدود شده',
+      Chinese: '被封锁',
+      Russian: 'ЗАБЛОКИРОВАНО',
+      Ukrainian: 'ЗАБЛОКОВАНО',
+      Hindi: 'अवरुद्ध',
+    },
+    subtitle: {
+      English: 'Censored in restricted countries',
+      Farsi: 'سانسور شده در کشورهای محدود',
+      Chinese: '在受限国家被审查',
+      Russian: 'Цензурировано в странах с ограничениями',
+      Ukrainian: 'Цензуровано в країнах з обмеженнями',
+      Hindi: 'प्रतिबंधित देशों में सेंसर',
+    },
+    services: {
+      youtube: {
+        name: {
+          English: 'YouTube',
+          Farsi: 'یوتیوب',
+          Chinese: 'YouTube',
+          Russian: 'YouTube',
+          Ukrainian: 'YouTube',
+          Hindi: 'YouTube',
+        },
+        blocked: {
+          English: 'NO SIGNAL',
+          Farsi: 'بدون سیگنال',
+          Chinese: '无信号',
+          Russian: 'НЕТ СИГНАЛА',
+          Ukrainian: 'НЕМАЄ СИГНАЛУ',
+          Hindi: 'कोई संकेत नहीं',
+        },
+      },
+      spotify: {
+        name: {
+          English: 'Spotify',
+          Farsi: 'اسپاتیفای',
+          Chinese: 'Spotify',
+          Russian: 'Spotify',
+          Ukrainian: 'Spotify',
+          Hindi: 'Spotify',
+        },
+        blocked: {
+          English: 'MUTED',
+          Farsi: 'خاموش',
+          Chinese: '静音',
+          Russian: 'ЗАГЛУШЕНО',
+          Ukrainian: 'ЗАГЛУШЕНО',
+          Hindi: 'म्यूट',
+        },
+      },
+      twitter: {
+        name: {
+          English: 'X (Twitter)',
+          Farsi: 'ایکس (توییتر)',
+          Chinese: 'X (推特)',
+          Russian: 'X (Twitter)',
+          Ukrainian: 'X (Twitter)',
+          Hindi: 'X (ट्विटर)',
+        },
+        blocked: {
+          English: 'CENSORED',
+          Farsi: 'سانسور',
+          Chinese: '审查',
+          Russian: 'ЦЕНЗУРА',
+          Ukrainian: 'ЦЕНЗУРА',
+          Hindi: 'सेंसर',
+        },
+      },
+      instagram: {
+        name: {
+          English: 'Instagram',
+          Farsi: 'اینستاگرام',
+          Chinese: 'Instagram',
+          Russian: 'Instagram',
+          Ukrainian: 'Instagram',
+          Hindi: 'Instagram',
+        },
+        blocked: {
+          English: 'ACCESS DENIED',
+          Farsi: 'دسترسی رد شد',
+          Chinese: '拒绝访问',
+          Russian: 'ДОСТУП ЗАПРЕЩЁН',
+          Ukrainian: 'ДОСТУП ЗАБОРОНЕНО',
+          Hindi: 'पहुंच अस्वीकृत',
+        },
+      },
+      netflix: {
+        name: {
+          English: 'Netflix',
+          Farsi: 'نتفلیکس',
+          Chinese: 'Netflix',
+          Russian: 'Netflix',
+          Ukrainian: 'Netflix',
+          Hindi: 'Netflix',
+        },
+        blocked: {
+          English: 'UNAVAILABLE',
+          Farsi: 'در دسترس نیست',
+          Chinese: '不可用',
+          Russian: 'НЕДОСТУПНО',
+          Ukrainian: 'НЕДОСТУПНО',
+          Hindi: 'अनुपलब्ध',
+        },
+      },
+      facebook: {
+        name: {
+          English: 'Facebook',
+          Farsi: 'فیسبوک',
+          Chinese: 'Facebook',
+          Russian: 'Facebook',
+          Ukrainian: 'Facebook',
+          Hindi: 'Facebook',
+        },
+        blocked: {
+          English: 'RESTRICTED',
+          Farsi: 'محدود',
+          Chinese: '受限',
+          Russian: 'ОГРАНИЧЕНО',
+          Ukrainian: 'ОБМЕЖЕНО',
+          Hindi: 'प्रतिबंधित',
+        },
+      },
+      telegram: {
+        name: {
+          English: 'Telegram',
+          Farsi: 'تلگرام',
+          Chinese: 'Telegram',
+          Russian: 'Telegram',
+          Ukrainian: 'Telegram',
+          Hindi: 'Telegram',
+        },
+        blocked: {
+          English: 'FORBIDDEN',
+          Farsi: 'ممنوع',
+          Chinese: '禁止',
+          Russian: 'ЗАПРЕЩЕНО',
+          Ukrainian: 'ЗАБОРОНЕНО',
+          Hindi: 'निषिद्ध',
+        },
+      },
+      paypal: {
+        name: {
+          English: 'PayPal',
+          Farsi: 'پی‌پال',
+          Chinese: 'PayPal',
+          Russian: 'PayPal',
+          Ukrainian: 'PayPal',
+          Hindi: 'PayPal',
+        },
+        blocked: {
+          English: 'DECLINED',
+          Farsi: 'رد شده',
+          Chinese: '被拒',
+          Russian: 'ОТКЛОНЕНО',
+          Ukrainian: 'ВІДХИЛЕНО',
+          Hindi: 'अस्वीकृत',
+        },
+      },
+      whatsapp: {
+        name: {
+          English: 'WhatsApp',
+          Farsi: 'واتساپ',
+          Chinese: 'WhatsApp',
+          Russian: 'WhatsApp',
+          Ukrainian: 'WhatsApp',
+          Hindi: 'WhatsApp',
+        },
+        blocked: {
+          English: 'BLOCKED',
+          Farsi: 'مسدود',
+          Chinese: '被封',
+          Russian: 'БЛОКИРОВАНО',
+          Ukrainian: 'ЗАБЛОКОВАНО',
+          Hindi: 'ब्लॉक',
+        },
+      },
+      soundcloud: {
+        name: {
+          English: 'SoundCloud',
+          Farsi: 'ساندکلاود',
+          Chinese: 'SoundCloud',
+          Russian: 'SoundCloud',
+          Ukrainian: 'SoundCloud',
+          Hindi: 'SoundCloud',
+        },
+        blocked: {
+          English: 'SILENCED',
+          Farsi: 'سکوت',
+          Chinese: '静默',
+          Russian: 'ЗАГЛУШЕНО',
+          Ukrainian: 'ЗАГЛУШЕНО',
+          Hindi: 'मौन',
+        },
+      },
+    },
+    
+    // Card-specific content for authentic UIs
+    telegram: {
+      message: {
+        English: 'Hey! Check out this article about freedom...',
+        Farsi: 'سلام! این مقاله را درباره آزادی ببین...',
+        Chinese: '嘿！看看这篇关于自由的文章...',
+        Russian: 'Привет! Посмотри эту статью о свободе...',
+        Ukrainian: 'Привіт! Подивись цю статтю про свободу...',
+        Hindi: 'अरे! स्वतंत्रता के बारे में यह लेख देखो...',
+      },
+      typing: {
+        English: 'Type a message...',
+        Farsi: 'پیام بنویسید...',
+        Chinese: '输入消息...',
+        Russian: 'Введите сообщение...',
+        Ukrainian: 'Введіть повідомлення...',
+        Hindi: 'संदेश लिखें...',
+      },
+    },
+    
+    facebook: {
+      status: {
+        English: 'What\'s on your mind?',
+        Farsi: 'چه فکری می‌کنید؟',
+        Chinese: '你在想什么？',
+        Russian: 'Что у вас нового?',
+        Ukrainian: 'Що у вас нового?',
+        Hindi: 'आप क्या सोच रहे हैं?',
+      },
+      post: {
+        English: 'Just shared my thoughts on freedom and democracy...',
+        Farsi: 'فقط افکارم را درباره آزادی و دموکراسی به اشتراک گذاشتم...',
+        Chinese: '刚刚分享了我关于自由和民主的想法...',
+        Russian: 'Только что поделился мыслями о свободе и демократии...',
+        Ukrainian: 'Щойно поділився думками про свободу та демократію...',
+        Hindi: 'अभी स्वतंत्रता और लोकतंत्र पर अपने विचार साझा किए...',
+      },
+    },
+    
+    twitter: {
+      tweet: {
+        English: 'Everyone deserves the right to speak freely and access information...',
+        Farsi: 'همه حق دارند آزادانه صحبت کنند و به اطلاعات دسترسی داشته باشند...',
+        Chinese: '每个人都有权自由发言和获取信息...',
+        Russian: 'Каждый заслуживает права свободно высказываться и получать доступ к информации...',
+        Ukrainian: 'Кожен заслуговує права вільно висловлюватися та отримувати доступ до інформації...',
+        Hindi: 'सभी को स्वतंत्र रूप से बोलने और जानकारी तक पहुंचने का अधिकार है...',
+      },
+    },
+    
+    youtube: {
+      title: {
+        English: 'Documentary: Internet Freedom',
+        Farsi: 'مستند: آزادی اینترنت',
+        Chinese: '纪录片：互联网自由',
+        Russian: 'Документальный фильм: Свобода Интернета',
+        Ukrainian: 'Документальний фільм: Свобода Інтернету',
+        Hindi: 'डॉक्यूमेंट्री: इंटरनेट स्वतंत्रता',
+      },
+    },
+  },
+
   // Header
   header: {
     blog: {
