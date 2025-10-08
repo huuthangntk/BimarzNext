@@ -284,14 +284,19 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   const wiggleX = useMotionValue(0);
   const wiggleY = useMotionValue(0);
 
+  // Motion values for entity target indices (for smooth cycling through purple dots)
+  const entity0Target = useMotionValue(0);
+  const entity1Target = useMotionValue(2);
+  const entity2Target = useMotionValue(4);
+  const entity0TargetSpring = useSpring(entity0Target, { stiffness: 50, damping: 15 });
+  const entity1TargetSpring = useSpring(entity1Target, { stiffness: 50, damping: 15 });
+  const entity2TargetSpring = useSpring(entity2Target, { stiffness: 50, damping: 15 });
+
   // Refs for animation control
   const isCenterRef = useRef(true);
   const isFirstRunRef = useRef(true);
   const isGlitchingRef = useRef(false);
   const minDistanceRef = useRef<number>(100);
-  
-  // State for entity positions so they can move smoothly between purple dots
-  const [entityTargetIndices, setEntityTargetIndices] = useState<number[]>([0, 2, 4]);
 
   // Performance: useMotionTemplate for dynamic gradient
   const backgroundGradient = useMotionTemplate`radial-gradient(circle at ${followX}% ${followY}%, 
@@ -338,9 +343,14 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   // Calculate minimum distance from entities to main text
   const calculateMinDistance = useCallback(
     (textX: number, textY: number, rot: number) => {
+      const entityIndices = [
+        entity0TargetSpring.get(),
+        entity1TargetSpring.get(),
+        entity2TargetSpring.get(),
+      ];
       let minDist = 100;
 
-      entityTargetIndices.forEach((targetIndex) => {
+      entityIndices.forEach((targetIndex) => {
         const angle = ((targetIndex / orbitalWords.length) * 360 + rot) % 360;
         const radius = 18;
         const entityPos = calculateOrbitPosition(angle, radius, followX.get(), followY.get());
@@ -350,7 +360,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
 
       return minDist;
     },
-    [orbitalWords.length, followX, followY, calculateOrbitPosition, entityTargetIndices]
+    [orbitalWords.length, followX, followY, calculateOrbitPosition, entity0TargetSpring, entity1TargetSpring, entity2TargetSpring]
   );
 
   // Consolidated animation loop using single rAF
@@ -422,12 +432,13 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    // Entity movement interval - move to next purple dot
+    // Entity movement interval - cycle through all purple dots
     const entityInterval = setInterval(() => {
-      setEntityTargetIndices((prev) => 
-        prev.map((target) => (target + 1) % orbitalWords.length)
-      );
-    }, 2000); // Slower movement for better visibility
+      // Move each entity to the next purple dot position
+      entity0Target.set((entity0Target.get() + 1) % orbitalWords.length);
+      entity1Target.set((entity1Target.get() + 1) % orbitalWords.length);
+      entity2Target.set((entity2Target.get() + 1) % orbitalWords.length);
+    }, 2000); // Move every 2 seconds for better visibility
 
     // Start animations
     runCycle();
@@ -451,6 +462,9 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
     orbitalWords.length,
     generateNextPosition,
     calculateMinDistance,
+    entity0Target,
+    entity1Target,
+    entity2Target,
   ]);
 
   // Entities data
@@ -660,10 +674,11 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
         {/* Moving Entities - Desktop */}
         <div className="hidden md:block">
           {entities.map((entity, entityIndex) => {
-            const targetIndex = entityTargetIndices[entityIndex];
+            // Get the appropriate spring value for this entity
+            const targetSpring = entityIndex === 0 ? entity0TargetSpring : entityIndex === 1 ? entity1TargetSpring : entity2TargetSpring;
             const angle = useTransform(
-              rotation,
-              (r) => ((targetIndex / orbitalWords.length) * 360 + r) % 360
+              [rotation, targetSpring],
+              ([r, target]) => ((target / orbitalWords.length) * 360 + r) % 360
             );
             const radius = 18;
             const posX = useTransform([angle, followX], ([a, fx]) => {
@@ -749,10 +764,11 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
         {/* Moving Entities - Mobile */}
         <div className="md:hidden">
           {entities.map((entity, entityIndex) => {
-            const targetIndex = entityTargetIndices[entityIndex];
+            // Get the appropriate spring value for this entity
+            const targetSpring = entityIndex === 0 ? entity0TargetSpring : entityIndex === 1 ? entity1TargetSpring : entity2TargetSpring;
             const angle = useTransform(
-              rotation,
-              (r) => ((targetIndex / orbitalWords.length) * 360 + r) % 360
+              [rotation, targetSpring],
+              ([r, target]) => ((target / orbitalWords.length) * 360 + r) % 360
             );
             const radius = 25;
             const posX = useTransform([angle, followX], ([a, fx]) => {
