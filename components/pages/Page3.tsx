@@ -150,7 +150,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, language, theme, del
     ];
 
     let currentIndex = 0;
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
 
     const runTimeline = () => {
       const current = timeline[currentIndex];

@@ -10,7 +10,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="hidden md:flex fixed bottom-0 left-0 right-0 z-50 h-[60px] glass">
+    <footer className="hidden md:flex relative w-full z-50 h-[60px] glass flex-shrink-0">
       <div className="h-full px-[60px] flex items-center justify-between w-full">
         {/* Left: Links */}
         <div className="flex items-center gap-8">

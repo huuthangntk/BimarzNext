@@ -51,7 +51,7 @@ export default function Header({ currentPage = 1, onLogoClick }: HeaderProps) {
   const loginText = getTranslation('header.login', language);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass">
+    <header className="relative w-full z-50 glass flex-shrink-0">
       <div className="h-20 px-5 md:px-[60px] flex items-center justify-between">
         {/* Left: Logo */}
         <div className="flex items-center">
@@ -195,7 +195,7 @@ export default function Header({ currentPage = 1, onLogoClick }: HeaderProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 md:hidden z-40"
+              className="fixed inset-0 bg-black/50 md:hidden z-[100]"
             />
             
             {/* Menu Dropdown Panel */}
@@ -204,10 +204,11 @@ export default function Header({ currentPage = 1, onLogoClick }: HeaderProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed top-20 left-5 right-5 bg-[var(--bg-overlay)] backdrop-blur-xl md:hidden z-50 rounded-2xl shadow-2xl overflow-hidden"
+              className="fixed left-5 right-5 bg-[var(--bg-overlay)] backdrop-blur-xl md:hidden z-[101] rounded-2xl shadow-2xl overflow-hidden"
               style={{
                 backgroundColor: 'var(--bg-overlay)',
                 border: '1px solid var(--border-default)',
+                top: '88px', // Header height (80px) + 8px spacing
               }}
             >
               <div className="p-6">

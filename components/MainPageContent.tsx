@@ -252,23 +252,29 @@ export default function MainPageContent() {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full h-screen overflow-hidden">
+    <div ref={containerRef} className="flex flex-col w-full h-screen overflow-hidden">
       <ThemeRipple isActive={isRippling} position={ripplePosition || { x: 0, y: 0 }} />
+      
+      {/* Header - Fixed height */}
       <Header currentPage={currentPage} onLogoClick={handleLogoClick} />
-      <Footer />
-      <PageIndicator
-        currentPage={currentPage}
-        totalPages={TOTAL_PAGES}
-        onPageClick={navigateToPage}
-      />
-      <ScrollIndicator currentPage={currentPage} />
-
-      {/* Page Container - Only render active page */}
-      <div className="relative w-full h-full">
+      
+      {/* Page Container - Grows to fill available space */}
+      <main className="relative flex-1 w-full overflow-hidden">
+        <PageIndicator
+          currentPage={currentPage}
+          totalPages={TOTAL_PAGES}
+          onPageClick={navigateToPage}
+        />
+        <ScrollIndicator currentPage={currentPage} />
+        
+        {/* Only render active page */}
         <AnimatePresence mode="wait">
           {renderActivePage()}
         </AnimatePresence>
-      </div>
+      </main>
+      
+      {/* Footer - Fixed height (hidden on mobile) */}
+      <Footer />
     </div>
   );
 }
