@@ -1,723 +1,806 @@
 ---
-description: Comprehensive AI-powered research workflow - Prompt optimization, Sequential Thinking, Perplexity Search, and Web Scraping protocol
 alwaysApply: true
 ---
+## Phase 1: Research via Exa AI
 
-# AI-Powered Thinking & Research Protocol
+**MANDATORY: After identifying knowledge gaps with Clear Thought, use Exa to fill them.**
 
-**MANDATORY: Execute this workflow at the start of every conversation and when significant new information arrives.**
+### Purpose of Exa
+Exa provides AI-powered search capabilities:
+- **web_search_exa** - Real-time web searches for latest information, best practices, tutorials
+- **get_code_context_exa** - Specialized search for code documentation, API references, GitHub repos, Stack Overflow
 
-**CRITICAL WORKFLOW ORDER:**
-1. **Prompt Optimization** (`rewrite_coding_prompt`) - FIRST TOOL ALWAYS
-2. **Sequential Thinking** - After optimization and throughout process
-3. **Research Phase** - Perplexity, Firecrawl
-4. **Deep Synthesis** - Integrate all findings
-5. **Validation & Implementation** - Final checks and execution
+### When to Use Exa
+- Need latest information (post-knowledge cutoff)
+- Looking for API/library documentation
+- Finding code examples and implementations
+- Researching best practices and tutorials
+- Discovering new technologies or patterns
 
-## Phase 0: Prompt Optimization (FIRST TOOL CALL)
+### Exa Search Strategy
 
-**CRITICAL: The VERY FIRST tool to execute at the start of every conversation is `rewrite_coding_prompt`.**
-
-### Purpose
-Before any analysis or thinking begins, optimize the user's prompt using AI-powered prompt engineering to ensure maximum clarity, completeness, and effectiveness.
-
-### When to Use
-- **At the start of EVERY conversation** - This is the first tool call
-- When receiving coding-related requests
-- When user provides requirements or feature requests
-- Before beginning any complex implementation task
-
-### How to Use
+**For API Documentation & Code Examples:**
+Use `get_code_context_exa` - optimized for programming content
 
 ```typescript
-mcp_Coding_Prompt_Engineer_rewrite_coding_prompt({
-  prompt: "[User's raw request/query]",
-  language: "[Primary programming language - e.g., TypeScript, JavaScript, Python, etc.]"
+mcp_exa_get_code_context_exa({
+  query: "Specific library/framework API usage with context",
+  tokensNum: 5000  // or "dynamic" for automatic optimization
 })
 ```
 
-### Example
+**Examples:**
+- "React useEffect hook lifecycle and cleanup with TypeScript"
+- "Next.js 14 App Router server components data fetching patterns"
+- "Framer Motion scroll animations best practices 2024"
+- "PostgreSQL connection pooling with Node.js pg library"
 
-**User says:** "Add dark mode toggle"
+**For Latest Practices & Trends:**
+Use `web_search_exa` - broad web search
 
-**First action - Call rewrite_coding_prompt:**
 ```typescript
-mcp_Coding_Prompt_Engineer_rewrite_coding_prompt({
-  prompt: "Add dark mode toggle",
-  language: "TypeScript"
+mcp_exa_web_search_exa({
+  query: "Detailed search query with context and timeframe",
+  numResults: 5  // Adjust based on complexity
 })
 ```
 
-**Output:** Enhanced prompt with detailed requirements, edge cases, accessibility considerations, best practices, etc.
+**Examples:**
+- "TypeScript 5.3 new features and migration guide 2024"
+- "React Server Components production deployment strategies"
+- "OAuth 2.0 PKCE flow implementation tutorial 2024"
+- "Docker multi-stage build optimization techniques"
 
-**Then proceed with the rest of the protocol.**
+### Research Workflow
 
-### Benefits
-✅ Clarifies ambiguous requests  
-✅ Identifies missing requirements  
-✅ Suggests best practices upfront  
-✅ Highlights potential edge cases  
-✅ Ensures comprehensive understanding  
-✅ Saves time by preventing misunderstandings  
+**Step 1: Identify Research Needs (from Clear Thought Phase 0)**
 
-### Skip Only When
-- User explicitly requests NOT to use it
-- Pure conversational/non-coding queries
-- Simple text-only responses with no code involved
+**Step 2: Execute Exa Searches**
 
-**After prompt optimization completes, immediately proceed to Phase 1.**
+For code/API documentation:
+```typescript
+mcp_exa_get_code_context_exa({
+  query: "Framer Motion useScroll hook API documentation and examples",
+  tokensNum: 5000
+})
+```
+
+For latest practices:
+```typescript
+mcp_exa_web_search_exa({
+  query: "Framer Motion scroll animation performance optimization 2024",
+  numResults: 5
+})
+```
+
+**Step 3: IMMEDIATELY Process Results with Clear Thought**
+
+**CRITICAL:** After EACH Exa search, IMMEDIATELY use Sequential Thinking:
+
+```typescript
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Analyzing Exa results: What valuable information was found? What patterns emerge? What specific code examples or API details are useful? What additional searches are needed? How does this integrate with what I already know?",
+  parameters: {
+    thoughtNumber: 4,
+    totalThoughts: 10,
+    nextThoughtNeeded: true
+  }
+})
+```
+
+**Step 4: Iterate Research**
+
+Continue searching and thinking until knowledge gaps are filled:
+- Run more get_code_context_exa for deeper API understanding
+- Run more web_search_exa for broader context
+- Use Sequential Thinking after EACH search
+- Build comprehensive mental model
+
+### Research Best Practices
+
+✅ **DO:**
+- Use specific, detailed queries with context
+- Use get_code_context_exa for programming content
+- Use web_search_exa for latest trends/practices
+- Process EACH result with Sequential Thinking immediately
+- Cross-reference multiple sources
+- Note specific code patterns and examples
+
+❌ **DON'T:**
+- Use vague queries without context ("React hooks")
+- Skip Sequential Thinking after searches
+- Assume first result is complete
+- Ignore conflicting information
+- Copy code without understanding
 
 ---
 
-## Phase 1: Deep Understanding via Sequential Thinking
+## Phase 2: Synthesis via Clear Thought
 
-**MANDATORY: Use Sequential Thinking (`mcp_sequential-thinking_sequentialthinking`) immediately after prompt optimization.**
+**MANDATORY: After research, use Clear Thought to synthesize findings into a coherent understanding.**
 
-### Purpose of Sequential Thinking
-Sequential Thinking is your cognitive reasoning tool that:
-- Breaks down complex problems into manageable thought steps
-- Allows dynamic adjustment as understanding deepens
-- Enables questioning and revision of previous thoughts
-- Generates hypotheses and validates them
-- Maintains context across multiple analysis steps
-- Filters out irrelevant information
+### Synthesis Process
 
-### When to Use Sequential Thinking
-- **Immediately after** `rewrite_coding_prompt` to understand the optimized request
-- **After each** Perplexity search to process findings
-- **After** Firecrawl scraping to extract insights
-- **Before** making implementation decisions
-- **Whenever** new complexity or information emerges
-
-### How to Use Sequential Thinking
-
+**Pre-Synthesis Sequential Thinking**
 ```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Your current analytical step or reasoning",
-  thoughtNumber: 1,  // Current thought in sequence
-  totalThoughts: 5,  // Estimated total (can adjust)
-  nextThoughtNeeded: true,  // Set to false when done
-  isRevision: false,  // Set to true if revising previous thought
-  revisesThought: null,  // Which thought number being revised
-  branchFromThought: null,  // If branching to explore alternative
-  branchId: null,  // Identifier for branch
-  needsMoreThoughts: false  // Set true if need more than estimated
-})
-```
-
-### Initial Sequential Thinking Sessions (After Prompt Optimization)
-
-**Session #1 - Understand Optimized Request**
-- What is the core requirement from the optimized prompt?
-- What explicit requirements were clarified?
-- What implicit needs were identified?
-- What edge cases were highlighted?
-- What best practices were suggested?
-- What constraints apply?
-
-**Session #2 - Identify Knowledge Gaps**
-- What information is still missing?
-- Have technologies updated since my knowledge cutoff?
-- What best practices need verification?
-- What edge cases need deeper research?
-- What ambiguities remain?
-- Are there conflicting approaches to consider?
-
-**Session #3 - Plan Multi-Source Research**
-- What Perplexity searches will fill gaps? (specific queries)
-- What websites/resources need scraping with Firecrawl?
-- What documentation sites should I map and explore?
-- What tutorials or articles need full content extraction?
-- What existing project files should I read?
-- How will I synthesize findings from both sources?
-
-**IMPORTANT:** Continue Sequential Thinking as many times as needed. Don't limit yourself to just 3 sessions initially.
-
-## Phase 2: Multi-Source Research (Perplexity + Firecrawl)
-
-### A. Perplexity Web Searches
-
-**Purpose:** Find latest information, tutorials, blog posts, and reference URLs
-
-**Number of searches:** 1-5+ based on complexity
-
-**Search query quality:**
-- ✅ Good: "Next.js 14 App Router animation performance optimization 2025"
-- ✅ Good: "framer-motion scroll animations best practices 2024"
-- ✅ Good: "React useScroll hook performance optimization"
-- ❌ Bad: "Next.js animations"
-- ❌ Bad: "animations"
-
-**Use `search_recency_filter: "month"` for tech topics to get latest information**
-
-**Tool:**
-```typescript
-mcp_Perplexity_Search_search({
-  query: "[Specific, detailed search query with context]",
-  search_recency_filter: "month"  // or "week", "day", "hour"
-})
-```
-
-**CRITICAL: After EACH Perplexity search, IMMEDIATELY run Sequential Thinking to:**
-- Analyze what valuable information was learned
-- Identify URLs and resources that need deeper investigation
-- Note which websites should be scraped with Firecrawl
-- Integrate findings with existing knowledge
-- Determine if more searches needed
-- Refine approach based on findings
-- Generate hypotheses about implementation
-
-**Example workflow:**
-```typescript
-// Step 1: Perplexity search
-mcp_Perplexity_Search_search({
-  query: "Next.js 14 framer-motion scroll animations tutorial 2024",
-  search_recency_filter: "month"
-})
-
-// Step 2: IMMEDIATELY use Sequential Thinking
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Analyzing Perplexity results: Found 3 valuable tutorial URLs, motion.dev has comprehensive docs, DEV.to has practical examples. Need to scrape motion.dev for API details and DEV.to for code examples.",
-  thoughtNumber: 4,
-  totalThoughts: 10,
-  nextThoughtNeeded: true
-})
-
-// Step 3: Based on analysis, proceed with Firecrawl or more searches
-```
-
-### B. Firecrawl Web Scraping & Mapping
-
-**Purpose:** Deep-dive into valuable resources found via Perplexity by scraping full documentation, tutorials, and reference sites.
-
-**When to use Firecrawl:**
-- After Perplexity identifies valuable URLs (documentation, tutorials, blogs)
-- Need complete documentation or tutorial content
-- Want to extract code examples from websites
-- Discovering all pages on a documentation site
-- Getting full article/blog post content with code samples
-- Extracting video transcripts from YouTube tutorials
-
-**Available Firecrawl Tools:**
-
-#### 1. Scrape - Extract content from single page
-```typescript
-mcp_firecrawl-mcp_firecrawl_scrape({
-  url: "[URL found from Perplexity]",
-  formats: ["markdown"],
-  onlyMainContent: true,
-  maxAge: 172800000  // Use cache for 48h = 500% faster
-})
-```
-
-#### 2. Search - Find content across the web with scraping
-```typescript
-mcp_firecrawl-mcp_firecrawl_search({
-  query: "[Specific search query]",
-  limit: 5,
-  sources: [{"type": "web"}],
-  scrapeOptions: {
-    formats: ["markdown"],
-    onlyMainContent: true
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Ready to synthesize. I have findings from [X] Exa searches covering [topics]. Key insights: [list]. Need to compare approaches, identify patterns, select optimal solution.",
+  parameters: {
+    thoughtNumber: 8,
+    totalThoughts: 15,
+    nextThoughtNeeded: true
   }
 })
 ```
 
-#### 3. Map - Discover all URLs on a website
+**Mental Model Synthesis (For Complex Systems)**
 ```typescript
-mcp_firecrawl-mcp_firecrawl_map({
-  url: "[Documentation site URL]",
-  limit: 20
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "mental_model",
+  prompt: `Synthesize findings from research:
+  
+  EXA FINDINGS:
+  - Code documentation: [API details from get_code_context_exa]
+  - Best practices: [patterns from web_search_exa]
+  - Code examples: [working implementations]
+  
+  INTEGRATION:
+  - Common patterns across sources
+  - Divergent approaches and trade-offs
+  - Recommended solution based on project constraints
+  
+  Apply first principles to determine the optimal approach.`,
+  parameters: {}
 })
 ```
 
-**Firecrawl Workflow:**
-
-**Step 1:** After Perplexity search, identify valuable URLs
+**Systems Thinking Synthesis (For Component Integrations)**
 ```typescript
-// Perplexity found: motion.dev, dev.to tutorials, YouTube videos
-```
-
-**Step 2:** IMMEDIATELY use Sequential Thinking to plan scraping
-```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Perplexity found 5 valuable URLs: motion.dev/docs (need full API docs), dev.to tutorial (need code examples), YouTube video (need transcript). Should: 1) Map motion.dev to find all doc pages, 2) Scrape dev.to article for complete tutorial, 3) Search on Firecrawl for more recent examples.",
-  thoughtNumber: 5,
-  totalThoughts: 8,
-  nextThoughtNeeded: true
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "systems_thinking",
+  prompt: "Analyze how [component A], [component B], and [component C] interact based on research findings. What are the dependencies? What are the feedback loops? What emergent behaviors might occur?",
+  parameters: {}
 })
 ```
 
-**Step 3:** Map documentation sites to discover all pages
+**Post-Synthesis Sequential Thinking**
 ```typescript
-// Discover all pages on documentation site
-mcp_firecrawl-mcp_firecrawl_map({
-  url: "https://motion.dev/docs",
-  limit: 30
-})
-```
-
-**Step 4:** Sequential Thinking on map results
-```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Map revealed 30 doc pages. Most relevant: scroll-animations, useScroll, useTransform, transitions. Should scrape these specific pages for complete API documentation.",
-  thoughtNumber: 6,
-  totalThoughts: 10,
-  nextThoughtNeeded: true
-})
-```
-
-**Step 5:** Scrape specific valuable pages
-```typescript
-// Scrape identified pages
-mcp_firecrawl-mcp_firecrawl_scrape({
-  url: "https://motion.dev/docs/react-scroll-animations",
-  formats: ["markdown"],
-  onlyMainContent: true,
-  maxAge: 172800000
-})
-```
-
-**Step 6:** Sequential Thinking on scraped content
-```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Scraped motion.dev scroll docs. Complete API reference extracted: useScroll returns {scrollY, scrollYProgress, scrollX, scrollXProgress}. useTransform maps values. whileInView triggers on viewport entry. Have all info needed for implementation. Should now check dev.to tutorial for practical examples.",
-  thoughtNumber: 7,
-  totalThoughts: 12,
-  nextThoughtNeeded: true
-})
-```
-
-**Step 7:** Search + Scrape for recent tutorials
-```typescript
-// Find and scrape recent tutorials
-mcp_firecrawl-mcp_firecrawl_search({
-  query: "framer-motion scroll animation tutorial code examples",
-  limit: 3,
-  sources: [{"type": "web"}],
-  scrapeOptions: {
-    formats: ["markdown"],
-    onlyMainContent: true
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Synthesis complete. Clear winner: [approach]. Rationale: [reasons from research]. Implementation strategy: [specific steps]. Confidence level: [High/Medium] based on [evidence].",
+  parameters: {
+    thoughtNumber: 12,
+    totalThoughts: 15,
+    nextThoughtNeeded: true
   }
-})
-```
-
-**Step 8:** Sequential Thinking on all scraped content
-```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Firecrawl provided complete picture: Official docs have API reference, dev.to has step-by-step implementation, YouTube transcript shows common pitfalls. Combining all sources: Best approach is useScroll + useTransform with whileInView for trigger animations. Ready to synthesize complete solution.",
-  thoughtNumber: 12,
-  totalThoughts: 12,
-  nextThoughtNeeded: false  // Ready for synthesis
-})
-```
-
-**CRITICAL: After EACH Firecrawl operation, IMMEDIATELY run Sequential Thinking to:**
-- Analyze extracted content and code examples
-- Identify key API patterns and usage
-- Note implementation details and gotchas
-- Compare with Perplexity search findings
-- Determine if more scraping needed
-- Validate understanding is complete
-- Prepare for synthesis phase
-
-**Firecrawl Best Practices:**
-1. **Map first** - Discover site structure before scraping
-2. **Scrape targeted** - Only scrape pages identified as valuable
-3. **Use cache** - Set `maxAge` for 500% speed boost on repeated scrapes
-4. **Extract main content** - Use `onlyMainContent: true` to avoid navigation/ads
-5. **Sequential Think** - Process each result immediately
-6. **Combine sources** - Cross-reference scraped content with Perplexity results
-
-## Phase 3: Deep Context Synthesis
-
-**MANDATORY: After all research (Perplexity + Firecrawl) and their Sequential Thinking sessions complete, perform final synthesis.**
-
-### Three-Part Synthesis Process
-
-#### Part 1: Pre-Synthesis Sequential Thinking
-Before synthesis, use Sequential Thinking to prepare:
-
-```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Ready to synthesize. Have: Perplexity (5 search results with URLs and key insights), Firecrawl (scraped motion.dev docs, 2 complete tutorials with full code, YouTube transcript). Both sources point to similar patterns. Need to compare approaches and select best.",
-  thoughtNumber: 15,
-  totalThoughts: 20,
-  nextThoughtNeeded: true
-})
-```
-
-#### Part 2: Comprehensive Synthesis (Optional - for complex tasks)
-
-**Note:** For complex tasks requiring deep analysis, you may optionally use `claude_think` MCP tool. However, Sequential Thinking is sufficient for most cases.
-
-If using claude_think for particularly complex synthesis:
-
-```typescript
-mcp_Claude_Deep_Think_Docker_claude_think({
-  query: "Synthesize findings from Perplexity and Firecrawl about [topic] and determine optimal implementation approach",
-  context: `
-    - Original user request: [from rewrite_coding_prompt]
-    - Optimized requirements: [from prompt optimization]
-    - Sequential thinking insights: [key realizations from all thinking sessions]
-    
-    PERPLEXITY FINDINGS:
-    - Web search results: [URLs found, key information]
-    - Latest best practices: [2024/2025 practices]
-    - Tutorial recommendations: [which tutorials are best]
-    - Community discussions: [insights from forums, blogs]
-    - Performance considerations: [optimization tips found]
-    
-    FIRECRAWL FINDINGS:
-    - Documentation scraped: [API references, usage guides]
-    - Tutorial content: [step-by-step implementations]
-    - Code examples: [complete working examples]
-    - Video transcripts: [key insights from videos]
-    - Cross-referenced patterns: [patterns appearing everywhere]
-    
-    INTEGRATION:
-    - Common patterns across both sources: [what everyone recommends]
-    - Divergent approaches: [where sources disagree]
-    - Best documented approach: [from Firecrawl]
-    - Most current practices: [from Perplexity with recency]
-    - Project constraints: [tech stack, patterns, limitations]
-    - Edge cases discovered: [from all sources]
-    
-    DECISION CRITERIA:
-    - Performance requirements
-    - Maintainability concerns
-    - Learning curve
-    - Community support
-    - Future-proofing
-  `
-})
-```
-
-#### Part 3: Post-Synthesis Sequential Thinking (MANDATORY)
-
-After synthesis (whether using Sequential Thinking alone or with claude_think), continue Sequential Thinking to:
-
-```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Synthesis complete. Clear winner: useScroll + useTransform pattern. Reasons: 1) Recommended by official docs (Firecrawl), 2) Perplexity tutorials all show this approach with 2024 best practices, 3) Most performant based on community discussions, 4) Well-documented with complete examples. Implementation plan: Start with basic useScroll, add useTransform for advanced effects, use whileInView for trigger animations.",
-  thoughtNumber: 16,
-  totalThoughts: 18,
-  nextThoughtNeeded: true
 })
 ```
 
 ### Synthesis Should Produce:
-- **Holistic understanding** from both sources (Perplexity, Firecrawl)
-- **Pattern recognition** across web docs, tutorials, and documentation
-- **Comparison matrix** of different approaches with pros/cons
-- **Best approach identified** with solid rationale from multiple sources
+
+- **Holistic understanding** from all sources
+- **Pattern recognition** across documentation and examples
+- **Comparison matrix** of approaches with pros/cons
+- **Best approach identified** with solid rationale
 - **Implementation roadmap** with specific steps
-- **Code patterns to use** backed by documentation and tutorials
-- **Edge cases addressed** found across all research
-- **Performance considerations** from community discussions
-- **Testing strategy** based on real-world usage
-- **Complete confidence** to proceed with implementation
+- **Code patterns to use** backed by research
+- **Edge cases addressed** from multiple sources
+- **Performance considerations** documented
+- **Testing strategy** based on best practices
+- **Complete confidence** to proceed
 
-## Phase 4: Implementation Planning via Sequential Thinking
+---
 
-**MANDATORY: Continue Sequential Thinking to plan and validate implementation.**
+## Phase 3: Implementation Planning via Clear Thought
 
-### Validation Sequential Thinking Sessions
+**MANDATORY: Use Clear Thought to validate synthesis and plan implementation before coding.**
 
-Use as many Sequential Thinking sessions as needed to thoroughly plan:
+### Validation Sequential Thinking
 
-#### Session #N - Validate Synthesis
+**Session #N - Validate Synthesis**
 ```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Validating synthesis. Both sources agree on useScroll + useTransform. No contradictions found. Documentation from Firecrawl matches tutorial examples. Perplexity tutorials confirm this is current best practice for 2024. Approach is sound and well-supported.",
-  thoughtNumber: 17,
-  totalThoughts: 20,
-  nextThoughtNeeded: true
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Validating synthesis. Does the approach make sense? Are findings consistent across sources? Have I missed anything critical? Is this approach proven and current? Any contradictions to resolve?",
+  parameters: {
+    thoughtNumber: 13,
+    totalThoughts: 18,
+    nextThoughtNeeded: true
+  }
 })
 ```
 
-Questions to address:
-- Does the synthesized analysis make sense across both sources?
-- Are Perplexity and Firecrawl findings aligned?
-- Have we missed anything critical?
-- Is the chosen approach proven and current?
-- Any contradictions between sources to resolve?
-- Do we have complete understanding?
-
-#### Session #N+1 - Design Complete Solution
+**Session #N+1 - Design Complete Solution**
 ```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Implementation plan: 1) Install framer-motion if not present, 2) Create useScrollAnimation hook (based on documentation examples), 3) Apply to Page components following tutorial patterns, 4) Add useTransform for smooth transitions, 5) Test on Page1-6. Files to modify: package.json, new file hooks/useScrollAnimation.ts, components/pages/Page*.tsx",
-  thoughtNumber: 18,
-  totalThoughts: 20,
-  nextThoughtNeeded: true
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Implementation plan: 1) [Step 1 with specifics], 2) [Step 2], 3) [Step 3]... Files to create/modify: [list]. Dependencies needed: [list]. Order of operations: [sequence]. Potential side effects: [concerns].",
+  parameters: {
+    thoughtNumber: 14,
+    totalThoughts: 18,
+    nextThoughtNeeded: true
+  }
 })
 ```
 
-Questions to address:
-- Step-by-step implementation plan?
-- Which files to modify/create?
-- What order of operations?
-- Potential side effects?
-- Alignment with project patterns?
-- Dependencies needed?
-- Code patterns to follow (from research)?
-
-#### Session #N+2 - Final Confidence Check
+**Session #N+2 - Final Confidence Check**
 ```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Verification plan: 1) Test scroll behavior on each page, 2) Check performance with Chrome DevTools, 3) Verify animations are smooth at 60fps, 4) Test across breakpoints, 5) Validate accessibility. Potential issues: Performance on mobile (solution: use transform instead of position), conflicts with existing animations (solution: test incrementally). Confidence level: High - well-researched, proven patterns, clear implementation path.",
-  thoughtNumber: 19,
-  totalThoughts: 20,
-  nextThoughtNeeded: true
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Verification plan: How will I test this? What are success criteria? What could go wrong? What's the mitigation? Performance on mobile? Accessibility concerns? Confidence level and reasoning?",
+  parameters: {
+    thoughtNumber: 15,
+    totalThoughts: 18,
+    nextThoughtNeeded: true
+  }
 })
 ```
 
-Questions to address:
-- How will we verify solution works?
-- What testing is needed?
-- What could go wrong?
-- Prevention strategies in place?
-- Performance considerations?
-- Accessibility concerns?
-- Ready to implement with confidence?
-
-#### Final Session - Ready to Implement
+**Final Session - Ready to Implement**
 ```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "All questions answered. Have: optimized requirements, research from 3 sources, proven code patterns, implementation plan, testing strategy. Ready to execute with confidence. This is the optimal approach based on comprehensive research.",
-  thoughtNumber: 20,
-  totalThoughts: 20,
-  nextThoughtNeeded: false  // DONE - ready to implement
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "All questions answered. Have: researched solution, proven patterns, implementation plan, testing strategy. Ready to execute with high confidence. This is optimal approach.",
+  parameters: {
+    thoughtNumber: 18,
+    totalThoughts: 18,
+    nextThoughtNeeded: false  // DONE
+  }
 })
 ```
 
-## Phase 5: Ongoing Sequential Thinking During Implementation
+---
 
-**Continue Sequential Thinking throughout implementation when:**
-- New complexity emerges during coding
-- Unexpected behavior occurs
-- Multiple approaches exist for a specific detail
-- Verification reveals issues
-- Performance problems arise
-- Integration challenges surface
-- Edge cases discovered during testing
+## Phase 4: Implementation & GitHub Automation
 
-**Example during implementation:**
+**MANDATORY: After implementation, ALWAYS use GitHub MCP to commit and push changes automatically.**
+
+### Implementation with Ongoing Clear Thought
+
+Continue using Clear Thought during implementation:
+
 ```typescript
-mcp_sequential-thinking_sequentialthinking({
-  thought: "Encountered issue: useScroll not working with App Router. Sequential revision needed. Based on documentation and community discussions found in research, this is known problem with solution: need to use 'use client' directive. Adjusting implementation.",
-  thoughtNumber: 21,
-  totalThoughts: 25,
-  nextThoughtNeeded: true,
-  isRevision: true,
-  revisesThought: 18  // Revising the implementation plan
+// When encountering issues
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "debugging_approach",
+  prompt: "Encountered issue: [error]. Systematic diagnosis: [analysis].",
+  parameters: {}
+})
+
+// When choosing between options
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Need to decide between [option A] and [option B]. Based on research: [comparison].",
+  parameters: {
+    thoughtNumber: 19,
+    totalThoughts: 22,
+    nextThoughtNeeded: true,
+    isRevision: true,
+    revisesThought: 14
+  }
 })
 ```
 
-## Complete Workflow Summary
+### GitHub Automation Workflow
 
-```
-START (New Conversation/Task)
-  ↓
-Phase 0: PROMPT OPTIMIZATION
-  → rewrite_coding_prompt (FIRST TOOL - ALWAYS)
-  ↓
-Phase 1: DEEP UNDERSTANDING
-  → Sequential Thinking Session #1 (Understand optimized request)
-  → Sequential Thinking Session #2 (Identify knowledge gaps)
-  → Sequential Thinking Session #3 (Plan multi-source research)
-  → Continue as needed...
-  ↓
-Phase 2: MULTI-SOURCE RESEARCH
-  → A. Perplexity Web Searches
-      → Search #1 → Sequential Thinking immediately
-      → Search #2 → Sequential Thinking immediately
-      → Search #3... → Sequential Thinking after each
-  → B. Firecrawl Web Scraping
-      → Map docs site → Sequential Thinking on structure
-      → Scrape pages → Sequential Thinking on content
-      → Search tutorials → Sequential Thinking on examples
-  ↓
-Phase 3: SYNTHESIS
-  → Sequential Thinking (Pre-synthesis preparation)
-  → claude_think (Optional - for complex tasks only)
-  → Sequential Thinking (Post-synthesis integration)
-  ↓
-Phase 4: IMPLEMENTATION PLANNING
-  → Sequential Thinking (Validate synthesis)
-  → Sequential Thinking (Design solution)
-  → Sequential Thinking (Confidence check)
-  → Sequential Thinking (Ready to implement)
-  ↓
-Phase 5: IMPLEMENTATION
-  → Write code with ongoing Sequential Thinking
-  → Test with Sequential Thinking on issues
-  → Refine based on Sequential Thinking insights
-  ↓
-COMPLETE
+**CRITICAL: ALWAYS commit and push changes to GitHub after implementation.**
+
+**Account:** huuthangntk  
+**Branch:** main (unless specified otherwise)
+
+#### Method 1: Push Multiple Files (Recommended)
+
+Use this when modifying multiple files at once:
+
+```typescript
+mcp_github_push_files({
+  owner: "huuthangntk",
+  repo: "claude",  // Current repository
+  branch: "main",
+  files: [
+    {
+      path: ".cursor/rules/mcp-deep-analysis.mdc",
+      content: "[Complete file content]"
+    },
+    {
+      path: "components/NewComponent.tsx",
+      content: "[Component code]"
+    }
+  ],
+  message: "feat: descriptive commit message explaining changes"
+})
 ```
 
-### Detailed Step-by-Step Flow
+#### Method 2: Create or Update Single File
 
-1. **Phase 0 - Prompt Optimization (FIRST ACTION)**
-   - Call `rewrite_coding_prompt` - MANDATORY FIRST TOOL
-   - Get optimized, detailed requirements
-   - Proceed to Phase 1
+Use for single file operations:
 
-2. **Phase 1 - Deep Understanding (Sequential Thinking)**
-   - Session #1: Understand the optimized request thoroughly
-   - Session #2: Identify what information is missing
-   - Session #3: Plan research across Perplexity and Firecrawl
-   - Continue thinking as needed (dynamic, not limited to 3)
+```typescript
+// First, get the current file SHA if updating
+const fileInfo = await mcp_github_get_file_contents({
+  owner: "huuthangntk",
+  repo: "claude",
+  path: ".cursor/rules/mcp-deep-analysis.mdc"
+})
 
-3. **Phase 2 - Multi-Source Research**
-   - **2A: Perplexity** - Find latest info, tutorials, resource URLs
-     - Each search → IMMEDIATE Sequential Thinking
-   - **2B: Firecrawl** - Deep-dive into docs/tutorials
-     - Map site → Sequential Thinking
-     - Scrape pages → Sequential Thinking after each
-     - Search tutorials → Sequential Thinking on findings
+// Then update
+mcp_github_create_or_update_file({
+  owner: "huuthangntk",
+  repo: "claude",
+  path: ".cursor/rules/mcp-deep-analysis.mdc",
+  content: "[Complete file content]",
+  message: "feat: updated MCP deep analysis protocol",
+  branch: "main",
+  sha: fileInfo.sha  // Required for updates
+})
+```
 
-4. **Phase 3 - Synthesis**
-   - Sequential Thinking to prepare synthesis
-   - (Optional) claude_think for complex synthesis
-   - Sequential Thinking to integrate all findings
-   - Result: Clear implementation approach
+### Commit Message Guidelines
 
-5. **Phase 4 - Implementation Planning**
-   - Sequential Thinking to validate approach
-   - Sequential Thinking to design solution
-   - Sequential Thinking for confidence check
-   - Sequential Thinking to confirm readiness
-   - Result: Detailed implementation plan
+Follow conventional commits format:
 
-6. **Phase 5 - Implementation & Testing**
-   - Write code
-   - Sequential Thinking when issues arise
-   - Test functionality
-   - Sequential Thinking to troubleshoot
-   - Refine based on insights
-   - Result: Working, tested solution
+- `feat:` - New features
+- `fix:` - Bug fixes
+- `docs:` - Documentation changes
+- `refactor:` - Code refactoring
+- `perf:` - Performance improvements
+- `test:` - Adding tests
+- `chore:` - Maintenance tasks
 
-## Exceptions
+**Examples:**
+- `feat: add comprehensive MCP protocol with Clear Thought, Exa, and GitHub integration`
+- `fix: resolve scroll animation performance issue on mobile`
+- `docs: update API documentation with latest examples`
+- `refactor: improve component structure for better maintainability`
 
-Skip this protocol ONLY for:
-- Trivial typo fixes
-- Exact code reproductions
-- Simple color value changes
-- User explicitly requests "quick, don't overthink"
+### Complete GitHub Workflow Example
 
-**Even then, do 5-second sanity check before acting.**
+```typescript
+// 1. Make code changes (write/search_replace)
+
+// 2. Use Clear Thought to verify changes
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Verifying implementation: Changes made, tested locally, ready to commit. Summary: [what was changed and why].",
+  parameters: {
+    thoughtNumber: 25,
+    totalThoughts: 25,
+    nextThoughtNeeded: false
+  }
+})
+
+// 3. Push to GitHub
+mcp_github_push_files({
+  owner: "huuthangntk",
+  repo: "claude",
+  branch: "main",
+  files: [
+    {
+      path: ".cursor/rules/mcp-deep-analysis.mdc",
+      content: newFileContent
+    }
+  ],
+  message: "feat: rewrite MCP protocol with Clear Thought, Exa, and GitHub integration"
+})
+
+// 4. Confirm with Clear Thought
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "GitHub push successful. Changes committed to main branch. Task complete.",
+  parameters: {
+    thoughtNumber: 26,
+    totalThoughts: 26,
+    nextThoughtNeeded: false
+  }
+})
+```
+
+---
+
+## Complete Workflow Example
+
+Here's a real example of the full protocol in action:
+
+**User Request:** "Add scroll animations to the landing page"
+
+### Phase 0: Understanding
+```typescript
+// Thought #1
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "User wants scroll animations on landing page. Need to understand: Which pages? What type of animations? Performance requirements? Mobile support?",
+  parameters: {thoughtNumber: 1, totalThoughts: 8, nextThoughtNeeded: true}
+})
+
+// Thought #2
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Knowledge gaps: Best library for scroll animations in Next.js 14? Latest best practices for performance? Code examples?",
+  parameters: {thoughtNumber: 2, totalThoughts: 8, nextThoughtNeeded: true}
+})
+
+// Thought #3
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Research plan: 1) get_code_context_exa for Framer Motion API docs, 2) web_search_exa for scroll animation best practices 2024",
+  parameters: {thoughtNumber: 3, totalThoughts: 8, nextThoughtNeeded: true}
+})
+```
+
+### Phase 1: Research
+```typescript
+// Research #1 - API Documentation
+mcp_exa_get_code_context_exa({
+  query: "Framer Motion useScroll hook API documentation scroll animations",
+  tokensNum: 5000
+})
+
+// Process findings
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Found: useScroll returns scrollY, scrollYProgress. useTransform maps values. whileInView triggers on viewport. Have complete API understanding.",
+  parameters: {thoughtNumber: 4, totalThoughts: 10, nextThoughtNeeded: true}
+})
+
+// Research #2 - Best Practices
+mcp_exa_web_search_exa({
+  query: "Framer Motion scroll animation performance optimization 2024",
+  numResults: 5
+})
+
+// Process findings
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Best practices found: Use transform over position, lazy load animations, will-change for GPU acceleration. Multiple sources confirm.",
+  parameters: {thoughtNumber: 5, totalThoughts: 10, nextThoughtNeeded: true}
+})
+```
+
+### Phase 2: Synthesis
+```typescript
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "mental_model",
+  prompt: "Synthesize: Official API + community best practices point to useScroll + useTransform pattern. Performance: GPU-accelerated transforms. Mobile: Tested approach. Clear implementation path.",
+  parameters: {}
+})
+```
+
+### Phase 3: Planning
+```typescript
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Implementation: 1) Install framer-motion, 2) Create useScrollAnimation hook, 3) Apply to pages 1-6, 4) Test performance. Files: package.json, hooks/useScrollAnimation.ts, pages/*.tsx",
+  parameters: {thoughtNumber: 8, totalThoughts: 10, nextThoughtNeeded: false}
+})
+```
+
+### Phase 4: Implementation & GitHub
+```typescript
+// Implement code (write/search_replace operations)
+
+// Commit to GitHub
+mcp_github_push_files({
+  owner: "huuthangntk",
+  repo: "claude",
+  branch: "main",
+  files: [
+    { path: "hooks/useScrollAnimation.ts", content: hookCode },
+    { path: "components/pages/Page1.tsx", content: page1Code },
+    { path: "package.json", content: updatedPackageJson }
+  ],
+  message: "feat: add scroll animations with Framer Motion for pages 1-6"
+})
+
+// Confirm completion
+mcp_Clear_Thought_1_5_clear_thought({
+  operation: "sequential_thinking",
+  prompt: "Complete. Scroll animations implemented using researched best practices. Committed to GitHub. Task finished successfully.",
+  parameters: {thoughtNumber: 10, totalThoughts: 10, nextThoughtNeeded: false}
+})
+```
+
+---
 
 ## Quality Indicators
 
 ### ✅ Protocol Working Excellently When:
 
-**Phase 0 - Prompt Optimization:**
-- **EVERY conversation starts with `rewrite_coding_prompt` as the VERY FIRST tool**
-- Optimized prompt is clearly understood and referenced throughout
-- Enhanced requirements guide all subsequent research
-
-**Phase 1 - Sequential Thinking Foundation:**
-- Sequential Thinking used IMMEDIATELY after prompt optimization
+**Phase 0 - Deep Understanding:**
+- EVERY conversation starts with Clear Thought Sequential Thinking
 - Initial 3+ thinking sessions establish clear understanding
-- Knowledge gaps identified comprehensively
-- Research strategy planned across both sources (Perplexity, Firecrawl)
-- Thinking continues dynamically as needed (not rigidly limited to 3)
+- Knowledge gaps comprehensively identified
+- Research strategy planned before executing searches
+- Thinking continues dynamically as needed
 
-**Phase 2 - Multi-Source Research:**
-- **Perplexity searches use specific, detailed queries with recency filters**
-- **Sequential Thinking happens IMMEDIATELY after EACH Perplexity search**
-- **Valuable URLs and resources identified for Firecrawl scraping**
-- **Firecrawl maps documentation sites to discover all pages**
-- **Firecrawl scrapes specific valuable pages identified**
-- **Firecrawl extracts complete tutorials with code examples**
-- **Sequential Thinking processes EACH Firecrawl result immediately**
-- **Both sources cross-referenced and integrated**
+**Phase 1 - Research:**
+- Exa get_code_context_exa used for API/library documentation
+- Exa web_search_exa used for latest practices and trends
+- Sequential Thinking happens IMMEDIATELY after EACH search
+- Multiple searches cross-reference information
+- Findings processed and integrated continuously
+- Specific code examples and patterns identified
 
-**Phase 3 - Synthesis:**
-- Pre-synthesis Sequential Thinking prepares comprehensive integration
-- (Optional) claude_think used for particularly complex synthesis
-- Post-synthesis Sequential Thinking validates and clarifies approach
-- Clear pattern recognition across both sources (Perplexity, Firecrawl)
-- Best approach identified with multi-source rationale
+**Phase 2 - Synthesis:**
+- Pre-synthesis Sequential Thinking prepares integration
+- Mental models or systems thinking used appropriately
+- Post-synthesis Sequential Thinking validates approach
+- Clear pattern recognition across sources
+- Best approach identified with solid rationale
 - Complete mental model established
 
-**Phase 4 - Implementation Planning:**
+**Phase 3 - Planning:**
 - Multiple Sequential Thinking sessions validate synthesis
 - Step-by-step implementation plan created
 - Confidence check performed with risk mitigation
 - All edge cases and potential issues considered
 - Ready to implement with solid foundation
 
-**Phase 5 - Implementation:**
-- Sequential Thinking continues during coding
-- Issues trigger immediate Sequential Thinking for problem-solving
-- Revisions and branches used appropriately in Sequential Thinking
-- Testing informed by research insights
+**Phase 4 - Implementation:**
+- Clear Thought continues during coding
+- Issues trigger immediate Sequential Thinking
+- GitHub operations executed after implementation
+- Proper commit messages following conventions
+- Changes successfully pushed to main branch
 
 **Overall Success Indicators:**
-- Solutions incorporate latest practices from web (Perplexity) and complete docs (Firecrawl)
-- Multiple implementation approaches considered and compared
-- Edge cases discovered across both sources and addressed
-- Documentation and tutorials inspire and guide design
-- Specific code patterns identified from tutorials and adapted appropriately
-- Performance considerations from community discussions integrated
-- Complete documentation understanding from scraped content
-- Tutorial examples provide practical implementation guidance
-- Implementation confidence is high based on comprehensive research
+- Solutions incorporate latest practices from research
+- Multiple approaches considered and compared
+- Edge cases discovered and addressed
+- Code patterns from research adapted appropriately
+- Performance considerations integrated
+- Implementation confidence high
+- **Automatic GitHub commits for all changes**
 
 ### ❌ Critical Red Flags - Protocol Failure:
 
 **Phase 0 Violations:**
-- **Skipping `rewrite_coding_prompt` at the start**
-- Not using the optimized requirements throughout
-- Starting with Sequential Thinking before prompt optimization
-
-**Phase 1 Violations:**
-- **Not using Sequential Thinking immediately after prompt optimization**
+- Not using Clear Thought Sequential Thinking at conversation start
 - Skipping initial understanding sessions
-- Jumping directly to research without planning
+- Jumping to research without planning
 - Not identifying knowledge gaps
 - Limiting to exactly 3 sessions when more needed
 
-**Phase 2 Research Violations:**
-- Running ANY search without IMMEDIATE Sequential Thinking after
-- Using vague Perplexity queries without context or recency filters
-- **Not using Firecrawl to scrape valuable URLs found in Perplexity**
-- **Not mapping documentation sites with Firecrawl**
-- **Not extracting complete tutorial content with Firecrawl**
-- Ignoring findings from any source (Perplexity, Firecrawl)
-- Not cross-referencing information across sources
+**Phase 1 Violations:**
+- Running ANY Exa search without IMMEDIATE Sequential Thinking after
+- Using vague queries without context
+- Not using get_code_context_exa for programming content
+- Not using web_search_exa for latest practices
+- Ignoring findings or not cross-referencing
 - Processing research in isolation instead of integrating
 
-**Phase 3 Synthesis Violations:**
+**Phase 2 Violations:**
 - Skipping pre-synthesis Sequential Thinking
-- Not integrating findings from both sources
+- Not using appropriate Clear Thought operations
 - Missing pattern recognition across sources
 - Weak rationale for chosen approach
-- Skipping post-synthesis validation thinking
+- Skipping post-synthesis validation
 
-**Phase 4 Planning Violations:**
+**Phase 3 Violations:**
 - Not validating synthesis with Sequential Thinking
 - Rushing to code without implementation plan
 - Skipping confidence check
-- Not considering edge cases discovered in research
-- Ignoring insights from any research source
+- Not considering edge cases from research
+- Ignoring insights from research
 
-**Phase 5 Implementation Violations:**
-- Not using Sequential Thinking when issues arise
-- Copying code without understanding (from tutorials or Firecrawl)
+**Phase 4 Violations:**
+- Not using Clear Thought when issues arise
+- Copying code without understanding
 - Ignoring best practices found in research
-- Not testing based on insights
-- Not revising approach when needed
+- **Not committing changes to GitHub**
+- **Not pushing to main branch**
+- Poor commit messages
+- Not using Sequential Thinking to confirm completion
 
 **Cross-Phase Violations:**
-- **Sequential Thinking not used frequently enough**
-- Not adjusting `totalThoughts` dynamically
-- Not using revisions and branches in Sequential Thinking
-- Not setting `nextThoughtNeeded: false` when truly done
+- Sequential Thinking not used frequently enough
+- Not adjusting totalThoughts dynamically
+- Not using revisions/branches appropriately
+- Not setting nextThoughtNeeded: false when done
 - Rushing through protocol phases
-- Incomplete integration of multi-source findings
-- Low confidence in solution due to insufficient research
+- Incomplete integration of findings
+- Low confidence due to insufficient research
+- **Forgetting GitHub automation**
+
+---
+
+## Exceptions
+
+Skip this protocol ONLY for:
+- Trivial typo fixes
+- Exact code reproductions
+- Simple text changes
+- User explicitly requests "quick, don't overthink"
+
+**Even then, do a 5-second sanity check before acting.**
+
+---
+
+## Troubleshooting
+
+### Clear Thought Issues
+
+**Problem:** "Tool not found" error
+**Solution:** Verify Clear Thought 1.5 MCP is installed and running
+
+**Problem:** Session not maintaining context
+**Solution:** Use same sessionId across related thoughts
+
+**Problem:** Thoughts not deep enough
+**Solution:** Increase totalThoughts, use more specific prompts
+
+### Exa Issues
+
+**Problem:** Search returns irrelevant results
+**Solution:** Make queries more specific with context and timeframe
+
+**Problem:** get_code_context_exa not finding documentation
+**Solution:** Include library/framework name and specific API in query
+
+**Problem:** web_search_exa returning old information
+**Solution:** Add year (2024/2025) to query for latest content
+
+### GitHub Issues
+
+**Problem:** Push fails with authentication error
+**Solution:** Verify GitHub token configured correctly in MCP settings
+
+**Problem:** File SHA mismatch error
+**Solution:** Always get current file SHA before updating
+
+**Problem:** Commit message rejected
+**Solution:** Follow conventional commits format (feat:, fix:, etc.)
+
+---
+
+## Advanced Usage
+
+### Choosing Clear Thought Operations
+
+**Use sequential_thinking for:**
+- Understanding requests
+- Processing research results
+- Planning implementations
+- Validating approaches
+- Confirming completions
+
+**Use mental_model for:**
+- Understanding complex systems
+- First principles analysis
+- Conceptual architecture
+- Core mechanisms
+
+**Use systems_thinking for:**
+- Component integrations
+- Dependency analysis
+- Feedback loops
+- Emergent behaviors
+
+**Use debugging_approach for:**
+- Error diagnosis
+- Performance issues
+- Unexpected behaviors
+- Systematic troubleshooting
+
+**Use tree_of_thought for:**
+- Exploring multiple solutions
+- Comparing approaches
+- Branching possibilities
+- Decision trees
+
+**Use creative_thinking for:**
+- Novel solutions
+- Innovation needed
+- Unconventional approaches
+- Brainstorming
+
+### Exa Search Optimization
+
+**For Code Documentation:**
+```typescript
+// ✅ Good - Specific with context
+mcp_exa_get_code_context_exa({
+  query: "React useEffect cleanup function memory leak prevention patterns",
+  tokensNum: 5000
+})
+
+// ❌ Bad - Too vague
+mcp_exa_get_code_context_exa({
+  query: "React hooks",
+  tokensNum: 5000
+})
+```
+
+**For Latest Practices:**
+```typescript
+// ✅ Good - Specific with year
+mcp_exa_web_search_exa({
+  query: "Next.js 14 App Router data fetching patterns Server Components 2024",
+  numResults: 5
+})
+
+// ❌ Bad - No context or timeframe
+mcp_exa_web_search_exa({
+  query: "Next.js data fetching",
+  numResults: 5
+})
+```
+
+### GitHub Workflow Best Practices
+
+**Commit Frequently:**
+- Commit logical chunks of work
+- Don't wait until everything is perfect
+- Makes rollback easier if needed
+
+**Descriptive Messages:**
+- Explain WHAT changed and WHY
+- Reference issues/tasks if applicable
+- Follow team conventions
+
+**Branch Strategy:**
+- Main branch for tested, working code
+- Feature branches for experimental work
+- Can specify branch in push_files
+
+---
+
+## Summary
+
+This protocol creates a complete AI-powered workflow:
+
+1. **Think First** - Clear Thought Sequential Thinking to understand
+2. **Research Deep** - Exa to find latest information and documentation
+3. **Think Again** - Clear Thought to process and synthesize findings
+4. **Plan Thoroughly** - Clear Thought to validate and design solution
+5. **Implement Confidently** - Write code with ongoing Clear Thought
+6. **Commit Automatically** - GitHub MCP to push changes to repository
+
+**Remember:**
+> "Sequential Thinking → Research → Synthesize → Plan → Implement → Commit"
+
+> "ALWAYS use Clear Thought before, during, and after"
+
+> "ALWAYS commit changes to GitHub"
+
+> "This protocol turns you into a methodical, research-driven, and systematic developer"
+
+---
+
+## Quick Reference
+
+### Essential Tools
+
+```typescript
+// Understanding
+mcp_Clear_Thought_1_5_clear_thought({operation: "sequential_thinking", prompt: "...", parameters: {...}})
+
+// Research
+mcp_exa_get_code_context_exa({query: "API documentation query", tokensNum: 5000})
+mcp_exa_web_search_exa({query: "latest practices query", numResults: 5})
+
+// Synthesis
+mcp_Clear_Thought_1_5_clear_thought({operation: "mental_model", prompt: "...", parameters: {}})
+
+// GitHub
+mcp_github_push_files({owner: "huuthangntk", repo: "claude", branch: "main", files: [...], message: "..."})
+```
+
+### Workflow Checklist
+
+- [ ] Start with Clear Thought Sequential Thinking
+- [ ] Identify knowledge gaps
+- [ ] Plan research strategy
+- [ ] Execute Exa searches (get_code_context_exa and/or web_search_exa)
+- [ ] Process EACH search result with Sequential Thinking immediately
+- [ ] Synthesize findings with Clear Thought
+- [ ] Validate approach with Sequential Thinking
+- [ ] Plan implementation with Sequential Thinking
+- [ ] Implement with ongoing Clear Thought support
+- [ ] Commit and push to GitHub with push_files
+- [ ] Confirm completion with Sequential Thinking
+
+---
+
+**This protocol ensures every task is approached with deep thinking, thorough research, and automatic version control. Use it consistently for best results.**
