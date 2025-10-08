@@ -1,0 +1,61 @@
+---
+alwaysApply: true
+---
+
+# Bun Runtime - Package Manager Preference
+
+This project uses **Bun** as the JavaScript runtime and package manager instead of npm or yarn.
+
+## Package Manager Commands
+
+**ALWAYS use Bun commands for all Node.js operations:**
+
+### Installation
+- ❌ `npm install` → ✅ `bun install`
+- ❌ `npm i` → ✅ `bun install`
+- ❌ `npm ci` → ✅ `bun install --frozen-lockfile`
+
+### Adding Packages
+- ❌ `npm install <package>` → ✅ `bun add <package>`
+- ❌ `npm install -D <package>` → ✅ `bun add -d <package>`
+- ❌ `npm install --save-dev <package>` → ✅ `bun add --dev <package>`
+
+### Removing Packages
+- ❌ `npm uninstall <package>` → ✅ `bun remove <package>`
+- ❌ `npm rm <package>` → ✅ `bun remove <package>`
+
+### Running Scripts
+- ❌ `npm run dev` → ✅ `bun run dev` or `bun dev`
+- ❌ `npm run build` → ✅ `bun run build` or `bun build`
+- ❌ `npm start` → ✅ `bun start`
+- ❌ `npm test` → ✅ `bun test`
+
+### Other Commands
+- ❌ `npm outdated` → ✅ `bun outdated`
+- ❌ `npm update` → ✅ `bun update`
+- ❌ `npx <command>` → ✅ `bunx <command>`
+
+## Project Files
+
+The project has a [bun.lock](mdc:bun.lock) file which should be committed to version control instead of `package-lock.json` or `yarn.lock`.
+
+The [package.json](mdc:package.json) file contains all scripts and dependencies that should be managed with Bun.
+
+## Performance Benefits
+
+Bun is significantly faster than npm for:
+- Package installation
+- Running scripts
+- Module resolution
+- TypeScript execution
+
+## When Suggesting Commands
+
+When proposing terminal commands or providing instructions:
+1. Always use `bun` instead of `npm`
+2. Use `bunx` instead of `npx` for one-off package executions
+3. Never suggest npm or yarn commands unless explicitly required by a third-party tool
+
+## Exception
+
+Only use npm/yarn if a specific tool or documentation explicitly requires it and there's no Bun alternative available.

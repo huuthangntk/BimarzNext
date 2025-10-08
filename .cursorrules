@@ -1,0 +1,92 @@
+# MCP Deep Think Protocol
+
+## Critical Rule: Think Before Code
+
+**MANDATORY**: When new information arrives, ALWAYS call the "claude_think" MCP tool BEFORE writing or modifying code.
+
+### New Information Includes:
+- Error messages or stack traces
+- User requirements or feature requests
+- Code review feedback or suggestions
+- Performance issues or bottlenecks
+- Security alerts or vulnerabilities
+- API documentation to integrate
+- Database query problems
+- User feedback about UX/UI
+- Breaking changes in dependencies
+- Architectural decisions needed
+
+### Workflow:
+
+1. **NEW INFORMATION ARRIVES** → STOP ⏸️
+2. **CALL CLAUDE_THINK TOOL** 🧠
+   ```
+   Use the claude_think tool to analyze: [THE NEW INFORMATION]
+   
+   Context: [Current tech stack, constraints, what you know]
+   ```
+3. **REVIEW INSIGHTS** 👀
+   - Understand root cause
+   - Consider alternatives
+   - Identify pitfalls
+   - Note best practices
+4. **WRITE BETTER CODE** 💻
+   - Implement based on analysis
+   - Follow recommended approach
+   - Handle edge cases
+   - Include error handling
+5. **TEST & VERIFY** ✅
+
+### Examples:
+
+**Error Message:**
+```
+User: Getting "TypeError: Cannot read property 'map' of undefined"
+
+AI: Let me analyze this first.
+[Calls claude_think tool with error + context]
+[Reviews analysis]
+[Implements proper solution with loading states]
+```
+
+**New Feature:**
+```
+User: Add dark mode toggle
+
+AI: Let me understand the requirements first.
+[Calls claude_think tool with feature request + codebase context]
+[Reviews recommendations]
+[Implements with accessibility and animations]
+```
+
+**Performance Issue:**
+```
+User: App is slow, 50+ re-renders
+
+AI: Let me analyze the performance issue.
+[Calls claude_think tool with metrics + component structure]
+[Identifies root cause]
+[Implements Context API solution]
+```
+
+### Skip Claude_Think Tool Only For:
+- Simple typo fixes
+- Trivial text changes  
+- Exact copy-paste requests
+- Very obvious, simple changes
+
+### Benefits:
+✅ Fewer bugs from the start
+✅ Better architectural decisions
+✅ Identification of edge cases
+✅ Following best practices
+✅ Faster overall development
+✅ Higher code quality
+✅ Less revision rounds
+
+### Remember:
+> "Measure twice, cut once"
+> "Think before coding"  
+> "Analysis prevents bugs"
+
+The 20 seconds spent with claude_think saves hours of debugging!

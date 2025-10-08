@@ -1,0 +1,342 @@
+---
+alwaysApply: true
+---
+
+# Deep Thinking Protocol
+
+This rule ensures thorough analysis and consideration whenever new information is provided, promoting high-quality responses and preventing hasty decisions.
+
+## Core Principle
+
+**When new information arrives, PAUSE and THINK before acting.**
+
+## Trigger Conditions
+
+Engage deep thinking when:
+- User provides new requirements or specifications
+- Error messages or unexpected behavior is observed
+- Conflicting information or edge cases are detected
+- Complex multi-step tasks are requested
+- Design decisions need to be made
+- Code changes could have side effects
+- New files, documentation, or context is provided
+- Testing reveals bugs or issues
+- Integration points between systems are involved
+
+## Deep Thinking Process
+
+### Phase 1: Information Analysis (15 seconds)
+
+**STOP and ask yourself:**
+
+1. **What is the core request?**
+   - What is the user actually asking for?
+   - What is the underlying goal or problem?
+   - Are there any ambiguities that need clarification?
+
+2. **What information do I have?**
+   - What context is provided?
+   - What files or systems are involved?
+   - What constraints or requirements exist?
+   - What memories or rules are relevant?
+
+3. **What information do I need?**
+   - What's missing to provide a complete solution?
+   - Should I read additional files?
+   - Should I search the codebase?
+   - Should I check for related code or patterns?
+
+### Phase 2: Impact Assessment (15 seconds)
+
+**Consider the implications:**
+
+1. **What will be affected?**
+   - Which files need changes?
+   - What components or systems are impacted?
+   - Are there dependencies to consider?
+   - Could this break existing functionality?
+
+2. **What are the risks?**
+   - Could this introduce bugs?
+   - Are there edge cases to handle?
+   - Will this affect performance?
+   - Are there security considerations?
+
+3. **What are the alternatives?**
+   - Is there a better approach?
+   - Are there existing patterns to follow?
+   - What are the trade-offs?
+   - Should I suggest a different solution?
+
+### Phase 3: Solution Design (15 seconds)
+
+**Plan before executing:**
+
+1. **What is the best approach?**
+   - Break complex tasks into steps
+   - Identify the optimal solution path
+   - Consider maintainability and scalability
+   - Align with project patterns and standards
+
+2. **What order should I proceed?**
+   - What needs to happen first?
+   - What depends on what?
+   - Can tasks be parallelized?
+   - What can be tested incrementally?
+
+3. **How will I verify success?**
+   - What defines a successful outcome?
+   - How will I test this?
+   - What could go wrong?
+   - What's the rollback plan if needed?
+
+### Phase 4: Validation Check (10 seconds)
+
+**Before acting, verify:**
+
+- [ ] I understand the request completely
+- [ ] I have sufficient information to proceed
+- [ ] I've considered alternatives and edge cases
+- [ ] My approach aligns with project standards
+- [ ] I've identified all affected files/systems
+- [ ] I know how to verify the solution works
+- [ ] I've considered potential side effects
+- [ ] My solution is maintainable and clear
+
+## Application Examples
+
+### Example 1: User Requests New Feature
+
+**User**: "Add a dark mode toggle to the header"
+
+**Deep Thinking Process**:
+```
+1. ANALYZE:
+   - Core request: Add theme toggle functionality
+   - Context: Header component, theme system
+   - Need to check: Current theme implementation, header structure
+
+2. ASSESS IMPACT:
+   - Files affected: components/Header.tsx, contexts/ThemeContext.tsx
+   - Systems involved: Theme context, CSS variables
+   - Risks: Could affect all pages if theme system breaks
+
+3. DESIGN SOLUTION:
+   - Check if ThemeContext already exists ✓
+   - Add toggle button to header
+   - Connect to theme state
+   - Add ripple animation effect
+   - Test on all pages
+
+4. VALIDATE:
+   - Understand request ✓
+   - Have theme context ✓
+   - Following design system ✓
+   - Know verification steps ✓
+```
+
+**Result**: Proceed with implementation confidently
+
+### Example 2: Error Message Appears
+
+**Error**: "Cannot read property 'map' of undefined"
+
+**Deep Thinking Process**:
+```
+1. ANALYZE:
+   - Core issue: Trying to map over undefined/null
+   - Need to identify: Where in code, what data structure
+   - Missing: Which component, what data source
+
+2. ASSESS IMPACT:
+   - Could be multiple places using .map()
+   - Need to search codebase
+   - May indicate data fetching issue
+   - Could affect user experience
+
+3. DESIGN SOLUTION:
+   - Search for .map() usage in relevant files
+   - Add null checks before mapping
+   - Consider loading states
+   - Add error boundaries if needed
+
+4. VALIDATE:
+   - Need more information - search first ✓
+   - Consider multiple solutions ✓
+   - Think about prevention ✓
+```
+
+**Result**: Search codebase before making changes
+
+### Example 3: Complex Multi-Step Task
+
+**User**: "Redesign the entire pricing page"
+
+**Deep Thinking Process**:
+```
+1. ANALYZE:
+   - Core request: Major redesign of Page 7
+   - Scope: Layout, pricing cards, CTA buttons, animations
+   - Ambiguity: What specifically needs changing?
+
+2. ASSESS IMPACT:
+   - Major file: components/pages/Page7.tsx
+   - Related: Design system, theme, translations
+   - Risk: Breaking existing functionality
+   - Testing: Need comprehensive verification
+
+3. DESIGN SOLUTION:
+   - Break into steps:
+     1. Review current implementation
+     2. Identify pain points
+     3. Design new layout
+     4. Implement incrementally
+     5. Test each component
+     6. Verify responsive behavior
+   - Create TODO list for tracking
+
+4. VALIDATE:
+   - Large task - need systematic approach ✓
+   - Should use TODO list ✓
+   - Need to test thoroughly ✓
+   - Consider asking for clarification ✓
+```
+
+**Result**: Create TODO list, possibly ask for clarification, proceed systematically
+
+## Integration with Workflow
+
+### When Reading Files
+
+**Before**: Quickly read file and start coding
+**After Deep Thinking**: 
+- Why am I reading this file?
+- What am I looking for?
+- How does it fit into the bigger picture?
+- Should I read related files?
+
+### When Writing Code
+
+**Before**: Implement first solution that comes to mind
+**After Deep Thinking**:
+- Is this the best approach?
+- Does it follow project patterns?
+- Have I considered edge cases?
+- Will this be maintainable?
+
+### When Testing
+
+**Before**: Basic happy path testing
+**After Deep Thinking**:
+- What could go wrong?
+- What edge cases exist?
+- Have I tested all states?
+- Does it work across all viewports/themes?
+
+## Quality Indicators
+
+You're engaging in proper deep thinking when:
+
+✅ **You pause before acting** - Not rushing to execute
+✅ **You ask clarifying questions** - When something is ambiguous
+✅ **You consider alternatives** - Not just the first solution
+✅ **You think about edge cases** - Beyond happy path
+✅ **You reference project patterns** - Consistency with existing code
+✅ **You verify understanding** - Before proceeding
+✅ **You break down complexity** - Systematic approach
+✅ **You anticipate issues** - Proactive problem prevention
+
+## Red Flags (Signs You're Not Thinking Deeply Enough)
+
+❌ **Immediately executing** without understanding
+❌ **Making assumptions** without verification
+❌ **Ignoring context** provided in rules/memories
+❌ **Skipping file reading** when information is needed
+❌ **Missing edge cases** that should be obvious
+❌ **Creating inconsistencies** with existing patterns
+❌ **Not breaking down** complex tasks
+❌ **Forgetting to test** or verify changes
+
+## Special Cases Requiring Extra Deep Thinking
+
+### High-Impact Changes
+- Modifying core functionality
+- Changing shared components
+- Altering state management
+- Database schema changes
+- API contract modifications
+
+### Integration Points
+- Connecting multiple systems
+- Third-party integrations
+- Cross-component interactions
+- Theme/language switching logic
+
+### User-Facing Changes
+- UI/UX modifications
+- Navigation changes
+- Form submissions
+- Error handling
+- Loading states
+
+### Performance-Critical Code
+- Animation implementations
+- Large data processing
+- Image/asset optimization
+- Bundle size impacts
+
+## Continuous Improvement
+
+After completing a task, reflect:
+
+1. **Did I think deeply enough?**
+   - Could I have anticipated issues better?
+   - Did I miss any edge cases?
+   - Was my solution optimal?
+
+2. **What did I learn?**
+   - New patterns discovered?
+   - Better approaches identified?
+   - Mistakes to avoid next time?
+
+3. **How can I improve?**
+   - What questions should I have asked?
+   - What information should I have gathered?
+   - How could I have been more thorough?
+
+## Emergency Bypass
+
+There are rare cases where deep thinking should be minimal:
+
+- **Simple, well-defined tasks**: "Fix typo in line 42"
+- **Exact reproductions**: "Copy this exact code here"
+- **Trivial changes**: "Change color from blue to red"
+- **User explicitly requests speed**: "Quick fix, don't overthink"
+
+Even then, do a 5-second sanity check before acting.
+
+## Summary: The Deep Thinking Mantra
+
+**Before every action, remember:**
+
+> **PAUSE → ANALYZE → ASSESS → DESIGN → VALIDATE → ACT**
+
+> "Measure twice, cut once" - applies to code too!
+
+> "Fast, wrong implementation wastes more time than slow, correct one"
+
+## Integration with Other Rules
+
+This deep thinking protocol enhances all other rules:
+
+- **Project Structure**: Think about where changes fit
+- **Coding Standards**: Think about consistency
+- **Design System**: Think about visual consistency
+- **Testing Rules**: Think about verification strategy
+- **Bun Runtime**: Think about command correctness
+
+Deep thinking is the meta-rule that makes all other rules more effective.
+
+---
+
+**Remember**: Taking 60 seconds to think deeply can save hours of debugging and refactoring. Quality over speed. Thoroughness over haste.

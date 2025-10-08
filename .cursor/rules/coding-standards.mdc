@@ -1,0 +1,196 @@
+---
+globs: *.ts,*.tsx
+---
+
+# TypeScript & React Coding Standards
+
+## TypeScript Best Practices
+
+### Type Safety
+- **Always use explicit types** for function parameters and return values
+- **Avoid `any` type** - use `unknown` if type is truly unknown
+- **Use interfaces** for object shapes, especially for props
+- **Enable strict mode** - already configured in [tsconfig.json](mdc:tsconfig.json)
+
+### React Component Patterns
+
+#### Functional Components
+```typescript
+interface MyComponentProps {
+  title: string;
+  onAction?: () => void;
+}
+
+export default function MyComponent({ title, onAction }: MyComponentProps) {
+  // Component logic
+}
+```
+
+#### Hooks Usage
+- Use `useState` for local state
+- Use `useContext` for theme/language from [contexts/ThemeContext.tsx](mdc:contexts/ThemeContext.tsx)
+- Use `useEffect` with proper dependency arrays
+- Custom hooks should start with `use` prefix
+
+## Styling Guidelines
+
+### Tailwind CSS
+- **Use Tailwind utility classes** for styling (see [tailwind.config.ts](mdc:tailwind.config.ts))
+- **Responsive modifiers**: `sm:`, `md:`, `lg:`, `xl:`
+- **Theme-aware classes**: Use `dark:` prefix for dark mode styles
+- **Custom animations**: Defined in tailwind config, use like `animate-glitch`
+
+### CSS Variables
+- Theme colors are defined in [app/globals.css](mdc:app/globals.css)
+- Access via `bg-primary`, `text-secondary`, etc.
+- Dark mode automatically switches CSS variables
+
+## Animation Standards
+
+### Framer Motion
+- Import from: `import { motion } from 'framer-motion'`
+- Use `motion.div`, `motion.span`, etc. for animated elements
+- Define variants for complex animations
+- Use `initial`, `animate`, `exit` props
+- Add `transition` with proper duration and easing
+
+### Performance
+- **GPU-accelerated properties**: Use `transform`, `opacity`, `filter`
+- **Avoid layout animations**: Don't animate `width`, `height`, `top`, `left`
+- **Use `will-change`** sparingly for complex animations
+- **Reduce motion support**: Check `prefers-reduced-motion` in animations
+
+## Component Structure
+
+### File Organization
+```typescript
+// 1. Imports
+import React, { useState, useContext } from 'react';
+import { motion } from 'framer-motion';
+import { ThemeContext } from '@/contexts/ThemeContext';
+
+// 2. Type definitions
+interface ComponentProps {
+  // props
+}
+
+// 3. Component definition
+export default function ComponentName({ ...props }: ComponentProps) {
+  // 4. Context/hooks
+  const { theme, language } = useContext(ThemeContext);
+  
+  // 5. State
+  const [state, setState] = useState();
+  
+  // 6. Effects
+  useEffect(() => {
+    // effect logic
+  }, [dependencies]);
+  
+  // 7. Event handlers
+  const handleAction = () => {
+    // handler logic
+  };
+  
+  // 8. Render
+  return (
+    <motion.div>
+      {/* JSX */}
+    </motion.div>
+  );
+}
+```
+
+## Navigation & Page Structure
+
+### Page Components
+- Each page in [components/pages/](mdc:components/pages/) should:
+  - Accept `isActive` prop to trigger animations
+  - Use full screen height: `h-screen`
+  - Include proper spacing from header/footer
+  - Have unique animation per page
+  - Support both light and dark themes
+
+### Navigation Logic
+- Pages 1-6: Controlled navigation via scroll/swipe (in [app/page.tsx](mdc:app/page.tsx))
+- Page 7: Normal scrolling within page
+- Use `currentPage` state and `setCurrentPage` function
+
+## Responsive Design
+
+### Breakpoints
+- **Mobile**: `< 768px` (default, mobile-first)
+- **Tablet**: `768px - 1024px` (use `md:` prefix)
+- **Desktop**: `> 1024px` (use `lg:` prefix)
+
+### Spacing Rules
+- **Header**: 80px desktop, 64px mobile
+- **Footer**: 60px desktop, hidden on mobile
+- **Margins**: 80-100px from header/footer
+- **Element spacing**: Minimum 24px between elements
+- **Horizontal margins**: Proper spacing on all screen sizes
+
+## Language & Theme Support
+
+### Using Translations
+```typescript
+import { translations } from '@/lib/translations';
+const { language } = useContext(ThemeContext);
+const t = translations[language];
+
+// Use: t.common.login, t.pages.page1.title, etc.
+```
+
+### Theme-Aware Styling
+```typescript
+// In Tailwind
+<div className="bg-white dark:bg-gray-900 text-black dark:text-white">
+
+// In components
+const { theme } = useContext(ThemeContext);
+{theme === 'dark' ? <DarkIcon /> : <LightIcon />}
+```
+
+## Common Patterns
+
+### Glass Morphism
+Use [components/GlassCard.tsx](mdc:components/GlassCard.tsx) for glass effect:
+```typescript
+<GlassCard className="p-6">
+  {/* Content */}
+</GlassCard>
+```
+
+### Page Transitions
+```typescript
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: -20 }}
+  transition={{ duration: 0.5 }}
+>
+  {/* Content */}
+</motion.div>
+```
+
+## Accessibility
+
+- **Semantic HTML**: Use proper elements (`<button>`, `<nav>`, `<header>`, etc.)
+- **ARIA labels**: Add to interactive elements
+- **Keyboard navigation**: Support Tab, Enter, Escape
+- **Focus indicators**: Visible focus states
+- **Reduced motion**: Respect `prefers-reduced-motion`
+
+## Performance Optimization
+
+- **Lazy loading**: Use dynamic imports for heavy components
+- **Image optimization**: Use Next.js `<Image>` component
+- **Memoization**: Use `React.memo`, `useMemo`, `useCallback` for expensive operations
+- **Avoid re-renders**: Proper dependency arrays in hooks
+
+## Error Handling
+
+- **Graceful degradation**: Components should handle missing data
+- **Error boundaries**: For catching and displaying errors
+- **Loading states**: Show loading indicators for async operations
+- **Fallbacks**: Provide fallback content when data fails to load

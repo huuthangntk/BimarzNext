@@ -1,0 +1,84 @@
+---
+alwaysApply: true
+---
+
+# Bimarz VPN Landing Page - Project Structure & Overview
+
+## Project Context
+This is a **Next.js 14** landing page featuring a **Typography Emotion Journey** across 7 pages. The project tells a story from fear and surveillance to freedom and joy, perfect for the Bimarz VPN service.
+
+## Key Files & Architecture
+
+### Main Entry Points
+- [app/page.tsx](mdc:app/page.tsx) - Main page with navigation logic and page switching
+- [app/layout.tsx](mdc:app/layout.tsx) - Root layout with ThemeProvider
+- [app/globals.css](mdc:app/globals.css) - Global styles, CSS variables, and theme system
+
+### Component Structure
+- **Individual Pages**: [components/pages/](mdc:components/pages/) contains Page1-Page7, each with unique animations
+- **Layout Components**: 
+  - [components/Header.tsx](mdc:components/Header.tsx) - Header with logo, navigation, language switcher, theme toggle
+  - [components/Footer.tsx](mdc:components/Footer.tsx) - Footer with links and social icons
+  - [components/PageIndicator.tsx](mdc:components/PageIndicator.tsx) - Vertical page indicator (right side)
+  - [components/ScrollIndicator.tsx](mdc:components/ScrollIndicator.tsx) - Animated scroll hint
+- **Reusable Components**: 
+  - [components/GlassCard.tsx](mdc:components/GlassCard.tsx) - Glass morphism component
+  - [components/ThemeRipple.tsx](mdc:components/ThemeRipple.tsx) - Theme transition effect
+
+### State Management
+- [contexts/ThemeContext.tsx](mdc:contexts/ThemeContext.tsx) - Theme and language state management
+- [lib/translations.ts](mdc:lib/translations.ts) - Multi-language support (6 languages)
+
+### Configuration Files
+- [package.json](mdc:package.json) - Dependencies: Next.js 14, React 18, Framer Motion, TypeScript
+- [tailwind.config.ts](mdc:tailwind.config.ts) - Tailwind configuration with custom animations
+- [tsconfig.json](mdc:tsconfig.json) - TypeScript strict mode configuration
+
+## The 7-Page Journey
+
+1. **Page1 (EXPOSED)** - Fear & Danger with red glitch effects
+2. **Page2 (YOU)** - Surveillance with circular scanning animation
+3. **Page3 (BLOCKED)** - Frustration with censor bars
+4. **Page4 (?)** - Hope with emerging warm light
+5. **Page5 (VPN SOLUTION)** - Confidence with aurora waves
+6. **Page6 (OPEN SOURCE)** - Trust with glass cathedral and VPN icons
+7. **Page7 (FREE!)** - Joy & Freedom with celebration and pricing
+
+## Key Features
+
+- **Navigation**: Pages 1-6 use scroll/swipe to switch pages; Page 7 has normal scrolling
+- **Themes**: Light/Dark modes with ripple transition effect
+- **Languages**: English, Farsi, Chinese, Russian, Ukrainian, Hindi
+- **Responsive**: Mobile-first design with proper spacing
+- **Animations**: Unique animation per page using Framer Motion
+
+## Design Principles
+
+- **Spacing**: 80-100px margins from header/footer, 24px minimum between elements
+- **No Overlaps**: Content never overlaps at any screen size
+- **Professional Colors**: No ugly or overly saturated colors
+- **Typography**: Lalezar font with responsive scaling
+- **Performance**: GPU-accelerated animations, 60fps smooth
+
+## Assets Location
+
+All static assets are in [public/](mdc:public/) folder:
+- Logo files: `logo-32.png`, `logo-64.png`, `logo-128.png`, `logo-256.png`
+- VPN client icons: `v2rayng.svg`, `hiddify.svg`, `Sing-box.svg`, etc.
+- Fonts: `Lalezar.otf`, `Iranian Sans.ttf`
+
+## Development Commands
+
+```bash
+npm run dev    # Start development server on port 3000
+npm run build  # Build for production
+npm run start  # Start production server
+npm run lint   # Run ESLint
+```
+
+## Related Documentation
+
+- [README.md](mdc:README.md) - Project overview and features
+- [PROJECT_SUMMARY.md](mdc:PROJECT_SUMMARY.md) - Complete project summary
+- [IMPLEMENTATION_NOTES.md](mdc:IMPLEMENTATION_NOTES.md) - Technical details
+- [theme.json](mdc:theme.json) - Design system specifications

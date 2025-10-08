@@ -1,0 +1,408 @@
+---
+description: Design system specifications, colors, spacing, and visual standards
+---
+
+# Design System & Visual Standards
+
+## Color Palette
+
+### Theme Colors (from [app/globals.css](mdc:app/globals.css))
+
+#### Light Theme
+```css
+--color-primary: #2563EB    /* Blue - primary actions */
+--color-secondary: #7C3AED  /* Purple - secondary actions */
+--color-accent: #F59E0B     /* Amber - highlights */
+--color-danger: #EF4444     /* Red - warnings/errors */
+--color-success: #10B981    /* Green - success states */
+```
+
+#### Dark Theme
+```css
+--color-primary: #3B82F6    /* Brighter blue */
+--color-secondary: #8B5CF6  /* Brighter purple */
+--color-accent: #FBBF24     /* Brighter amber */
+--color-danger: #F87171     /* Brighter red */
+--color-success: #34D399    /* Brighter green */
+```
+
+### Page-Specific Accent Colors
+
+- **Page 1 (Exposed)**: Red tones (#EF4444) - danger, urgency
+- **Page 2 (Tracked)**: Purple/cyan tones - surveillance
+- **Page 3 (Blocked)**: Dark grays - restriction
+- **Page 4 (Hope)**: Golden/amber tones (#F59E0B) - warmth
+- **Page 5 (Solution)**: Blue/cyan tones (#2563EB) - confidence
+- **Page 6 (Open Source)**: Rainbow prisms - transparency
+- **Page 7 (Freedom)**: Vibrant multi-color - celebration
+
+### Background Colors
+
+```css
+/* Light Mode */
+background: #FFFFFF
+surface: #F9FAFB
+card: rgba(255, 255, 255, 0.8)  /* with backdrop blur */
+
+/* Dark Mode */
+background: #111827
+surface: #1F2937
+card: rgba(31, 41, 55, 0.8)  /* with backdrop blur */
+```
+
+## Typography
+
+### Font Family
+- **Primary Font**: Lalezar (from [public/Lalezar.otf](mdc:public/Lalezar.otf))
+- **Fallback**: Iranian Sans, system sans-serif
+
+### Font Sizes (Responsive)
+
+```css
+/* Hero Text (Main page titles) */
+Desktop (1024px+):  96px (6rem)
+Tablet (768px):     72px (4.5rem)
+Mobile (<768px):    48px (3rem)
+
+/* Section Headings */
+Desktop: 48px (3rem)
+Tablet:  36px (2.25rem)
+Mobile:  24px (1.5rem)
+
+/* Body Text */
+Desktop: 18px (1.125rem)
+Tablet:  16px (1rem)
+Mobile:  14px (0.875rem)
+
+/* Small Text */
+All sizes: 14px (0.875rem)
+```
+
+### Font Weights
+- **Regular**: 400 (body text)
+- **Medium**: 500 (subheadings)
+- **Bold**: 700 (headings, emphasis)
+
+### Line Heights
+- **Headings**: 1.2 (tight)
+- **Body**: 1.6 (comfortable reading)
+- **Buttons**: 1.0 (compact)
+
+## Spacing System
+
+### Base Unit: 4px
+
+```
+Spacing Scale:
+1 = 4px    (0.25rem)  - xs
+2 = 8px    (0.5rem)   - sm
+3 = 12px   (0.75rem)  - 
+4 = 16px   (1rem)     - base
+6 = 24px   (1.5rem)   - md
+8 = 32px   (2rem)     - lg
+12 = 48px  (3rem)     - xl
+16 = 64px  (4rem)     - 2xl
+20 = 80px  (5rem)     - 3xl
+24 = 96px  (6rem)     - 4xl
+```
+
+### Layout Spacing Rules
+
+```css
+/* Vertical Spacing from Header/Footer */
+Top margin from header:    80-100px (lg:20-24)
+Bottom margin from footer: 80-100px (lg:20-24)
+
+/* Between Major Sections */
+Desktop: 64px (16)
+Tablet:  48px (12)
+Mobile:  32px (8)
+
+/* Between Elements (Minimum) */
+All sizes: 24px (6)  /* NEVER less than this */
+
+/* Horizontal Margins */
+Desktop: 48px (12) or more
+Tablet:  32px (8)
+Mobile:  16px (4)
+```
+
+### Component Spacing
+
+```css
+/* Cards/Panels */
+Padding: 24-32px (6-8)
+Gap between cards: 24px (6)
+
+/* Buttons */
+Padding: 12px 24px (3 6)  - medium
+Padding: 8px 16px (2 4)   - small
+Gap between buttons: 16px (4)
+
+/* Form Fields */
+Padding: 12px 16px (3 4)
+Gap between fields: 16px (4)
+```
+
+## Layout Dimensions
+
+### Header
+- **Desktop height**: 80px
+- **Mobile height**: 64px
+- **Position**: Fixed top
+- **Z-index**: 50
+
+### Footer
+- **Desktop height**: 60px
+- **Mobile**: Hidden
+- **Position**: Fixed bottom
+- **Z-index**: 40
+
+### Page Indicator
+- **Width**: 24px
+- **Position**: Fixed right, 50% translateY
+- **Z-index**: 30
+
+### Content Area
+- **Full height**: 100vh (per page)
+- **Safe area**: Accounting for header/footer
+
+## Effects & Animations
+
+### Glass Morphism ([components/GlassCard.tsx](mdc:components/GlassCard.tsx))
+
+```css
+background: rgba(255, 255, 255, 0.1)  /* dark mode */
+background: rgba(255, 255, 255, 0.8)  /* light mode */
+backdrop-filter: blur(12px)
+border: 1px solid rgba(255, 255, 255, 0.2)
+border-radius: 16px
+```
+
+### Shadow System
+
+```css
+/* Small Shadow (cards) */
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+
+/* Medium Shadow (elevated elements) */
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15)
+
+/* Large Shadow (modals, popovers) */
+box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2)
+
+/* Dark Mode: Reduce shadow opacity by 50% */
+```
+
+### Border Radius
+
+```css
+/* Buttons, small elements */
+border-radius: 8px
+
+/* Cards, panels */
+border-radius: 16px
+
+/* Large containers */
+border-radius: 24px
+
+/* Pills (badges, tags) */
+border-radius: 9999px
+```
+
+### Transitions
+
+```css
+/* Standard transition */
+transition: all 0.3s ease
+
+/* Theme transition */
+transition: background-color 0.5s ease, color 0.5s ease
+
+/* Page transition */
+transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)
+
+/* Hover effects */
+transition: transform 0.2s ease, box-shadow 0.2s ease
+```
+
+## Animation Guidelines
+
+### Duration Standards
+
+```css
+/* Quick interactions (hover, focus) */
+duration: 200ms
+
+/* Standard animations (fade, slide) */
+duration: 300-500ms
+
+/* Page transitions */
+duration: 800ms
+
+/* Complex animations (background effects) */
+duration: 2-5s (loop)
+```
+
+### Easing Functions
+
+```css
+/* Ease Out (default) - natural deceleration */
+cubic-bezier(0.0, 0.0, 0.2, 1)
+
+/* Ease In Out - smooth both ends */
+cubic-bezier(0.4, 0.0, 0.2, 1)
+
+/* Spring - bouncy effect */
+cubic-bezier(0.68, -0.55, 0.265, 1.55)
+```
+
+### Animation Performance
+
+- ✅ **Animate**: transform, opacity, filter
+- ❌ **Avoid**: width, height, top, left, margin
+- Use `will-change` for complex animations
+- Respect `prefers-reduced-motion`
+
+## Responsive Breakpoints
+
+```css
+/* Mobile First Approach */
+/* Default: < 768px (mobile) */
+
+/* Tablet */
+@media (min-width: 768px)  { /* md: prefix */ }
+
+/* Desktop */
+@media (min-width: 1024px) { /* lg: prefix */ }
+
+/* Large Desktop */
+@media (min-width: 1280px) { /* xl: prefix */ }
+
+/* Extra Large */
+@media (min-width: 1536px) { /* 2xl: prefix */ }
+```
+
+## Component Standards
+
+### Buttons
+
+```tsx
+/* Primary Button */
+<button className="
+  px-6 py-3 
+  bg-primary text-white 
+  rounded-lg 
+  font-medium 
+  transition-all duration-200 
+  hover:scale-105 hover:shadow-lg
+  active:scale-95
+">
+  Button Text
+</button>
+
+/* Secondary Button */
+<button className="
+  px-6 py-3 
+  bg-transparent text-primary 
+  border-2 border-primary 
+  rounded-lg 
+  font-medium 
+  transition-all duration-200 
+  hover:bg-primary hover:text-white
+">
+  Button Text
+</button>
+```
+
+### Cards
+
+```tsx
+<GlassCard className="p-6 md:p-8">
+  {/* Card content */}
+</GlassCard>
+```
+
+### Page Layout
+
+```tsx
+<motion.div className="
+  relative 
+  h-screen 
+  flex items-center justify-center 
+  pt-20 pb-16 lg:pt-24 lg:pb-20
+  px-4 md:px-8 lg:px-12
+">
+  {/* Page content */}
+</motion.div>
+```
+
+## Accessibility Standards
+
+### Color Contrast
+- **Normal text**: 4.5:1 minimum
+- **Large text**: 3:1 minimum
+- **Interactive elements**: 3:1 minimum
+
+### Focus States
+```css
+focus:outline-none 
+focus:ring-2 
+focus:ring-primary 
+focus:ring-offset-2
+```
+
+### Interactive Elements
+- **Minimum tap target**: 44x44px (mobile)
+- **Minimum button padding**: 12px vertical, 24px horizontal
+- **Clear hover states**: scale or color change
+- **Clear active states**: scale down or shadow change
+
+## Icon System
+
+### Icon Sizes
+```css
+xs: 16px (1rem)
+sm: 20px (1.25rem)
+md: 24px (1.5rem)
+lg: 32px (2rem)
+xl: 48px (3rem)
+```
+
+### Icon Usage
+- **Navigation**: 24px
+- **Social media**: 20px
+- **Decorative**: 48px+
+- **VPN Clients** (Page 6): 80px desktop, 60px mobile
+
+## Logo Standards
+
+- **Header logo**: 64px height (desktop), 48px (mobile)
+- **Source**: [public/logo-64.png](mdc:public/logo-64.png)
+- **Padding**: 16px around logo
+- **Always visible**: On all pages
+
+## Theme Toggle
+
+- **Size**: 40px circle
+- **Icons**: Sun (light mode), Moon (dark mode)
+- **Animation**: Ripple effect on click ([components/ThemeRipple.tsx](mdc:components/ThemeRipple.tsx))
+- **Transition**: 500ms smooth color change
+
+## Design Principles Summary
+
+1. **Consistency**: Use design tokens from this system
+2. **Hierarchy**: Clear visual hierarchy with size, weight, color
+3. **Spacing**: Never overlap, always maintain minimum spacing
+4. **Performance**: GPU-accelerated animations only
+5. **Accessibility**: WCAG 2.1 AA compliance
+6. **Responsiveness**: Mobile-first, test all breakpoints
+7. **Theming**: Support both light and dark modes
+8. **Motion**: Meaningful animations, respect reduced motion
+
+## Reference Files
+
+- Design specs: [theme.json](mdc:theme.json)
+- Global styles: [app/globals.css](mdc:app/globals.css)
+- Tailwind config: [tailwind.config.ts](mdc:tailwind.config.ts)
+- Components: [components/](mdc:components/)

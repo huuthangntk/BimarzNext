@@ -1,0 +1,332 @@
+---
+description: Visual testing and quality assurance using browser automation on localhost:3000
+---
+
+# Browser Testing & Visual QA Protocol
+
+## Overview
+
+This rule defines the comprehensive testing protocol for the Bimarz VPN Landing Page using browser automation tools. The application runs on **localhost:3000** and must be thoroughly tested for visual bugs, functionality, and responsiveness.
+
+## Prerequisites
+
+Before testing, ensure:
+1. Development server is running: `npm run dev`
+2. Application is accessible at `http://localhost:3000`
+3. Browser automation tools are available
+
+## Testing Workflow
+
+### Phase 1: Initial Navigation & Screenshot
+
+1. **Navigate to the application**:
+   - URL: `http://localhost:3000`
+   - Wait for page to fully load
+
+2. **Take full-page screenshot**:
+   - Capture the initial state (Page 1)
+   - Save as `page1-initial.png`
+
+3. **Capture accessibility snapshot**:
+   - Get page structure and interactive elements
+   - Analyze DOM hierarchy
+
+### Phase 2: Comprehensive Page Testing
+
+Test each of the 7 pages systematically:
+
+#### For Pages 1-6 (Scroll-based Navigation)
+
+1. **Navigate to each page**:
+   - Use scroll or click page indicator dots
+   - Wait for animation completion (~800ms)
+
+2. **Capture page state**:
+   - Take screenshot of each page
+   - Capture accessibility snapshot
+   - Verify interactive elements
+
+3. **Test page-specific features**:
+   - **Page 1**: Verify glitch animation is running
+   - **Page 2**: Verify circular scanning animation (not square!)
+   - **Page 3**: Verify censor bar animations
+   - **Page 4**: Verify warm light emergence effect
+   - **Page 5**: Verify aurora wave animation
+   - **Page 6**: Verify glass cathedral effect and VPN icons load
+   - **Page 7**: Verify celebration animation and pricing cards
+
+#### For Page 7 (Normal Scrolling)
+
+1. **Test scrolling behavior**:
+   - Verify normal scroll within page
+   - Test scroll back to Page 6 from top
+   - Verify pricing cards visibility
+
+2. **Test interactive elements**:
+   - Verify "Start Free Trial" button
+   - Verify "Get Started" buttons on pricing cards
+
+### Phase 3: Header & Navigation Testing
+
+1. **Test language switcher**:
+   - Click language dropdown
+   - Take screenshot of dropdown open
+   - Test switching to each language:
+     - English
+     - فارسی (Farsi)
+     - 中文 (Chinese)
+     - Русский (Russian)
+     - Українська (Ukrainian)
+     - हिन्दी (Hindi)
+   - Verify content updates correctly
+
+2. **Test theme toggle**:
+   - Click theme toggle button
+   - Verify ripple animation appears
+   - Wait for theme transition (~500ms)
+   - Take screenshot of dark mode
+   - Verify all colors updated correctly
+   - Toggle back to light mode
+
+3. **Test navigation links**:
+   - Click "Blog" link
+   - Click "FAQ" link
+   - Click "Privacy" link
+   - Click "About Us" link
+   - Verify behavior (currently placeholders)
+
+4. **Test mobile menu** (resize to mobile first):
+   - Resize to 375x667 (mobile)
+   - Click hamburger icon
+   - Verify menu opens
+   - Take screenshot
+   - Verify close button appears
+   - Click close button
+   - Verify menu closes
+
+### Phase 4: Responsive Testing
+
+Test three viewport sizes:
+
+1. **Mobile**: 375x667 (iPhone SE)
+   - Navigate through all pages
+   - Take screenshots
+   - Verify no overlapping content
+   - Verify proper spacing
+   - Test swipe gestures if possible
+
+2. **Tablet**: 768x1024 (iPad)
+   - Navigate through all pages
+   - Take screenshots
+   - Verify responsive layout
+   - Test touch interactions
+
+3. **Desktop**: 1920x1080
+   - Navigate through all pages
+   - Take screenshots
+   - Verify optimal desktop layout
+   - Test mouse scroll navigation
+
+### Phase 5: Visual Bug Detection
+
+Analyze all screenshots for:
+
+1. **Layout Issues**:
+   - Overlapping text or elements
+   - Content too close to edges
+   - Improper spacing (<24px between elements)
+   - Content overlapping header/footer
+
+2. **Alignment Issues**:
+   - Misaligned text or components
+   - Inconsistent padding/margins
+   - Off-center elements
+
+3. **Visual Glitches**:
+   - Broken animations
+   - Flickering elements
+   - Invisible text (contrast issues)
+   - Missing images or icons
+
+4. **Theme Issues**:
+   - Colors not updating in dark mode
+   - Low contrast text
+   - Broken glass morphism effects
+   - Invisible elements
+
+5. **Responsive Issues**:
+   - Horizontal scrollbars (bad!)
+   - Text overflow
+   - Images stretching or squishing
+   - Buttons too small to tap
+
+### Phase 6: Console & Network Analysis
+
+1. **Check console logs**:
+   - Look for JavaScript errors
+   - Look for warnings
+   - Look for failed requests
+
+2. **Check network requests**:
+   - Verify all assets load successfully
+   - Check for 404 errors
+   - Verify image optimization
+
+3. **Performance analysis**:
+   - Check page load time
+   - Verify animation smoothness (60fps)
+   - Check for layout shifts
+
+## Bug Detection Criteria
+
+### Critical Bugs (Must Fix)
+- Application doesn't load
+- JavaScript errors breaking functionality
+- Complete visual breakage
+- Navigation not working
+- Interactive elements not responding
+
+### High Priority Bugs
+- Animations not running
+- Theme toggle not working
+- Language switcher not working
+- Significant layout issues
+- Text overlapping or unreadable
+- Missing images/icons
+
+### Medium Priority Bugs
+- Minor spacing issues
+- Inconsistent animations
+- Minor alignment problems
+- Performance issues (slow animations)
+
+### Low Priority Bugs
+- Minor visual inconsistencies
+- Small spacing adjustments
+- Color tweaks needed
+- Animation timing adjustments
+
+## Bug Documentation Format
+
+For each bug found, document:
+
+```markdown
+### Bug #X: [Brief Description]
+
+**Severity**: Critical | High | Medium | Low
+**Location**: Page N / Component Name
+**Screenshot**: [filename.png]
+
+**Description**:
+[Detailed description of the issue]
+
+**Steps to Reproduce**:
+1. Step one
+2. Step two
+3. Step three
+
+**Expected Behavior**:
+[What should happen]
+
+**Actual Behavior**:
+[What actually happens]
+
+**Suggested Fix**:
+[Possible solution]
+```
+
+## Testing Checklist
+
+Use this checklist for complete QA:
+
+- [ ] Page 1 loads correctly
+- [ ] Page 2 loads with circular animation
+- [ ] Page 3 loads with censor bars
+- [ ] Page 4 loads with light effect
+- [ ] Page 5 loads with aurora animation
+- [ ] Page 6 loads with glass effect and icons
+- [ ] Page 7 loads with pricing cards
+- [ ] Scroll navigation works (pages 1-6)
+- [ ] Normal scroll works (page 7)
+- [ ] Page indicator clicks work
+- [ ] Language switcher works for all 6 languages
+- [ ] Theme toggle works with ripple effect
+- [ ] Mobile menu opens and closes
+- [ ] Responsive on mobile (375px)
+- [ ] Responsive on tablet (768px)
+- [ ] Responsive on desktop (1920px)
+- [ ] No console errors
+- [ ] All images load
+- [ ] All animations run smoothly
+- [ ] No overlapping content
+- [ ] Proper spacing everywhere
+- [ ] Dark mode works correctly
+- [ ] Light mode works correctly
+
+## Automated Testing Commands
+
+When asked to test the application, follow this sequence:
+
+```
+1. Navigate to http://localhost:3000
+2. Take initial screenshot
+3. Capture page snapshot
+4. Navigate through pages 1-7
+5. Take screenshot of each page
+6. Test theme toggle
+7. Test language switcher
+8. Resize to mobile and test
+9. Analyze all screenshots
+10. Document any bugs found
+11. Provide comprehensive report
+```
+
+## Proof of Testing
+
+After testing, provide:
+
+1. **Gallery of screenshots** showing all pages and states
+2. **Bug report** documenting all issues found
+3. **Console log summary** of any errors or warnings
+4. **Visual comparison** highlighting problematic areas
+5. **Recommendations** for fixes with specific file locations
+
+## Integration with Development
+
+After bug detection:
+
+1. **Prioritize bugs** by severity
+2. **Create fix plan** with specific file changes
+3. **Implement fixes** in relevant components
+4. **Re-test** to verify fixes
+5. **Document changes** made
+
+## Files to Check for Common Issues
+
+- **Layout issues**: Check [app/page.tsx](mdc:app/page.tsx), [app/globals.css](mdc:app/globals.css)
+- **Animation issues**: Check individual page components in [components/pages/](mdc:components/pages/)
+- **Theme issues**: Check [contexts/ThemeContext.tsx](mdc:contexts/ThemeContext.tsx), [app/globals.css](mdc:app/globals.css)
+- **Header issues**: Check [components/Header.tsx](mdc:components/Header.tsx)
+- **Responsive issues**: Check Tailwind classes in components, [tailwind.config.ts](mdc:tailwind.config.ts)
+
+## Continuous Testing
+
+This testing protocol should be executed:
+- After any significant code change
+- Before committing to version control
+- Before deploying to production
+- When implementing new features
+- When fixing reported bugs
+
+## Success Criteria
+
+Testing is complete when:
+- ✅ All 7 pages load and animate correctly
+- ✅ No console errors or warnings
+- ✅ All interactive features work
+- ✅ Responsive on all tested viewport sizes
+- ✅ Both themes work perfectly
+- ✅ All 6 languages work correctly
+- ✅ No visual bugs or overlapping content
+- ✅ Animations run smoothly at 60fps
+- ✅ All assets load successfully
