@@ -324,7 +324,7 @@ const MockAppUI: React.FC<{
 
 const BlockedOverlay: React.FC<{ service: ServiceApp; language: string }> = ({ service, language }) => {
   const text = translations.page3.services[service.id as keyof typeof translations.page3.services]?.blocked?.[language as keyof typeof translations.page3.services.youtube.blocked] || 'BLOCKED';
-
+ 
   return (
     <motion.div
       initial={{ opacity: 0, scale: 1.1 }}
@@ -367,7 +367,7 @@ const BlockedOverlay: React.FC<{ service: ServiceApp; language: string }> = ({ s
 
 const RestrictedOverlay: React.FC<{ service: ServiceApp; language: string }> = ({ service, language }) => {
   const text = translations.page3.services[service.id as keyof typeof translations.page3.services]?.restricted?.[language as keyof typeof translations.page3.services.youtube.blocked] || 'RESTRICTED';
-
+ 
   return (
     <motion.div
       initial={{ opacity: 0, scale: 1.1 }}
@@ -431,7 +431,7 @@ const CensoredOverlay: React.FC<{ service: ServiceApp; language: string }> = ({ 
           />
         ))}
       </div>
-
+ 
       <Shield className="w-14 h-14 md:w-10 md:h-10 text-gray-400 relative z-10" strokeWidth={2} />
       <p className="text-gray-400 text-lg md:text-base font-bold tracking-wider relative z-10">{text}</p>
     </motion.div>
