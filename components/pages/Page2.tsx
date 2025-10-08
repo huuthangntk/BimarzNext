@@ -1,7 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useSpring, useMotionValue } from 'framer-motion';
+import React, { useEffect, useRef, useCallback, memo } from 'react';
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  useSpring,
+  useMotionTemplate,
+  useWillChange,
+  useReducedMotion,
+} from 'framer-motion';
 import { useTheme } from '@/contexts/ThemeContext';
 import { getTranslation, getTranslationArray } from '@/lib/translations';
 
@@ -18,68 +26,260 @@ interface Position {
 interface Entity {
   id: string;
   color: string;
-  targetIndex: number;
+  label: string;
 }
+
+// Memoized Scanlines Overlay Component
+const Scanlines = memo(({ isDark }: { isDark: boolean }) => (
+  <motion.div
+    className="absolute inset-0 pointer-events-none z-10"
+    style={{
+      backgroundImage: `repeating-linear-gradient(
+        0deg,
+        ${isDark ? 'rgba(99, 102, 241, 0.03)' : 'rgba(79, 70, 229, 0.03)'} 0px,
+        transparent 1px,
+        transparent 2px,
+        ${isDark ? 'rgba(99, 102, 241, 0.03)' : 'rgba(79, 70, 229, 0.03)'} 3px
+      )`,
+    }}
+    animate={{
+      backgroundPosition: ['0px 0px', '0px 4px'],
+    }}
+    transition={{
+      duration: 0.15,
+      repeat: Infinity,
+      ease: 'linear',
+    }}
+  />
+));
+
+Scanlines.displayName = 'Scanlines';
+
+// Memoized Tracking Reticle Component
+const TrackingReticle = memo(({ x, y, isDark }: { x: number; y: number; isDark: boolean }) => {
+  const reticleColor = isDark ? '#EF4444' : '#DC2626';
+
+  return (
+    <motion.div
+      className="absolute pointer-events-none z-20"
+      style={{
+        left: `${x}%`,
+        top: `${y}%`,
+        transform: 'translate(-50%, -50%)',
+      }}
+      animate={{
+        left: `${x}%`,
+        top: `${y}%`,
+      }}
+      transition={{
+        duration: 0.3,
+        ease: [0.4, 0, 0.2, 1],
+      }}
+    >
+      {/* Crosshair */}
+      <div className="relative w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48">
+        {/* Center dot */}
+        <motion.div
+          className="absolute left-1/2 top-1/2 w-2 h-2 rounded-full"
+          style={{
+            backgroundColor: reticleColor,
+            transform: 'translate(-50%, -50%)',
+          }}
+          animate={{
+            scale: [1, 1.5, 1],
+            opacity: [0.5, 1, 0.5],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+
+        {/* Corner brackets */}
+        {[
+          { rotation: 0, x: 0, y: 0 },
+          { rotation: 90, x: 100, y: 0 },
+          { rotation: 180, x: 100, y: 100 },
+          { rotation: 270, x: 0, y: 100 },
+        ].map((corner, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-6 h-6 md:w-8 md:h-8"
+            style={{
+              left: `${corner.x}%`,
+              top: `${corner.y}%`,
+              transform: `translate(-50%, -50%) rotate(${corner.rotation}deg)`,
+              borderTop: `2px solid ${reticleColor}`,
+              borderLeft: `2px solid ${reticleColor}`,
+            }}
+            animate={{
+              opacity: [0.3, 0.8, 0.3],
+            }}
+            transition={{
+              duration: 2,
+              delay: i * 0.2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+        ))}
+
+        {/* Scanning circle */}
+        <motion.div
+          className="absolute left-1/2 top-1/2 rounded-full"
+          style={{
+            width: '140%',
+            height: '140%',
+            border: `1px solid ${reticleColor}`,
+            transform: 'translate(-50%, -50%)',
+          }}
+          animate={{
+            scale: [0.8, 1.2, 0.8],
+            opacity: [0.8, 0.2, 0.8],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      </div>
+    </motion.div>
+  );
+});
+
+TrackingReticle.displayName = 'TrackingReticle';
+
+// Memoized Data Stream Component
+const DataStream = memo(({ isDark }: { isDark: boolean }) => {
+  const particles = Array.from({ length: 12 }, (_, i) => ({
+    id: i,
+    delay: i * 0.3,
+    x: Math.random() * 100,
+    duration: 3 + Math.random() * 2,
+  }));
+
+  return (
+    <div className="absolute inset-0 pointer-events-none z-5 overflow-hidden">
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute w-1 h-16 md:h-20 lg:h-24"
+          style={{
+            left: `${particle.x}%`,
+            background: isDark
+              ? 'linear-gradient(to bottom, transparent, rgba(99, 102, 241, 0.4), transparent)'
+              : 'linear-gradient(to bottom, transparent, rgba(79, 70, 229, 0.3), transparent)',
+          }}
+          animate={{
+            top: ['-10%', '110%'],
+            opacity: [0, 1, 1, 0],
+          }}
+          transition={{
+            duration: particle.duration,
+            delay: particle.delay,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+        />
+      ))}
+    </div>
+  );
+});
+
+DataStream.displayName = 'DataStream';
+
+// Memoized Warning Pulse Component
+const WarningPulse = memo(({ distance, isDark }: { distance: number; isDark: boolean }) => {
+  const dangerThreshold = 30; // Distance below which warning activates
+  const isDangerous = distance < dangerThreshold;
+  const intensity = isDangerous ? 1 - distance / dangerThreshold : 0;
+
+  if (!isDangerous) return null;
+
+  return (
+    <motion.div
+      className="absolute inset-0 pointer-events-none z-15"
+      style={{
+        background: isDark
+          ? `radial-gradient(circle at 50% 50%, rgba(239, 68, 68, ${intensity * 0.2}), transparent 60%)`
+          : `radial-gradient(circle at 50% 50%, rgba(220, 38, 38, ${intensity * 0.15}), transparent 60%)`,
+      }}
+      animate={{
+        opacity: [0.5, 1, 0.5],
+      }}
+      transition={{
+        duration: 0.8,
+        repeat: Infinity,
+        ease: 'easeInOut',
+      }}
+    />
+  );
+});
+
+WarningPulse.displayName = 'WarningPulse';
 
 export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) {
   const { theme, language } = useTheme();
-  const [mainTextPosition, setMainTextPosition] = useState<Position>({ x: 50, y: 45 });
-  const [followPosition, setFollowPosition] = useState<Position>({ x: 50, y: 45 });
-  const [isGlitching, setIsGlitching] = useState(false);
-  const [glitchOffset, setGlitchOffset] = useState({ x: 0, y: 0 });
-  const [staticRotation, setStaticRotation] = useState(0);
-  const [wiggleOffset, setWiggleOffset] = useState({ x: 0, y: 0 });
-  const [entityTargets, setEntityTargets] = useState<number[]>([0, 2, 4]);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isCenterRef = useRef(true); // Track if next position should be center
-  const isFirstRunRef = useRef(true); // Track if this is the first animation cycle
+  const shouldReduceMotion = useReducedMotion();
+  const willChange = useWillChange();
 
+  // Translations
   const heroText = getTranslation('page2.hero', language);
   const orbitalWords = getTranslationArray('page2.surveillance', language);
   const ctaButtonText = getTranslation('page2.ctaButton', language);
-  
-  // Get entity translations
   const policeText = getTranslation('page2.entities.police', language);
   const hackerText = getTranslation('page2.entities.hacker', language);
   const ispText = getTranslation('page2.entities.isp', language);
 
-  // Theme-aware colors
+  // Theme colors
   const isDark = theme === 'dark';
   const bgGradient = isDark
     ? 'bg-gradient-to-br from-indigo-950 via-slate-900 to-gray-900'
     : 'bg-gradient-to-br from-indigo-100 via-slate-200 to-gray-100';
-
   const heroTextColor = isDark ? '#F1F5F9' : '#1E293B';
-  const heroGlitchColor = isDark ? '#6366F1' : '#4F46E5';
   const gridColor = isDark ? 'rgba(99, 102, 241, 0.25)' : 'rgba(79, 70, 229, 0.2)';
   const wordColor = isDark ? 'text-indigo-300' : 'text-indigo-700';
-  
-  // Check if we're at center position
-  const isAtCenter = mainTextPosition.x === 50 && mainTextPosition.y === 45;
 
-  // Entity colors - unique for each
-  const entities: Entity[] = [
-    { id: 'police', color: isDark ? '#EF4444' : '#DC2626', targetIndex: 0 }, // Red
-    { id: 'hacker', color: isDark ? '#10B981' : '#059669', targetIndex: 1 }, // Green
-    { id: 'isp', color: isDark ? '#F59E0B' : '#D97706', targetIndex: 2 }, // Amber/Orange
-  ];
+  // Performance: Use MotionValues instead of useState
+  const mainTextX = useMotionValue(50);
+  const mainTextY = useMotionValue(45);
+  const followX = useSpring(mainTextX, { stiffness: 100, damping: 20 });
+  const followY = useSpring(mainTextY, { stiffness: 100, damping: 20 });
+  const glitchX = useMotionValue(0);
+  const glitchY = useMotionValue(0);
+  const rotation = useMotionValue(0);
+  const wiggleX = useMotionValue(0);
+  const wiggleY = useMotionValue(0);
 
-  const entityTexts = [policeText, hackerText, ispText];
+  // Refs for animation control
+  const isCenterRef = useRef(true);
+  const isFirstRunRef = useRef(true);
+  const isGlitchingRef = useRef(false);
+  const entityTargetIndices = useRef<number[]>([0, 2, 4]);
+  const minDistanceRef = useRef<number>(100);
+
+  // Performance: useMotionTemplate for dynamic gradient
+  const backgroundGradient = useMotionTemplate`radial-gradient(circle at ${followX}% ${followY}%, 
+    ${
+      isDark
+        ? 'rgba(255, 255, 255, 0.15) 0%, rgba(99, 102, 241, 0.8) 5%, rgba(99, 102, 241, 0.6) 10%, rgba(30, 27, 75, 0.85) 25%, rgba(15, 23, 42, 0.95) 45%, #0f172a 70%'
+        : 'rgba(255, 255, 255, 0.95) 0%, rgba(165, 180, 252, 0.9) 5%, rgba(165, 180, 252, 0.7) 10%, rgba(226, 232, 240, 0.8) 25%, rgba(203, 213, 225, 0.9) 45%, #cbd5e1 70%'
+    })`;
 
   // Generate next position - alternates between center and random
-  const generateNextPosition = (): Position => {
+  const generateNextPosition = useCallback((): Position => {
     isCenterRef.current = !isCenterRef.current;
-    
+
     if (isCenterRef.current) {
-      // Return to center
       return { x: 50, y: 45 };
     } else {
       // Generate random position avoiding CTA button
-      const attempts = 50;
-      for (let i = 0; i < attempts; i++) {
+      for (let i = 0; i < 50; i++) {
         const x = Math.random() * 60 + 20; // 20-80%
         const y = Math.random() * 50 + 20; // 20-70%
-        
+
         // Avoid CTA button area (center-bottom)
         const distanceFromCTA = Math.sqrt(Math.pow(x - 50, 2) + Math.pow(y - 75, 2));
         if (distanceFromCTA > 20) {
@@ -88,87 +288,86 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
       }
       return { x: 50, y: 35 };
     }
-  };
+  }, []);
 
-  // Optimized glitch effect - only runs when page is active
+  // Calculate orbital position
+  const calculateOrbitPosition = useCallback(
+    (angle: number, radius: number, centerX: number, centerY: number): Position => {
+      const radians = (angle * Math.PI) / 180;
+      return {
+        x: centerX + Math.cos(radians) * radius,
+        y: centerY + Math.sin(radians) * radius,
+      };
+    },
+    []
+  );
+
+  // Calculate minimum distance from entities to main text
+  const calculateMinDistance = useCallback(
+    (textX: number, textY: number, rot: number) => {
+      const entities = entityTargetIndices.current;
+      let minDist = 100;
+
+      entities.forEach((targetIndex) => {
+        const angle = ((targetIndex / orbitalWords.length) * 360 + rot) % 360;
+        const radius = 18;
+        const entityPos = calculateOrbitPosition(angle, radius, followX.get(), followY.get());
+        const dist = Math.sqrt(Math.pow(entityPos.x - textX, 2) + Math.pow(entityPos.y - textY, 2));
+        minDist = Math.min(minDist, dist);
+      });
+
+      return minDist;
+    },
+    [orbitalWords.length, followX, followY, calculateOrbitPosition]
+  );
+
+  // Consolidated animation loop using single rAF
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive || shouldReduceMotion) return;
 
+    let animationFrameId: number;
+    let lastTime = 0;
+    const fps = 30; // Optimized for mobile
+    const fpsInterval = 1000 / fps;
+
+    // Glitch interval
     const glitchInterval = setInterval(() => {
-      if (isGlitching) {
-        // Heavy glitch during transition
-        setGlitchOffset({
-          x: (Math.random() - 0.5) * 30,
-          y: (Math.random() - 0.5) * 30,
-        });
+      if (isGlitchingRef.current) {
+        glitchX.set((Math.random() - 0.5) * 30);
+        glitchY.set((Math.random() - 0.5) * 30);
       } else {
-        // Continuous subtle glitch at all positions
-        setGlitchOffset({
-          x: (Math.random() - 0.5) * 4,
-          y: (Math.random() - 0.5) * 4,
-        });
+        glitchX.set((Math.random() - 0.5) * 4);
+        glitchY.set((Math.random() - 0.5) * 4);
       }
-    }, 100); // Slightly reduced frequency
+    }, 100);
 
-    return () => clearInterval(glitchInterval);
-  }, [isGlitching, isActive]);
-
-  // Main animation cycle: hold -> glitch -> jump -> follow (only when active)
-  useEffect(() => {
-    if (!isActive) return;
-
+    // Main animation cycle
     const runCycle = () => {
-      // Determine hold duration based on current position
-      let holdDuration;
-      if (isFirstRunRef.current) {
-        holdDuration = 2000; // First run: 2 seconds
-        isFirstRunRef.current = false;
-      } else {
-        // Check current position to determine duration
-        const currentIsCenter = mainTextPosition.x === 50 && mainTextPosition.y === 45;
-        holdDuration = currentIsCenter ? 3500 : 2500; // Center: 3.5s, Random: 2.5s
-      }
-      
-      // Hold phase
+      const holdDuration = isFirstRunRef.current
+        ? 2000
+        : isCenterRef.current
+        ? 3500
+        : 2500;
+
+      isFirstRunRef.current = false;
+
       setTimeout(() => {
-        setIsGlitching(true);
-        
-        // Glitch phase (0.5 seconds)
+        isGlitchingRef.current = true;
+
         setTimeout(() => {
           const newPosition = generateNextPosition();
-          // Main text jumps instantly
-          setMainTextPosition(newPosition);
-          
-          // Names follow after very short delay (ultra fast)
+          mainTextX.set(newPosition.x);
+          mainTextY.set(newPosition.y);
+
           setTimeout(() => {
-            setFollowPosition(newPosition);
-            setIsGlitching(false);
-            
-            // Schedule next cycle recursively
+            isGlitchingRef.current = false;
             runCycle();
           }, 50);
         }, 500);
       }, holdDuration);
     };
 
-    // Start first cycle after 2 seconds
-    const firstTimeout = setTimeout(runCycle, 2000);
-
-    return () => {
-      clearTimeout(firstTimeout);
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [isActive]);
-
-  // Optimized rotation and wiggle using requestAnimationFrame (only when active)
-  useEffect(() => {
-    if (!isActive) return;
-
-    let animationFrameId: number;
-    let lastTime = 0;
-    const fps = 30; // Reduced from ~60fps to 30fps for better mobile performance
-    const fpsInterval = 1000 / fps;
-
+    // Continuous rotation and wiggle
     const animate = (time: number) => {
       if (time - lastTime < fpsInterval) {
         animationFrameId = requestAnimationFrame(animate);
@@ -177,80 +376,73 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
 
       lastTime = time;
 
-      // Update rotation and wiggle in single rAF
-      setStaticRotation((prev) => (prev + 0.5) % 360);
-      setWiggleOffset({
-        x: Math.sin(Date.now() / 500) * 3,
-        y: Math.cos(Date.now() / 700) * 3,
-      });
+      // Update rotation
+      rotation.set((rotation.get() + 0.5) % 360);
+
+      // Update wiggle
+      wiggleX.set(Math.sin(Date.now() / 500) * 3);
+      wiggleY.set(Math.cos(Date.now() / 700) * 3);
+
+      // Calculate and update minimum distance
+      const dist = calculateMinDistance(mainTextX.get(), mainTextY.get(), rotation.get());
+      minDistanceRef.current = dist;
 
       animationFrameId = requestAnimationFrame(animate);
     };
 
+    // Entity movement interval
+    const entityInterval = setInterval(() => {
+      entityTargetIndices.current = entityTargetIndices.current.map(
+        (target) => (target + 1) % orbitalWords.length
+      );
+    }, 1500);
+
+    // Start animations
+    runCycle();
     animationFrameId = requestAnimationFrame(animate);
 
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [isActive]);
-
-  // Calculate orbital positions around follow position (for smooth following)
-  const calculateOrbitPosition = (angle: number, radius: number, center: Position): Position => {
-    const radians = (angle * Math.PI) / 180;
-    return {
-      x: center.x + Math.cos(radians) * radius,
-      y: center.y + Math.sin(radians) * radius,
+    return () => {
+      clearInterval(glitchInterval);
+      clearInterval(entityInterval);
+      cancelAnimationFrame(animationFrameId);
     };
-  };
+  }, [
+    isActive,
+    shouldReduceMotion,
+    mainTextX,
+    mainTextY,
+    glitchX,
+    glitchY,
+    rotation,
+    wiggleX,
+    wiggleY,
+    orbitalWords.length,
+    generateNextPosition,
+    calculateMinDistance,
+  ]);
 
-  // Get static name positions (they rotate continuously)
-  const getStaticNamePosition = (index: number, totalNames: number): Position => {
-    const angle = ((index / totalNames) * 360 + staticRotation) % 360;
-    const radius = 18; // Percentage-based
-    return calculateOrbitPosition(angle, radius, followPosition);
-  };
-
-  // Entity movement - they move between static name positions (only when active)
-  useEffect(() => {
-    if (!isActive) return;
-
-    const entityInterval = setInterval(() => {
-      setEntityTargets((prev) => {
-        const totalNames = orbitalWords.length;
-        return prev.map((target) => (target + 1) % totalNames);
-      });
-    }, 1500); // Move to next position every 1.5 seconds
-
-    return () => clearInterval(entityInterval);
-  }, [orbitalWords.length, isActive]);
+  // Entities data
+  const entities: Entity[] = [
+    { id: 'police', color: isDark ? '#EF4444' : '#DC2626', label: policeText },
+    { id: 'hacker', color: isDark ? '#10B981' : '#059669', label: hackerText },
+    { id: 'isp', color: isDark ? '#F59E0B' : '#D97706', label: ispText },
+  ];
 
   return (
-    <motion.div 
+    <motion.div
       className={`relative w-full h-full overflow-hidden ${bgGradient}`}
       style={{
-        background: isDark
-          ? `radial-gradient(circle at ${followPosition.x}% ${followPosition.y}%, 
-              rgba(255, 255, 255, 0.15) 0%, 
-              rgba(99, 102, 241, 0.8) 5%,
-              rgba(99, 102, 241, 0.6) 10%,
-              rgba(30, 27, 75, 0.85) 25%,
-              rgba(15, 23, 42, 0.95) 45%,
-              #0f172a 70%)`
-          : `radial-gradient(circle at ${followPosition.x}% ${followPosition.y}%, 
-              rgba(255, 255, 255, 0.95) 0%, 
-              rgba(165, 180, 252, 0.9) 5%,
-              rgba(165, 180, 252, 0.7) 10%,
-              rgba(226, 232, 240, 0.8) 25%,
-              rgba(203, 213, 225, 0.9) 45%,
-              #cbd5e1 70%)`,
-        transition: 'background 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+        background: backgroundGradient,
+        willChange,
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Animated Grid Background */}
+      {/* Hexagonal Grid Pattern */}
       <motion.div
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-10"
         style={{
           backgroundImage: `
             linear-gradient(0deg, transparent 24%, ${gridColor} 25%, ${gridColor} 26%, transparent 27%, transparent 74%, ${gridColor} 75%, ${gridColor} 76%, transparent 77%, transparent),
@@ -268,79 +460,96 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
         }}
       />
 
+      {/* Data Stream Particles */}
+      {!shouldReduceMotion && <DataStream isDark={isDark} />}
+
+      {/* Scanlines Overlay */}
+      {!shouldReduceMotion && <Scanlines isDark={isDark} />}
+
+      {/* Warning Pulse (distance-based) */}
+      {!shouldReduceMotion && (
+        <WarningPulse distance={minDistanceRef.current} isDark={isDark} />
+      )}
+
       {/* Content Container */}
       <div className="relative z-10 w-full h-full px-5 lg:px-20">
-        {/* Main Hero Text "YOUR DATA" with Chaotic Glitch - INSTANT JUMP */}
-        <div
+        {/* Tracking Reticle */}
+        {!shouldReduceMotion && (
+          <TrackingReticle x={mainTextX.get()} y={mainTextY.get()} isDark={isDark} />
+        )}
+
+        {/* Main Hero Text with Glitch */}
+        <motion.div
           className="absolute"
-        style={{
-            left: `${mainTextPosition.x}%`,
-            top: `${mainTextPosition.y}%`,
+          style={{
+            left: useTransform(mainTextX, (v) => `${v}%`),
+            top: useTransform(mainTextY, (v) => `${v}%`),
             transform: 'translate(-50%, -50%)',
-            transition: 'none', // No transition - instant jump
           }}
         >
           <motion.h1
-            className="text-4xl md:text-6xl lg:text-7xl font-bold whitespace-nowrap"
+            className="text-4xl md:text-6xl lg:text-7xl font-bold whitespace-nowrap select-none"
             style={{
               color: heroTextColor,
-              textShadow: isDark
-                ? `
-                  ${glitchOffset.x}px ${glitchOffset.y}px 0 rgba(239, 68, 68, 0.8),
-                  ${-glitchOffset.x}px ${-glitchOffset.y}px 0 rgba(16, 185, 129, 0.8),
-                  0 0 15px rgba(255, 255, 255, 0.7),
-                  0 0 30px rgba(99, 102, 241, 0.8),
-                  0 0 50px rgba(99, 102, 241, 0.6),
-                  0 0 70px rgba(99, 102, 241, 0.4)
-                `
-                : `
-                  ${glitchOffset.x}px ${glitchOffset.y}px 0 rgba(220, 38, 38, 0.7),
-                  ${-glitchOffset.x}px ${-glitchOffset.y}px 0 rgba(5, 150, 105, 0.7),
-                  0 0 12px rgba(255, 255, 255, 0.8),
-                  0 0 25px rgba(79, 70, 229, 0.7),
-                  0 0 45px rgba(79, 70, 229, 0.5),
-                  0 0 65px rgba(79, 70, 229, 0.3)
-                `,
-              transform: `translate(${glitchOffset.x}px, ${glitchOffset.y}px) skew(${glitchOffset.x * 0.5}deg, ${glitchOffset.y * 0.3}deg)`,
-              filter: `blur(${isGlitching ? '8px' : '0px'}) brightness(${isGlitching ? '1.3' : '1.2'})`,
-              transition: isGlitching ? 'none' : 'filter 0.3s ease-out',
+              textShadow: useMotionTemplate`
+                ${glitchX}px ${glitchY}px 0 ${isDark ? 'rgba(239, 68, 68, 0.8)' : 'rgba(220, 38, 38, 0.7)'},
+                ${useTransform(glitchX, (v) => -v)}px ${useTransform(
+                glitchY,
+                (v) => -v
+              )}px 0 ${isDark ? 'rgba(16, 185, 129, 0.8)' : 'rgba(5, 150, 105, 0.7)'},
+                0 0 15px ${isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.8)'},
+                0 0 30px ${isDark ? 'rgba(99, 102, 241, 0.8)' : 'rgba(79, 70, 229, 0.7)'}
+              `,
+              transform: useMotionTemplate`translate(${glitchX}px, ${glitchY}px) skew(${useTransform(
+                glitchX,
+                (v) => v * 0.5
+              )}deg, ${useTransform(glitchY, (v) => v * 0.3)}deg)`,
+              filter: useMotionTemplate`blur(${useTransform(
+                glitchX,
+                (v) => (Math.abs(v) > 10 ? '8px' : '0px')
+              )}) brightness(1.2)`,
+              willChange,
             }}
             animate={{
-              opacity: isGlitching ? [1, 0.3, 1, 0.5, 1] : [1, 0.96, 1],
+              opacity: [1, 0.96, 1],
             }}
             transition={{
-              duration: isGlitching ? 0.15 : 0.4,
+              duration: 0.4,
               repeat: Infinity,
             }}
           >
             {heroText}
           </motion.h1>
-        </div>
+        </motion.div>
 
-        {/* Orbital Words - Static surveillance terms with ROTATION and WIGGLE */}
+        {/* Orbital Words - Desktop */}
         <div className="hidden md:block">
           {orbitalWords.map((word, index) => {
-            const position = getStaticNamePosition(index, orbitalWords.length);
+            const angle = useTransform(rotation, (r) => ((index / orbitalWords.length) * 360 + r) % 360);
+            const radius = 18;
+            const posX = useTransform([angle, followX, wiggleX], ([a, fx, wx]) => {
+              const radians = ((a as number) * Math.PI) / 180;
+              return (fx as number) + Math.cos(radians) * radius + (wx as number);
+            });
+            const posY = useTransform([angle, followY, wiggleY], ([a, fy, wy]) => {
+              const radians = ((a as number) * Math.PI) / 180;
+              return (fy as number) + Math.sin(radians) * radius + (wy as number);
+            });
 
             return (
               <motion.div
                 key={word}
                 className="absolute"
                 style={{
-                  left: `${position.x + wiggleOffset.x}%`,
-                  top: `${position.y + wiggleOffset.y}%`,
+                  left: useTransform(posX, (v) => `${v}%`),
+                  top: useTransform(posY, (v) => `${v}%`),
                   transform: 'translate(-50%, -50%)',
-                }}
-                animate={{
-                  left: `${position.x + wiggleOffset.x}%`,
-                  top: `${position.y + wiggleOffset.y}%`,
-                }}
-                transition={{
-                  duration: 0.2,
-                  ease: [0.4, 0, 0.2, 1],
+                  willChange,
                 }}
               >
-                <div className={`text-lg lg:text-xl font-semibold ${wordColor} whitespace-nowrap text-center flex flex-col items-center gap-2`}>
+                <div
+                  className={`text-lg lg:text-xl font-semibold ${wordColor} whitespace-nowrap text-center flex flex-col items-center gap-2`}
+                >
                   <span>{word}</span>
                   {/* Blinking dot */}
                   <motion.div
@@ -368,32 +577,33 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           })}
         </div>
 
-        {/* Mobile Orbital Words with ROTATION and WIGGLE */}
+        {/* Orbital Words - Mobile */}
         <div className="md:hidden">
           {orbitalWords.map((word, index) => {
-            const angle = ((index / orbitalWords.length) * 360 + staticRotation) % 360;
-            const radius = 25; // Larger radius for mobile
-            const position = calculateOrbitPosition(angle, radius, followPosition);
+            const angle = useTransform(rotation, (r) => ((index / orbitalWords.length) * 360 + r) % 360);
+            const radius = 25;
+            const posX = useTransform([angle, followX, wiggleX], ([a, fx, wx]) => {
+              const radians = ((a as number) * Math.PI) / 180;
+              return (fx as number) + Math.cos(radians) * radius + (wx as number) * 0.3;
+            });
+            const posY = useTransform([angle, followY, wiggleY], ([a, fy, wy]) => {
+              const radians = ((a as number) * Math.PI) / 180;
+              return (fy as number) + Math.sin(radians) * radius + (wy as number) * 0.3;
+            });
 
             return (
               <motion.div
                 key={word}
                 className="absolute"
                 style={{
-                  left: `${position.x + wiggleOffset.x * 0.3}%`,
-                  top: `${position.y + wiggleOffset.y * 0.3}%`,
+                  left: useTransform(posX, (v) => `${v}%`),
+                  top: useTransform(posY, (v) => `${v}%`),
                   transform: 'translate(-50%, -50%)',
                 }}
-                animate={{
-                  left: `${position.x + wiggleOffset.x * 0.3}%`,
-                  top: `${position.y + wiggleOffset.y * 0.3}%`,
-                }}
-                transition={{
-                  duration: 0.2,
-                  ease: [0.4, 0, 0.2, 1],
-                }}
               >
-                <div className={`text-sm font-semibold ${wordColor} whitespace-nowrap text-center flex flex-col items-center gap-1.5`}>
+                <div
+                  className={`text-sm font-semibold ${wordColor} whitespace-nowrap text-center flex flex-col items-center gap-1.5`}
+                >
                   <span>{word}</span>
                   <motion.div
                     className="w-1.5 h-1.5 rounded-full"
@@ -415,28 +625,33 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           })}
         </div>
 
-        {/* Moving Entities - Police, Hacker, ISP - Move between static name positions */}
+        {/* Moving Entities - Desktop */}
         <div className="hidden md:block">
-          {entities.map((entity, index) => {
-            const targetIndex = entityTargets[index];
-            const position = getStaticNamePosition(targetIndex, orbitalWords.length);
+          {entities.map((entity, entityIndex) => {
+            const targetIndex = entityTargetIndices.current[entityIndex];
+            const angle = useTransform(
+              rotation,
+              (r) => ((targetIndex / orbitalWords.length) * 360 + r) % 360
+            );
+            const radius = 18;
+            const posX = useTransform([angle, followX], ([a, fx]) => {
+              const radians = ((a as number) * Math.PI) / 180;
+              return (fx as number) + Math.cos(radians) * radius;
+            });
+            const posY = useTransform([angle, followY], ([a, fy]) => {
+              const radians = ((a as number) * Math.PI) / 180;
+              return (fy as number) + Math.sin(radians) * radius;
+            });
 
             return (
               <motion.div
                 key={entity.id}
                 className="absolute"
                 style={{
-                  left: `${position.x}%`,
-                  top: `${position.y}%`,
+                  left: useTransform(posX, (v) => `${v}%`),
+                  top: useTransform(posY, (v) => `${v}%`),
                   transform: 'translate(-50%, -50%)',
-                }}
-                animate={{
-                  left: `${position.x}%`,
-                  top: `${position.y}%`,
-                }}
-                transition={{
-                  duration: 0.25,
-                  ease: [0.4, 0, 0.2, 1],
+                  willChange,
                 }}
               >
                 <div className="flex flex-col items-center gap-2">
@@ -457,11 +672,11 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                       ease: 'easeInOut',
                     }}
                   >
-                    {entityTexts[index]}
+                    {entity.label}
                   </motion.span>
                   {/* Blinking dot with entity color */}
                   <motion.div
-                    className="w-3 h-3 rounded-full"
+                    className="w-3 h-3 rounded-full relative"
                     style={{ backgroundColor: entity.color }}
                     animate={{
                       opacity: [0.4, 1, 0.4],
@@ -499,30 +714,32 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           })}
         </div>
 
-        {/* Mobile Moving Entities - Move between static name positions */}
+        {/* Moving Entities - Mobile */}
         <div className="md:hidden">
-          {entities.map((entity, index) => {
-            const targetIndex = entityTargets[index];
-            const angle = ((targetIndex / orbitalWords.length) * 360 + staticRotation) % 360;
+          {entities.map((entity, entityIndex) => {
+            const targetIndex = entityTargetIndices.current[entityIndex];
+            const angle = useTransform(
+              rotation,
+              (r) => ((targetIndex / orbitalWords.length) * 360 + r) % 360
+            );
             const radius = 25;
-            const position = calculateOrbitPosition(angle, radius, followPosition);
+            const posX = useTransform([angle, followX], ([a, fx]) => {
+              const radians = ((a as number) * Math.PI) / 180;
+              return (fx as number) + Math.cos(radians) * radius;
+            });
+            const posY = useTransform([angle, followY], ([a, fy]) => {
+              const radians = ((a as number) * Math.PI) / 180;
+              return (fy as number) + Math.sin(radians) * radius;
+            });
 
             return (
               <motion.div
                 key={entity.id}
                 className="absolute"
                 style={{
-                  left: `${position.x}%`,
-                  top: `${position.y}%`,
+                  left: useTransform(posX, (v) => `${v}%`),
+                  top: useTransform(posY, (v) => `${v}%`),
                   transform: 'translate(-50%, -50%)',
-                }}
-                animate={{
-                  left: `${position.x}%`,
-                  top: `${position.y}%`,
-                }}
-                transition={{
-                  duration: 0.25,
-                  ease: [0.4, 0, 0.2, 1],
                 }}
               >
                 <div className="flex flex-col items-center gap-1.5">
@@ -542,7 +759,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                       ease: 'easeInOut',
                     }}
                   >
-                    {entityTexts[index]}
+                    {entity.label}
                   </motion.span>
                   <motion.div
                     className="w-2 h-2 rounded-full"
@@ -572,9 +789,10 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
               text-xl md:text-2xl lg:text-3xl font-bold 
               text-white rounded-full 
               transition-all duration-300
-              ${isDark 
-                ? 'bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-400 hover:to-blue-400 cta-glow-indigo-dark' 
-                : 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 cta-glow-indigo-light'
+              ${
+                isDark
+                  ? 'bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-400 hover:to-blue-400 cta-glow-indigo-dark'
+                  : 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 cta-glow-indigo-light'
               }
               hover:scale-105 active:scale-95
               cursor-pointer select-none
@@ -587,17 +805,17 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
             whileTap={{ scale: 0.95 }}
           >
             {/* Shield Icon */}
-            <svg 
-              className="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
               />
             </svg>
             <span>{ctaButtonText}</span>
