@@ -272,7 +272,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   const heroTextColor = isDark ? '#F1F5F9' : '#1E293B';
   const gridColor = isDark ? 'rgba(99, 102, 241, 0.25)' : 'rgba(79, 70, 229, 0.2)';
   const wordColor = isDark ? 'text-indigo-300' : 'text-indigo-700';
-
+  
   // Performance: Use MotionValues instead of useState
   const mainTextX = useMotionValue(50);
   const mainTextY = useMotionValue(45);
@@ -288,8 +288,10 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   const isCenterRef = useRef(true);
   const isFirstRunRef = useRef(true);
   const isGlitchingRef = useRef(false);
-  const entityTargetIndices = useRef<number[]>([0, 2, 4]);
   const minDistanceRef = useRef<number>(100);
+  
+  // State for entity positions so they can move smoothly between purple dots
+  const [entityTargetIndices, setEntityTargetIndices] = useState<number[]>([0, 2, 4]);
 
   // Performance: useMotionTemplate for dynamic gradient
   const backgroundGradient = useMotionTemplate`radial-gradient(circle at ${followX}% ${followY}%, 
@@ -302,7 +304,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   // Generate next position - alternates between center and random
   const generateNextPosition = useCallback((): Position => {
     isCenterRef.current = !isCenterRef.current;
-
+    
     if (isCenterRef.current) {
       return { x: 50, y: 45 };
     } else {
@@ -310,7 +312,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
       for (let i = 0; i < 50; i++) {
         const x = Math.random() * 60 + 20; // 20-80%
         const y = Math.random() * 50 + 20; // 20-70%
-
+        
         // Avoid CTA button area (center-bottom)
         const distanceFromCTA = Math.sqrt(Math.pow(x - 50, 2) + Math.pow(y - 75, 2));
         if (distanceFromCTA > 20) {
@@ -336,10 +338,9 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   // Calculate minimum distance from entities to main text
   const calculateMinDistance = useCallback(
     (textX: number, textY: number, rot: number) => {
-      const entities = entityTargetIndices.current;
       let minDist = 100;
 
-      entities.forEach((targetIndex) => {
+      entityTargetIndices.forEach((targetIndex) => {
         const angle = ((targetIndex / orbitalWords.length) * 360 + rot) % 360;
         const radius = 18;
         const entityPos = calculateOrbitPosition(angle, radius, followX.get(), followY.get());
@@ -349,7 +350,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
 
       return minDist;
     },
-    [orbitalWords.length, followX, followY, calculateOrbitPosition]
+    [orbitalWords.length, followX, followY, calculateOrbitPosition, entityTargetIndices]
   );
 
   // Consolidated animation loop using single rAF
@@ -380,16 +381,16 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
         ? 3500
         : 2500;
 
-      isFirstRunRef.current = false;
-
+        isFirstRunRef.current = false;
+      
       setTimeout(() => {
         isGlitchingRef.current = true;
-
+        
         setTimeout(() => {
           const newPosition = generateNextPosition();
           mainTextX.set(newPosition.x);
           mainTextY.set(newPosition.y);
-
+          
           setTimeout(() => {
             isGlitchingRef.current = false;
             runCycle();
@@ -421,12 +422,12 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    // Entity movement interval
+    // Entity movement interval - move to next purple dot
     const entityInterval = setInterval(() => {
-      entityTargetIndices.current = entityTargetIndices.current.map(
-        (target) => (target + 1) % orbitalWords.length
+      setEntityTargetIndices((prev) => 
+        prev.map((target) => (target + 1) % orbitalWords.length)
       );
-    }, 1500);
+    }, 2000); // Slower movement for better visibility
 
     // Start animations
     runCycle();
@@ -460,7 +461,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   ];
 
   return (
-    <motion.div
+    <motion.div 
       className={`relative w-full h-full overflow-hidden ${bgGradient}`}
       style={{
         background: backgroundGradient,
@@ -512,7 +513,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
         {/* Main Hero Text with Glitch */}
         <motion.div
           className="absolute"
-          style={{
+        style={{
             left: useTransform(mainTextX, (v) => `${v}%`),
             top: useTransform(mainTextY, (v) => `${v}%`),
             transform: 'translate(-50%, -50%)',
@@ -659,7 +660,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
         {/* Moving Entities - Desktop */}
         <div className="hidden md:block">
           {entities.map((entity, entityIndex) => {
-            const targetIndex = entityTargetIndices.current[entityIndex];
+            const targetIndex = entityTargetIndices[entityIndex];
             const angle = useTransform(
               rotation,
               (r) => ((targetIndex / orbitalWords.length) * 360 + r) % 360
@@ -748,7 +749,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
         {/* Moving Entities - Mobile */}
         <div className="md:hidden">
           {entities.map((entity, entityIndex) => {
-            const targetIndex = entityTargetIndices.current[entityIndex];
+            const targetIndex = entityTargetIndices[entityIndex];
             const angle = useTransform(
               rotation,
               (r) => ((targetIndex / orbitalWords.length) * 360 + r) % 360
@@ -822,8 +823,8 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
               transition-all duration-300
               ${
                 isDark
-                  ? 'bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-400 hover:to-blue-400 cta-glow-indigo-dark'
-                  : 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 cta-glow-indigo-light'
+                ? 'bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-400 hover:to-blue-400 cta-glow-indigo-dark' 
+                : 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 cta-glow-indigo-light'
               }
               hover:scale-105 active:scale-95
               cursor-pointer select-none
@@ -836,17 +837,17 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
             whileTap={{ scale: 0.95 }}
           >
             {/* Shield Icon */}
-            <svg
-              className="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10"
-              fill="none"
-              stroke="currentColor"
+            <svg 
+              className="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10" 
+              fill="none" 
+              stroke="currentColor" 
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" 
               />
             </svg>
             {/* Responsive text - "Secure Now!" on small screens, full text on larger */}
