@@ -18,7 +18,12 @@ const LANGUAGE_NAMES: Record<typeof LANGUAGES[number], string> = {
   'Hindi': 'हिन्दी',
 };
 
-export default function Header() {
+interface HeaderProps {
+  currentPage?: number;
+  onLogoClick?: () => void;
+}
+
+export default function Header({ currentPage = 1, onLogoClick }: HeaderProps) {
   const { theme, toggleTheme, language, setLanguage } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
@@ -50,13 +55,20 @@ export default function Header() {
       <div className="h-20 px-5 md:px-[60px] flex items-center justify-between">
         {/* Left: Logo */}
         <div className="flex items-center">
-          <Image
-            src="/logo-64.png"
-            alt="Logo"
-            width={40}
-            height={40}
-            className="cursor-pointer"
-          />
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+          >
+            <Image
+              src="/logo-64.png"
+              alt="Logo"
+              width={40}
+              height={40}
+              className="cursor-pointer"
+              onClick={onLogoClick}
+            />
+          </motion.div>
         </div>
 
         {/* Center: Navigation (Medium+ screens only) */}

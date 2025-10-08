@@ -23,7 +23,13 @@ interface Page6Props {
 
 export default function Page6({ isActive = true }: Page6Props) {
   return (
-    <div className="relative w-full h-full overflow-hidden bg-gradient-to-br from-teal-950 via-emerald-900 to-slate-900">
+    <motion.div 
+      className="relative w-full h-full overflow-hidden bg-gradient-to-br from-teal-950 via-emerald-900 to-slate-900"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       {/* Glass Cathedral with Refractions */}
       {[...Array(5)].map((_, i) => (
         <motion.div
@@ -252,7 +258,7 @@ export default function Page6({ isActive = true }: Page6Props) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

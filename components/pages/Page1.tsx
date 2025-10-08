@@ -22,10 +22,12 @@ function doRectsOverlap(
 interface Page1Props {
   isActive?: boolean;
   onScrollToPage7?: () => void;
+  resetTrigger?: number;
 }
 
-export default function Page1({ isActive = true, onScrollToPage7 }: Page1Props) {
+export default function Page1({ isActive = true, onScrollToPage7, resetTrigger = 0 }: Page1Props) {
   const [glitchOffset, setGlitchOffset] = useState({ x: 0, y: 0 });
+  const [animateReset, setAnimateReset] = useState(false);
   const { theme, language } = useTheme();
   
   const heroText = getTranslation('page1.hero', language);
@@ -45,6 +47,17 @@ export default function Page1({ isActive = true, onScrollToPage7 }: Page1Props) 
 
     return () => clearInterval(interval);
   }, [isActive]);
+
+  // Handle reset animation trigger
+  useEffect(() => {
+    if (resetTrigger > 0) {
+      setAnimateReset(true);
+      const timer = setTimeout(() => {
+        setAnimateReset(false);
+      }, 300); // Fast animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [resetTrigger]);
 
   // Generate stable random positions with collision detection
   const wordPositions = useMemo(() => {
@@ -125,7 +138,21 @@ export default function Page1({ isActive = true, onScrollToPage7 }: Page1Props) 
   const streakColor = isDark ? 'bg-red-500' : 'bg-red-600';
 
   return (
-    <div className={`relative w-full h-full overflow-hidden ${bgGradient}`}>
+    <motion.div 
+      className={`relative w-full h-full overflow-hidden ${bgGradient}`}
+      initial={{ opacity: 0 }}
+      animate={{ 
+        opacity: 1,
+        scale: animateReset ? 0.98 : 1,
+        y: animateReset ? -10 : 0,
+      }}
+      exit={{ opacity: 0 }}
+      transition={{ 
+        opacity: { duration: 0.3 },
+        scale: { duration: 0.15, ease: 'easeOut' },
+        y: { duration: 0.15, ease: 'easeOut' },
+      }}
+    >
       {/* Animated Background */}
       <div className="absolute inset-0">
         {/* Pulsing red vignettes */}
@@ -424,6 +451,6 @@ export default function Page1({ isActive = true, onScrollToPage7 }: Page1Props) 
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

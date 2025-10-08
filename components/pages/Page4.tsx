@@ -9,7 +9,13 @@ interface Page4Props {
 
 export default function Page4({ isActive = true }: Page4Props) {
   return (
-    <div className="relative w-full h-full overflow-hidden bg-gradient-to-br from-gray-900 via-slate-800 to-orange-900">
+    <motion.div 
+      className="relative w-full h-full overflow-hidden bg-gradient-to-br from-gray-900 via-slate-800 to-orange-900"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       {/* Receding Oppressive Elements */}
       <motion.div
         className="absolute inset-0"
@@ -156,7 +162,7 @@ export default function Page4({ isActive = true }: Page4Props) {
           />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 

@@ -43,7 +43,14 @@ interface Page7Props {
 
 export default function Page7({ isActive = true }: Page7Props) {
   return (
-    <div id="page-7-content" className="relative w-full h-full overflow-y-auto custom-scrollbar bg-gradient-to-br from-yellow-950 via-orange-900 to-pink-900">
+    <motion.div 
+      id="page-7-content" 
+      className="relative w-full h-full overflow-y-auto custom-scrollbar bg-gradient-to-br from-yellow-950 via-orange-900 to-pink-900"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       {/* Vibrant Flowing Gradients */}
       <motion.div
         className="absolute inset-0 opacity-40"
@@ -352,7 +359,7 @@ export default function Page7({ isActive = true }: Page7Props) {
         {/* Additional Content Space */}
         <div className="h-20" />
       </div>
-    </div>
+    </motion.div>
   );
 }
 

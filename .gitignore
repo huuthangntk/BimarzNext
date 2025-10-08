@@ -11,7 +11,8 @@
 # next.js
 /.next/
 /out/
-
+bun.lock
+/bun.lock
 # production
 /build
 

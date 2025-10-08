@@ -223,7 +223,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   }, [orbitalWords.length, isActive]);
 
   return (
-      <div 
+    <motion.div 
       className={`relative w-full h-full overflow-hidden ${bgGradient}`}
       style={{
         background: isDark
@@ -243,6 +243,10 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
               #cbd5e1 70%)`,
         transition: 'background 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
     >
       {/* Animated Grid Background */}
       <motion.div
@@ -600,6 +604,6 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           </motion.button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
