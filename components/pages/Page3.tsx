@@ -14,15 +14,17 @@
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import { useTheme } from '@/contexts/ThemeContext';
 import { translations } from '@/lib/translations';
-import { Video, Music, MessageSquare, Film, CreditCard, XCircle, Send, User } from 'lucide-react';
+import { CreditCard, XCircle, Send } from 'lucide-react';
 import InstagramCard from './Page3/cards/InstagramCard';
 import YouTubeCard from './Page3/cards/YouTubeCard';
 import NetflixCard from './Page3/cards/NetflixCard';
 import SpotifyCard from './Page3/cards/SpotifyCard';
 import TwitterCard from './Page3/cards/TwitterCard';
 import SoundCloudCard from './Page3/cards/SoundCloudCard';
+import FacebookCard from './Page3/cards/FacebookCard';
 import MorphingText from './Page3/MorphingText';
 
 // ============================================================================
@@ -33,11 +35,11 @@ interface Page3Props {
   isActive?: boolean;
 }
 
-type ServiceId = 'youtube' | 'spotify' | 'twitter' | 'netflix' | 'paypal' | 'instagram' | 'telegram' | 'facebook' | 'whatsapp' | 'soundcloud';
+type ServiceId = 'youtube' | 'spotify' | 'twitter' | 'netflix' | 'paypal' | 'instagram' | 'telegram' | 'facebook' | 'soundcloud';
 
 interface BlockedService {
   id: ServiceId;
-  icon: React.ElementType;
+  iconPath: string; // Path to SVG icon
   effectType: 'tvStatic' | 'equalizer' | 'redaction' | 'buffering' | 'declined' | 'chat' | 'social';
   primaryColor: string;
   brandColors?: {
@@ -60,63 +62,63 @@ interface CardSlot {
 const BLOCKED_SERVICES: BlockedService[] = [
   {
     id: 'youtube',
-    icon: Video,
+    iconPath: '/icons/services/youtube.svg',
     effectType: 'tvStatic',
     primaryColor: '#FF0000',
     brandColors: { primary: '#FF0000', background: '#0F0F0F' },
   },
   {
     id: 'spotify',
-    icon: Music,
+    iconPath: '/icons/services/spotify.svg',
     effectType: 'equalizer',
     primaryColor: '#1DB954',
     brandColors: { primary: '#1DB954', background: '#121212' },
   },
   {
     id: 'telegram',
-    icon: Send,
+    iconPath: '/icons/services/telegram.svg',
     effectType: 'chat',
     primaryColor: '#0088CC',
     brandColors: { primary: '#0088CC', secondary: '#0077B3', background: '#0f1419' },
   },
   {
     id: 'instagram',
-    icon: User,
+    iconPath: '/icons/services/instagram.svg',
     effectType: 'social',
     primaryColor: '#E4405F',
     brandColors: { primary: '#E4405F', background: '#000000' },
   },
   {
     id: 'facebook',
-    icon: MessageSquare,
+    iconPath: '/icons/services/facebook.svg',
     effectType: 'social',
     primaryColor: '#1877F2',
     brandColors: { primary: '#1877F2', background: '#18191A' },
   },
   {
     id: 'twitter',
-    icon: MessageSquare,
+    iconPath: '/icons/services/twitter.svg',
     effectType: 'redaction',
     primaryColor: '#1DA1F2',
     brandColors: { primary: '#1DA1F2', background: '#000000' },
   },
   {
     id: 'netflix',
-    icon: Film,
+    iconPath: '/icons/services/netflix.svg',
     effectType: 'buffering',
     primaryColor: '#E50914',
     brandColors: { primary: '#E50914', background: '#141414' },
   },
   {
     id: 'paypal',
-    icon: CreditCard,
+    iconPath: '/icons/services/facebook.svg', // Placeholder - no PayPal icon
     effectType: 'declined',
     primaryColor: '#00457C',
     brandColors: { primary: '#00457C', background: '#003087' },
   },
   {
     id: 'soundcloud',
-    icon: Music,
+    iconPath: '/icons/services/soundcloud.svg',
     effectType: 'equalizer',
     primaryColor: '#FF5500',
     brandColors: { primary: '#FF5500', background: '#000000' },
@@ -251,7 +253,7 @@ const TelegramChatUI: React.FC<{ language: any; isBlocked: boolean }> = ({ langu
       {/* Telegram header */}
       <div className="flex items-center gap-3 p-3 bg-[#0088cc]">
         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-          <Send className="w-5 h-5 text-white" />
+          <Image src="/icons/services/telegram.svg" alt="Telegram" width={20} height={20} />
         </div>
         <div className="flex-1">
           <div className="font-semibold text-white text-sm">Telegram</div>
@@ -281,34 +283,6 @@ const TelegramChatUI: React.FC<{ language: any; isBlocked: boolean }> = ({ langu
             disabled
           />
         </div>
-      </div>
-    </div>
-  );
-};
-
-// Facebook Post UI
-const FacebookPostUI: React.FC<{ language: any; isBlocked: boolean }> = ({ language, isBlocked }) => {
-  const facebookData = (translations.page3 as any).facebook || {};
-  const post = facebookData.post?.[language] || 'Just shared my thoughts on freedom...';
-  
-  return (
-    <div className="relative w-full h-full bg-[#18191A] rounded-lg overflow-hidden text-white">
-      {/* Facebook header */}
-      <div className="flex items-center gap-2 p-3 border-b border-gray-800">
-        <div className="w-10 h-10 rounded-full bg-[#1877F2] flex items-center justify-center font-bold">
-          f
-        </div>
-        <span className="font-semibold">Facebook</span>
-      </div>
-
-      {/* Post content */}
-      <div className="p-4">
-        <motion.p 
-          className="text-sm"
-          animate={isBlocked ? { filter: 'blur(5px)' } : {}}
-        >
-          {post}
-        </motion.p>
       </div>
     </div>
   );
@@ -399,25 +373,24 @@ const ServiceCard: React.FC<ServiceCardProps> = React.memo(({ service, language,
         return <TwitterCard language={language} isRTL={isRTL} />;
       case 'soundcloud':
         return <SoundCloudCard language={language} isRTL={isRTL} />;
+      case 'facebook':
+        return <FacebookCard language={language} isRTL={isRTL} />;
+      case 'telegram':
+        return <TelegramChatUI language={language} isBlocked={isBlocked} />;
+      case 'paypal':
+        return <PayPalDeclined isBlocked={isBlocked} />;
       default:
-        // Fallback to legacy effect types for other services
-        switch (service.effectType) {
-          case 'chat':
-            if (service.id === 'telegram') {
-              return <TelegramChatUI language={language} isBlocked={isBlocked} />;
-            }
-            return <TelegramChatUI language={language} isBlocked={isBlocked} />;
-          case 'social':
-            return <FacebookPostUI language={language} isBlocked={isBlocked} />;
-          case 'declined':
-            return <PayPalDeclined isBlocked={isBlocked} />;
-          default:
-            return (
-              <div className="flex items-center justify-center h-full">
-                <service.icon className="w-16 h-16" style={{ color: service.primaryColor }} />
-              </div>
-            );
-        }
+        return (
+          <div className="flex items-center justify-center h-full bg-gray-900">
+            <Image 
+              src={service.iconPath} 
+              alt={service.id} 
+              width={64} 
+              height={64}
+              className="opacity-50"
+            />
+          </div>
+        );
     }
   };
 
@@ -457,13 +430,13 @@ export default function Page3({ isActive = true }: Page3Props) {
   const isRTL = language === 'Farsi';
   
   // Determine card count based on screen size
-  const [cardCount, setCardCount] = useState(3);
+  const [cardCount, setCardCount] = useState(2);
   
   useEffect(() => {
     const updateCardCount = () => {
       const width = window.innerWidth;
-      // Mobile: 3 cards, Desktop: 4 cards (2x2 grid)
-      setCardCount(width < 768 ? 3 : 4);
+      // Mobile: 2 cards (vertical), Desktop: 4 cards (2x2 grid)
+      setCardCount(width < 768 ? 2 : 4);
     };
     
     updateCardCount();
@@ -549,17 +522,21 @@ export default function Page3({ isActive = true }: Page3Props) {
       dir={isRTL ? 'rtl' : 'ltr'}
       className="relative w-full h-full overflow-hidden"
       style={{
-        background: 'linear-gradient(to bottom, #0a0a0a, #000000)',
+        background: theme === 'dark' 
+          ? 'linear-gradient(to bottom, #0a0a0a, #000000)'
+          : 'linear-gradient(to bottom, #2a2a2a, #1a1a1a)',
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      {/* Background - MUST fill entire container */}
+      {/* Background - Theme aware */}
       <div 
         className="absolute inset-0 z-0"
         style={{
-          background: 'linear-gradient(to bottom, #1a1a1a 0%, #0a0a0a 50%, #000000 100%)',
+          background: theme === 'dark'
+            ? 'linear-gradient(to bottom, #1a1a1a 0%, #0a0a0a 50%, #000000 100%)'
+            : 'linear-gradient(to bottom, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%)',
         }}
       />
 
@@ -583,53 +560,59 @@ export default function Page3({ isActive = true }: Page3Props) {
         transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
       />
 
-      {/* Content - centered layout for large screens */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-20 md:py-24">
-        {/* Morphing text - bigger and more dramatic */}
-        <div className="mb-8 sm:mb-12 md:mb-16 lg:mb-20 w-full">
-          <MorphingText language={language} isRTL={isRTL} />
-        </div>
+      {/* Content - Proper spacing for header (80px desktop, 64px mobile) and footer (60px desktop, hidden mobile) */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12">
+        {/* Add top padding for header and bottom padding for footer */}
+        <div className="w-full h-full flex flex-col items-center justify-center pt-20 pb-16 md:pt-24 md:pb-20 lg:pt-28 lg:pb-24">
+          {/* Morphing text - Proper spacing from header */}
+          <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12 w-full">
+            <MorphingText language={language} isRTL={isRTL} />
+          </div>
 
-        {/* Service cards grid - centered and bigger on large screens */}
-        <div className={`
-          w-full max-w-7xl mx-auto
-          grid gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16
-          ${cardCount === 3 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}
-          auto-rows-fr
-        `}>
-          {cardSlots.map((slot) => (
-            <div
-              key={slot.id}
-              className="w-full"
-              style={{
-                minHeight: cardCount === 3 ? '200px' : '250px',
-                maxHeight: cardCount === 3 ? '280px' : '350px',
-              }}
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                {slot.service && (
-                  <motion.div
-                    key={`service-${slot.service.id}`}
-                    className="w-full h-full"
-                  >
-                    <ServiceCard
-                      service={slot.service}
-                      language={language}
-                      isRTL={isRTL}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
+          {/* Service cards grid - Responsive sizing to prevent footer overlap */}
+          <div className={`
+            w-full max-w-6xl mx-auto
+            grid gap-4 sm:gap-5 md:gap-6 lg:gap-8
+            ${cardCount === 2 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}
+            auto-rows-fr
+          `}>
+            {cardSlots.map((slot) => (
+              <div
+                key={slot.id}
+                className="w-full"
+                style={{
+                  minHeight: cardCount === 2 ? '200px' : '180px',
+                  maxHeight: cardCount === 2 ? '280px' : '240px',
+                  height: cardCount === 2 ? 'auto' : '240px',
+                }}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {slot.service && (
+                    <motion.div
+                      key={`service-${slot.service.id}`}
+                      className="w-full h-full"
+                    >
+                      <ServiceCard
+                        service={slot.service}
+                        language={language}
+                        isRTL={isRTL}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Dark vignette for oppression */}
+      {/* Dark vignette for oppression - Theme aware */}
       <div
         className="absolute inset-0 pointer-events-none z-20"
         style={{
-          background: 'radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.7) 100%)',
+          background: theme === 'dark'
+            ? 'radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.7) 100%)'
+            : 'radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.5) 100%)',
         }}
       />
     </motion.div>
