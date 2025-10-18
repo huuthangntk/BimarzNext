@@ -299,6 +299,44 @@ body.lang-farsi {
   animation: powerfulGlowIndigoDark 3s ease-in-out infinite;
 }
 
+/* Mobile GPU Acceleration Utilities */
+@layer utilities {
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
+  }
+  
+  .prevent-mobile-bounce {
+    position: fixed;
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Optimize animations for mobile */
+  .mobile-optimized-animation {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    /* Force GPU layer */
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+  }
+  
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-optimized-animation {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
 /* GPU Acceleration Utilities */
 .gpu-accelerate {
   transform: translateZ(0);

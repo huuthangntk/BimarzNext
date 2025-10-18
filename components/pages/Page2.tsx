@@ -694,11 +694,11 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           })}
         </div>
 
-        {/* STANDARD ORBITAL DOTS - Mobile */}
+        {/* STANDARD ORBITAL DOTS - Mobile (OPTIMIZED - same as desktop) */}
         <div className="md:hidden">
           {orbitalWords.map((word, index) => {
             const angle = useTransform(rotation, (r) => ((index / orbitalWords.length) * 360 + r) % 360);
-            const radius = 25;
+            const radius = 25; // Larger radius for mobile to use vertical space
             const posX = useTransform([angle, followX, wiggleX], ([a, fx, wx]) => {
               const radians = ((a as number) * Math.PI) / 180;
               return (fx as number) + Math.cos(radians) * radius + (wx as number) * 0.3;
@@ -716,6 +716,12 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                   left: useTransform(posX, (v) => `${v}%`),
                   top: useTransform(posY, (v) => `${v}%`),
                   transform: 'translate(-50%, -50%)',
+                  // CRITICAL: GPU acceleration for mobile
+                  willChange: 'transform',
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                  perspective: 1000,
+                  WebkitPerspective: 1000,
                 }}
               >
                 <div
@@ -724,10 +730,20 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                   <span>{word}</span>
                   <motion.div
                     className="w-1.5 h-1.5 rounded-full"
-                    style={{ backgroundColor: isDark ? '#6366F1' : '#4F46E5' }}
+                    style={{ 
+                      backgroundColor: isDark ? '#6366F1' : '#4F46E5',
+                      willChange: 'transform',
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                    }}
                     animate={{
                       opacity: [0.3, 1, 0.3],
                       scale: [0.8, 1.3, 0.8],
+                      boxShadow: [
+                        `0 0 4px ${isDark ? '#6366F1' : '#4F46E5'}`,
+                        `0 0 12px ${isDark ? '#6366F1' : '#4F46E5'}`,
+                        `0 0 4px ${isDark ? '#6366F1' : '#4F46E5'}`,
+                      ],
                     }}
                     transition={{
                       duration: 1.5 + index * 0.3,
@@ -858,34 +874,48 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           })}
         </div>
 
-        {/* TRACKING ENTITIES - Mobile */}
+        {/* TRACKING ENTITIES - Mobile (OPTIMIZED with pre-calculated keyframes) */}
         <div className="md:hidden">
           {entities.map((entity, entityIndex) => {
+            // Use SAME desktop logic for mobile - pre-calculated keyframe approach
             const posX = entityIndex === 0 ? entity0X : entityIndex === 1 ? entity1X : entity2X;
             const posY = entityIndex === 0 ? entity0Y : entityIndex === 1 ? entity1Y : entity2Y;
 
-            // Unique glitch effects for mobile (simplified)
+            // Unique glitch effects for mobile (SAME as desktop but optimized)
             const getEntityGlitchEffect = () => {
               switch (entityIndex) {
                 case 0: // Police - aggressive red glitch
                   return {
-                    textShadow: `0 0 20px ${entity.color}, 0 0 40px ${entity.color}`,
-                    animation: { scale: [1, 1.12, 1] }
+                    filter: 'brightness(1.3) contrast(1.2)',
+                    textShadow: `0 0 20px ${entity.color}, 0 0 40px ${entity.color}, 0 0 60px ${entity.color}`,
+                    animation: {
+                      scale: [1, 1.15, 1],
+                      filter: ['brightness(1.3)', 'brightness(1.6)', 'brightness(1.3)'],
+                    }
                   };
                 case 1: // ISP - steady orange pulse
                   return {
+                    filter: 'brightness(1.2)',
                     textShadow: `0 0 15px ${entity.color}, 0 0 30px ${entity.color}`,
-                    animation: { scale: [1, 1.06, 1] }
+                    animation: {
+                      scale: [1, 1.08, 1],
+                      filter: ['brightness(1.2)', 'brightness(1.4)', 'brightness(1.2)'],
+                    }
                   };
                 case 2: // Hacker - chaotic green interference
                   return {
-                    textShadow: `0 0 25px ${entity.color}, 0 0 50px ${entity.color}`,
-                    animation: { scale: [1, 1.15, 1] }
+                    filter: 'brightness(1.4) contrast(1.1)',
+                    textShadow: `0 0 25px ${entity.color}, 0 0 50px ${entity.color}, 0 0 75px ${entity.color}`,
+                    animation: {
+                      scale: [1, 1.2, 1],
+                      filter: ['brightness(1.4)', 'brightness(1.7)', 'brightness(1.4)'],
+                    }
                   };
                 default:
                   return {
+                    filter: 'brightness(1.2)',
                     textShadow: `0 0 15px ${entity.color}`,
-                    animation: { scale: [1, 1.08, 1] }
+                    animation: { scale: [1, 1.1, 1] }
                   };
               }
             };
@@ -900,6 +930,12 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                   left: useTransform(posX, (v) => `${v}%`),
                   top: useTransform(posY, (v) => `${v}%`),
                   transform: 'translate(-50%, -50%)',
+                  // CRITICAL: GPU acceleration for mobile
+                  willChange: 'transform',
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                  perspective: 1000,
+                  WebkitPerspective: 1000,
                 }}
               >
                 <div className="flex flex-col items-center gap-1.5">
@@ -908,7 +944,11 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                     style={{
                       color: entity.color,
                       textShadow: glitchEffect.textShadow,
-                      filter: 'brightness(1.2)',
+                      filter: glitchEffect.filter,
+                      // GPU acceleration
+                      willChange: 'transform, filter',
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
                     }}
                     animate={glitchEffect.animation}
                     transition={{
@@ -919,19 +959,50 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                   >
                     {entity.label}
                   </motion.span>
+                  {/* Unique dot effects for each entity */}
                   <motion.div
-                    className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: entity.color }}
+                    className="w-2 h-2 rounded-full relative"
+                    style={{ 
+                      backgroundColor: entity.color,
+                      willChange: 'transform',
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                    }}
                     animate={{
                       opacity: [0.4, 1, 0.4],
-                      scale: [0.8, 1.4, 0.8],
+                      scale: [0.8, 1.5, 0.8],
+                      boxShadow: [
+                        `0 0 6px ${entity.color}`,
+                        `0 0 15px ${entity.color}`,
+                        `0 0 6px ${entity.color}`,
+                      ],
                     }}
                     transition={{
                       duration: entityIndex === 2 ? 0.6 : entityIndex === 0 ? 0.9 : 1.2,
                       repeat: Infinity,
                       ease: 'easeInOut',
                     }}
-                  />
+                  >
+                    {/* Outer ring pulse with entity-specific timing */}
+                    <motion.div
+                      className="absolute inset-0 rounded-full"
+                      style={{ 
+                        border: `2px solid ${entity.color}`,
+                        willChange: 'transform',
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                      }}
+                      animate={{
+                        scale: [1, 3],
+                        opacity: [0.8, 0],
+                      }}
+                      transition={{
+                        duration: entityIndex === 0 ? 1.0 : entityIndex === 1 ? 1.5 : 0.8,
+                        repeat: Infinity,
+                        ease: 'easeOut',
+                      }}
+                    />
+                  </motion.div>
                 </div>
               </motion.div>
             );
