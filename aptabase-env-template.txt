@@ -1,0 +1,89 @@
+# ============================================
+# APTABASE SELF-HOSTED CONFIGURATION
+# ============================================
+# Domain: https://aptbase.sume.one
+# 
+# INSTRUCTIONS: 
+# 1. Copy this file to your Aptabase deployment directory
+# 2. Rename it to ".env"
+# 3. Update docker-compose.yml to use these variables
+# ============================================
+
+# ============================================
+# CORE CONFIGURATION
+# ============================================
+
+# The hostname for Aptabase (used in docker-compose)
+APTABASE_HOST=aptbase.sume.one
+
+# Full base URL for the application
+BASE_URL=https://aptbase.sume.one
+
+# Random secret key for signing auth tokens (32+ characters)
+AUTH_SECRET=3qN53pPN3/3kZ1mkvtOWwWVTiFOBdz8i1WQpx0O8gPc=
+
+# ============================================
+# DATABASE CONFIGURATION (PostgreSQL)
+# ============================================
+
+# PostgreSQL connection details
+POSTGRES_USER=aptabase
+POSTGRES_PASSWORD=sTr0NGp4ssw0rd
+POSTGRES_DB=aptabase
+
+# Full PostgreSQL connection string for Aptabase
+# Format: postgresql://USER:PASSWORD@HOST:PORT/DATABASE
+DATABASE_URL=postgresql://aptabase:sTr0NGp4ssw0rd@aptabase_db:5432/aptabase
+
+# ============================================
+# ANALYTICS DATABASE (ClickHouse)
+# ============================================
+
+# ClickHouse connection details
+CLICKHOUSE_USER=aptabase
+CLICKHOUSE_PASSWORD=sTr0NGp4ssw0rd
+
+# Full ClickHouse connection string for Aptabase
+# Format: http://USER:PASSWORD@HOST:PORT
+CLICKHOUSE_URL=http://aptabase:sTr0NGp4ssw0rd@aptabase_events_db:8123
+
+# ============================================
+# SMTP EMAIL CONFIGURATION (✅ TESTED & WORKING)
+# ============================================
+
+SMTP_HOST=mail.privateemail.com
+SMTP_PORT=587
+SMTP_USERNAME=hi@sume.one
+SMTP_PASSWORD=M@nKHARAM5589
+SMTP_FROM_ADDRESS=hi@sume.one
+
+# ============================================
+# OAUTH PROVIDERS (Optional - Add when ready)
+# ============================================
+
+# GitHub OAuth
+# Get credentials from: https://github.com/settings/developers
+# Callback URL: https://aptbase.sume.one/auth/github/callback
+OAUTH_GITHUB_CLIENT_ID=
+OAUTH_GITHUB_CLIENT_SECRET=
+
+# Google OAuth
+# Get credentials from: https://console.cloud.google.com/apis/credentials
+# Callback URL: https://aptbase.sume.one/auth/google/callback
+OAUTH_GOOGLE_CLIENT_ID=
+OAUTH_GOOGLE_CLIENT_SECRET=
+
+# ============================================
+# REGION SETTING
+# ============================================
+
+# Leave empty or set to "SH" for self-hosted
+REGION=SH
+
+# ============================================
+# BILLING (Not needed for self-hosted)
+# ============================================
+
+LEMONSQUEEZY_API_KEY=
+LEMONSQUEEZY_SIGNING_SECRET=
+

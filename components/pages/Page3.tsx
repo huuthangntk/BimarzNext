@@ -652,6 +652,133 @@ const RestrictionOverlay: React.FC<RestrictionOverlayProps> = ({ service, langua
 };
 
 // ============================================================================
+// GLITCHING TEXT COMPONENT
+// ============================================================================
+
+interface GlitchingTextProps {
+  language: string;
+  theme: 'light' | 'dark';
+}
+
+const GlitchingText: React.FC<GlitchingTextProps> = ({ language, theme }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isGlitching, setIsGlitching] = useState(false);
+  
+  const words = translations.page3.censorshipWords[language as keyof typeof translations.page3.censorshipWords] || translations.page3.censorshipWords.English;
+
+  useEffect(() => {
+    // Cycle through words with glitch effect
+    const wordInterval = setInterval(() => {
+      setIsGlitching(true);
+      
+      // End glitch and change word after glitch duration
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % words.length);
+        setIsGlitching(false);
+      }, 400); // Glitch duration: 400ms
+      
+    }, 2500); // Time per word: 2.5s
+
+    return () => clearInterval(wordInterval);
+  }, [words.length]);
+
+  const currentWord = words[currentIndex];
+
+  // Theme-aware colors
+  const mainColor = theme === 'dark' ? '#ff4444' : '#cc0000';
+  const glitchColor1 = theme === 'dark' ? '#ff00de' : '#d100b8'; // Pink/Magenta
+  const glitchColor2 = theme === 'dark' ? '#00fff9' : '#00c7bd'; // Cyan
+
+  return (
+    <div className="relative inline-block">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={currentIndex}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.1 }}
+          className="relative inline-block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-wider"
+          style={{
+            color: mainColor,
+            textShadow: theme === 'dark' 
+              ? '0 0 20px rgba(255, 68, 68, 0.6), 0 0 40px rgba(255, 68, 68, 0.4), 0 4px 8px rgba(0, 0, 0, 0.8)'
+              : '0 0 20px rgba(204, 0, 0, 0.5), 0 0 40px rgba(204, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.6)',
+          }}
+        >
+          {/* Main text with glitch animation */}
+          <motion.span
+            animate={isGlitching ? {
+              x: [-2, 2, -1, 1, 0],
+              y: [2, -2, -1, 1, 0],
+            } : {}}
+            transition={{ duration: 0.4, times: [0, 0.25, 0.5, 0.75, 1] }}
+          >
+            {currentWord}
+          </motion.span>
+
+          {/* Glitch layer 1 - Pink/Magenta offset */}
+          {isGlitching && (
+            <motion.span
+              className="absolute top-0 left-0 pointer-events-none"
+              style={{
+                color: glitchColor1,
+                textShadow: `0 0 10px ${glitchColor1}`,
+                clipPath: 'polygon(0 0, 100% 0, 100% 45%, 0 45%)',
+              }}
+              animate={{
+                x: [-5, 4, -3, 2, 0],
+                y: [-2, 2, 1, -1, 0],
+              }}
+              transition={{ duration: 0.4, times: [0, 0.25, 0.5, 0.75, 1] }}
+            >
+              {currentWord}
+            </motion.span>
+          )}
+
+          {/* Glitch layer 2 - Cyan offset */}
+          {isGlitching && (
+            <motion.span
+              className="absolute top-0 left-0 pointer-events-none"
+              style={{
+                color: glitchColor2,
+                textShadow: `0 0 10px ${glitchColor2}`,
+                clipPath: 'polygon(0 55%, 100% 55%, 100% 100%, 0 100%)',
+              }}
+              animate={{
+                x: [5, -4, 3, -2, 0],
+                y: [2, -2, -1, 1, 0],
+              }}
+              transition={{ duration: 0.4, times: [0, 0.25, 0.5, 0.75, 1] }}
+            >
+              {currentWord}
+            </motion.span>
+          )}
+
+          {/* Additional chaos during glitch - random character flicker */}
+          {isGlitching && (
+            <motion.span
+              className="absolute top-0 left-0 pointer-events-none"
+              style={{
+                color: mainColor,
+                opacity: 0.3,
+              }}
+              animate={{
+                opacity: [0.3, 0.7, 0.2, 0.8, 0],
+                scale: [1, 1.02, 0.98, 1.01, 1],
+              }}
+              transition={{ duration: 0.4 }}
+            >
+              {currentWord}
+            </motion.span>
+          )}
+        </motion.span>
+      </AnimatePresence>
+    </div>
+  );
+};
+
+// ============================================================================
 // MAIN PAGE 3 COMPONENT
 // ============================================================================
 
@@ -683,8 +810,6 @@ export default function Page3({ isActive = true }: Page3Props) {
     const shuffled = [...SERVICES].sort(() => Math.random() - 0.5);
     setDisplayedServices(shuffled.slice(0, displayCount));
   }, [displayCount]);
-
-  const heroText = translations.page3.hero[language as keyof typeof translations.page3.hero] || 'BLOCKED';
 
   return (
     <motion.div
@@ -719,20 +844,14 @@ export default function Page3({ isActive = true }: Page3Props) {
         {/* Reduced top padding on large screens, ensure content fits above footer */}
         <div className="w-full h-full flex flex-col items-center justify-start pt-24 pb-20 md:pt-20 md:pb-24 lg:pt-16 lg:pb-28">
           
-          {/* Hero Text */}
+          {/* Hero Text - Glitching Animation */}
           <motion.h1
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 md:mb-8 lg:mb-10 tracking-wider"
-            style={{
-              color: theme === 'dark' ? '#ff4444' : '#cc0000',
-              textShadow: theme === 'dark' 
-                ? '0 0 20px rgba(255, 68, 68, 0.6), 0 0 40px rgba(255, 68, 68, 0.4), 0 4px 8px rgba(0, 0, 0, 0.8)'
-                : '0 0 20px rgba(204, 0, 0, 0.5), 0 0 40px rgba(204, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.6)',
-            }}
+            className="mb-6 md:mb-8 lg:mb-10"
           >
-            {heroText}
+            <GlitchingText language={language} theme={theme} />
           </motion.h1>
 
           {/* Cards Grid - More compact on large screens */}

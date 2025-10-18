@@ -101,6 +101,15 @@ export const translations = {
       Ukrainian: 'ЗАБЛОКОВАНО',
       Hindi: 'अवरुद्ध',
     },
+    // Glitching censorship words that cycle
+    censorshipWords: {
+      English: ['BLOCKED', 'CENSORED', 'RESTRICTED', 'FORBIDDEN', 'DENIED', 'UNAVAILABLE'],
+      Farsi: ['مسدود شده', 'سانسور', 'محدود', 'ممنوع', 'رد شده', 'در دسترس نیست'],
+      Chinese: ['被封锁', '审查', '受限', '禁止', '拒绝访问', '不可用'],
+      Russian: ['ЗАБЛОКИРОВАНО', 'ЦЕНЗУРА', 'ОГРАНИЧЕНО', 'ЗАПРЕЩЕНО', 'ДОСТУП ЗАПРЕЩЁН', 'НЕДОСТУПНО'],
+      Ukrainian: ['ЗАБЛОКОВАНО', 'ЦЕНЗУРА', 'ОБМЕЖЕНО', 'ЗАБОРОНЕНО', 'ДОСТУП ЗАБОРОНЕНО', 'НЕДОСТУПНО'],
+      Hindi: ['अवरुद्ध', 'सेंसर', 'प्रतिबंधित', 'निषिद्ध', 'पहुंच अस्वीकृत', 'अनुपलब्ध'],
+    },
     subtitle: {
       English: 'Censored in restricted countries',
       Farsi: 'سانسور شده در کشورهای محدود',
