@@ -1,0 +1,736 @@
+{
+    "manifestVersion": "2.0",
+    "projectName": "VPN Landing Page - Typography Emotion Journey",
+    "description": "Complete theme manifestation for a VPN landing page using Typography Emotion storytelling across 7 pages. This version addresses all design issues and provides comprehensive styling guidelines.",
+    
+    "CRITICAL_FOLDER_ISOLATION": {
+      "yourDesignatedFolder": "[FOLDER_NAME]",
+      "instruction": "REPLACE [FOLDER_NAME] WITH YOUR ACTUAL MODEL FOLDER NAME BEFORE USING THIS MANIFEST",
+      "availableFolders": ["grok-code-fast", "claude", "cheetah", "codex", "gemini"],
+      "rules": [
+        "You MUST work ONLY in the folder specified in 'yourDesignatedFolder' above",
+        "Each AI model has its own isolated folder - DO NOT access, read, or modify other folders",
+        "This workspace contains 5 separate Next.js projects, one per folder",
+        "Each folder is a complete, independent Next.js application",
+        "Your folder name matches the AI model being used (but you won't know your own name)",
+        "The user will manually edit 'yourDesignatedFolder' before giving you this manifest",
+        "NEVER assume you're working in the root or parent directory",
+        "ALL file paths, imports, and operations must be within YOUR designated folder only"
+      ],
+      "example": "If yourDesignatedFolder is 'claude', all your work happens in /claude/ directory. Never touch /gemini/ or /codex/ etc."
+    },
+    
+    "storyline": {
+      "concept": "Typography Emotion Journey",
+      "description": "The landing page tells a story through typography and text animations. Each page uses words and typographic treatments to convey emotions, creating a journey from fear to freedom.",
+      "visibility": "CRITICAL: The storyline must be visible and functional on BOTH mobile and desktop. Do not hide storyline elements on smaller screens. Adapt the design but maintain the narrative flow.",
+      "emotionalArc": [
+        { "page": 1, "emotion": "Fear/Danger", "intensity": 10 },
+        { "page": 2, "emotion": "Anxiety/Surveillance", "intensity": 9 },
+        { "page": 3, "emotion": "Frustration/Confinement", "intensity": 8 },
+        { "page": 4, "emotion": "Hope/Curiosity", "intensity": 5 },
+        { "page": 5, "emotion": "Understanding/Confidence", "intensity": 3 },
+        { "page": 6, "emotion": "Trust/Empowerment", "intensity": 2 },
+        { "page": 7, "emotion": "Joy/Freedom", "intensity": 1 }
+      ]
+    },
+  
+    "designPrinciples": {
+      "spacing": {
+        "critical": "NEVER allow elements to overlap. ALWAYS maintain proper spacing between all components.",
+        "headerFooterMargin": "Ensure 80-100px margin from header/footer to content",
+        "elementSpacing": "Minimum 24px between adjacent elements",
+        "pageMargins": {
+          "desktop": "80px horizontal, 100px top/bottom",
+          "tablet": "40px horizontal, 80px top/bottom",
+          "mobile": "20px horizontal, 60px top/bottom"
+        }
+      },
+      "responsiveness": {
+        "desktop": "Horizontal layout - fit all content within viewport without vertical scrolling within pages",
+        "mobile": "Vertical layout is acceptable - hide non-essential decorative elements if needed, but ALWAYS show core storyline content",
+        "adaptiveElements": "Some components should be hidden on mobile if they cause overcrowding, but narrative elements must remain visible"
+      },
+      "animations": {
+        "principle": "Each page MUST have unique background animations tailored to its emotional state",
+        "performance": "All animations must be smooth (60fps) and performant",
+        "subtlety": "Background animations should be complex but not distracting"
+      },
+      "consistency": {
+        "principle": "All 7 pages must feel like part of one cohesive experience",
+        "elements": "Use consistent design language, spacing system, and typography across all pages",
+        "variation": "Vary intensity and styling to match each page's emotion while maintaining overall unity"
+      }
+    },
+  
+    "lessonsLearned": {
+      "fromClaudeImplementation": [
+        "Color palette must be appealing and use standard web colors - avoid ugly or overly saturated colors",
+        "ALL background animations must actually animate - static backgrounds are unacceptable",
+        "Language selector must be a dropdown supporting multiple languages (Chinese, Russian, Ukrainian, Hindi, English, Farsi)",
+        "Footer must include Blog, Privacy Policy, and About Us links - redesign completely if current version is inadequate",
+        "Scanning animation on Page 2 must be circular, not square, and must be clearly visible and not broken",
+        "Pages 3, 4, 5, and 7 must be fully responsive with NO overlapping content - redesign from scratch if needed",
+        "Design should vary between ultra-minimal (text-focused) and ultra-packed (element-rich) pages for visual interest",
+        "Follow the storyline consistently - all pages must relate to each other and show clear emotional progression"
+      ],
+      "fromCheetahImplementation": [
+        "Each page requires its own UNIQUE background animation - never reuse the same animation across pages",
+        "Page indicator must be VERTICAL, not horizontal",
+        "Pages 6 and 7 must not overlap - redesign from scratch ensuring all content is visible",
+        "Footer must include Blog, Privacy, Policy, and About Us links",
+        "Mouse scroll indicator should be singular and follow user through ALL pages, not just page 1",
+        "Use real uploaded icons (v2rayV.png, v2rayng.svg, v2rayN.svg, v2rayA.png, Sing-box.svg, qv2ray.svg, hiddify.svg) for Open Source page",
+        "Place actual logo in header (available in multiple sizes in public folder) instead of generic icon",
+        "Mobile vertical overlap is unacceptable - hide some decorative elements on mobile to ensure everything fits properly",
+        "Mobile must support swipe gestures (up/down) for page navigation, not just scroll wheel",
+        "Hamburger menu must have readable background (less transparent, darker/lighter based on theme) and MUST include close button",
+        "Header and footer need horizontal margins to avoid sticking to screen edges - add breathing room"
+      ],
+      "generalGuidelines": [
+        "Test every page in both light and dark themes before considering complete",
+        "Ensure storyline is visible on mobile - this is the PRIMARY feature, not a decorative addition",
+        "When in doubt, delete everything and rebuild from scratch following theme.json",
+        "Use theme-aware components from the start, not as an afterthought",
+        "Spacing is MORE important than cramming in all content - hide decorative elements if needed"
+      ]
+    },
+  
+    "colors": {
+      "philosophy": "Use standard, professional colors found in modern web designs. Avoid overly bright neons or pure black. Colors should be appealing in both light and dark modes with proper contrast ratios.",
+      
+      "light": {
+        "primary": "#2563EB",
+        "primaryHover": "#1D4ED8",
+        "secondary": "#0EA5E9",
+        "secondaryHover": "#0284C7",
+        "accent": "#10B981",
+        "accentHover": "#059669",
+        "danger": "#EF4444",
+        "warning": "#F59E0B",
+        
+        "background": {
+          "main": "#FFFFFF",
+          "surface": "#F8FAFC",
+          "elevated": "#F1F5F9",
+          "overlay": "rgba(248, 250, 252, 0.95)"
+        },
+        
+        "text": {
+          "primary": "#0F172A",
+          "secondary": "#475569",
+          "tertiary": "#94A3B8",
+          "inverse": "#FFFFFF"
+        },
+        
+        "border": {
+          "default": "#E2E8F0",
+          "hover": "#CBD5E1",
+          "focus": "#2563EB"
+        },
+        
+        "glass": {
+          "background": "rgba(255, 255, 255, 0.7)",
+          "border": "rgba(255, 255, 255, 0.3)",
+          "shadow": "rgba(0, 0, 0, 0.1)"
+        }
+      },
+      
+      "dark": {
+        "primary": "#3B82F6",
+        "primaryHover": "#60A5FA",
+        "secondary": "#06B6D4",
+        "secondaryHover": "#22D3EE",
+        "accent": "#10B981",
+        "accentHover": "#34D399",
+        "danger": "#F87171",
+        "warning": "#FBBF24",
+        
+        "background": {
+          "main": "#0F172A",
+          "surface": "#1E293B",
+          "elevated": "#334155",
+          "overlay": "rgba(15, 23, 42, 0.95)"
+        },
+        
+        "text": {
+          "primary": "#F1F5F9",
+          "secondary": "#CBD5E1",
+          "tertiary": "#64748B",
+          "inverse": "#0F172A"
+        },
+        
+        "border": {
+          "default": "#334155",
+          "hover": "#475569",
+          "focus": "#3B82F6"
+        },
+        
+        "glass": {
+          "background": "rgba(30, 41, 59, 0.7)",
+          "border": "rgba(148, 163, 184, 0.2)",
+          "shadow": "rgba(0, 0, 0, 0.3)"
+        }
+      },
+      
+      "pageSpecificAccents": {
+        "page1": { "light": "#EF4444", "dark": "#F87171" },
+        "page2": { "light": "#6366F1", "dark": "#818CF8" },
+        "page3": { "light": "#8B5CF6", "dark": "#A78BFA" },
+        "page4": { "light": "#F59E0B", "dark": "#FBBF24" },
+        "page5": { "light": "#0EA5E9", "dark": "#22D3EE" },
+        "page6": { "light": "#10B981", "dark": "#34D399" },
+        "page7": { "light": "#F59E0B", "dark": "#FCD34D" }
+      }
+    },
+  
+    "typography": {
+      "fontFamily": {
+        "primary": "Lalezar",
+        "fallback": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
+        "location": "/public/Lalezar.ttf",
+        "languages": ["English", "Persian"]
+      },
+      
+      "scale": {
+        "hero": {
+          "desktop": "96px",
+          "tablet": "72px",
+          "mobile": "48px",
+          "lineHeight": "1.1",
+          "fontWeight": "700"
+        },
+        "h1": {
+          "desktop": "72px",
+          "tablet": "56px",
+          "mobile": "36px",
+          "lineHeight": "1.2",
+          "fontWeight": "700"
+        },
+        "h2": {
+          "desktop": "48px",
+          "tablet": "40px",
+          "mobile": "28px",
+          "lineHeight": "1.3",
+          "fontWeight": "600"
+        },
+        "h3": {
+          "desktop": "36px",
+          "tablet": "28px",
+          "mobile": "24px",
+          "lineHeight": "1.4",
+          "fontWeight": "600"
+        },
+        "body": {
+          "desktop": "18px",
+          "tablet": "16px",
+          "mobile": "16px",
+          "lineHeight": "1.6",
+          "fontWeight": "400"
+        },
+        "small": {
+          "desktop": "14px",
+          "tablet": "14px",
+          "mobile": "12px",
+          "lineHeight": "1.5",
+          "fontWeight": "400"
+        }
+      }
+    },
+  
+    "layout": {
+      "header": {
+        "height": { "desktop": "80px", "mobile": "64px" },
+        "behavior": {
+          "desktop": "Always visible, static position",
+          "mobile": "Show on scroll down, hide on scroll up"
+        },
+        "structure": {
+          "left": "Logo (use uploaded logo files, not icon)",
+          "center": "Navigation links (Blog, FAQ, Privacy, About Us)",
+          "right": "Language dropdown, Theme toggle, Login button"
+        },
+        "mobile": {
+          "structure": "Logo left, Hamburger menu right",
+          "hamburgerMenu": {
+            "background": "More opaque background (0.95 opacity) with appropriate theme color",
+            "closeButton": "Visible X close button in top-right of menu",
+            "closeBehavior": "Close on click outside OR close button click",
+            "animation": "Smooth slide-in from right (300ms)"
+          }
+        },
+        "margins": {
+          "horizontal": { "desktop": "60px", "mobile": "20px" }
+        }
+      },
+      
+      "footer": {
+        "height": { "desktop": "60px", "mobile": "0px" },
+        "visibility": {
+          "desktop": "Always visible",
+          "mobile": "Hidden"
+        },
+        "structure": {
+          "left": "Links: Blog, Privacy Policy, About Us",
+          "right": "Social icons: Instagram, Telegram"
+        },
+        "margins": {
+          "horizontal": { "desktop": "60px", "mobile": "0px" }
+        },
+        "styling": "Slim, minimal design with proper spacing. MUST be completely redesigned if current version is inadequate."
+      },
+      
+      "pageIndicator": {
+        "position": "VERTICAL on right side",
+        "style": "Dots or lines indicating current page (1-7)",
+        "behavior": "Highlights current page, clickable for navigation"
+      },
+      
+      "scrollIndicator": {
+        "element": "Single mouse icon with bounce animation",
+        "behavior": "Follows user through ALL 7 pages, not just first page",
+        "visibility": "Desktop only, hidden on mobile"
+      }
+    },
+  
+    "pages": [
+      {
+        "number": 1,
+        "name": "Threats and Dangers",
+        "emotion": "Fear, Danger, Urgency",
+        "colorAccent": "Red/Crimson",
+        
+        "typography": {
+          "hero": "EXPOSED",
+          "heroStyle": {
+            "size": "hero scale",
+            "animation": "Constant glitch effect - letters randomly shift position, color, and opacity",
+            "effect": "CSS text-shadow creating blur and displacement (5-10px random shifts)",
+            "color": "Flashing between primary text and danger accent"
+          },
+          "supportingWords": ["HACKED", "STOLEN", "LEAKED", "ATTACKED", "VULNERABLE"],
+          "supportingAnimation": "Flash rapidly around hero text, appearing and disappearing (200-500ms intervals)"
+        },
+        
+        "layout": {
+          "desktop": "Hero text center, supporting words scattered around edges, all within safe margins",
+          "mobile": "Hero text center-top, fewer supporting words (3-4 max), vertically arranged"
+        },
+        
+        "background": {
+          "base": "Dark gradient with red undertones",
+          "animation": {
+            "type": "Chaotic particle system or aggressive gradient shifts",
+            "description": "Dark background with pulsing red vignettes that flash irregularly. Sharp diagonal lines (CSS linear gradients) streak across periodically. Entire viewport shakes subtly.",
+            "intensity": "High - conveys danger and instability",
+            "technical": "CSS keyframe animations with random timing, transform: translate for shake, radial-gradient for vignettes"
+          }
+        },
+        
+        "glass": {
+          "used": false,
+          "reason": "This page should feel harsh and exposed, not protected"
+        },
+        
+        "spacing": {
+          "heroToSupporting": "100px minimum",
+          "supportingToEdge": "80px minimum",
+          "headerClearance": "120px from top",
+          "footerClearance": "100px from bottom"
+        }
+      },
+      
+      {
+        "number": 2,
+        "name": "Tracked and Monitored",
+        "emotion": "Anxiety, Surveillance, Paranoia",
+        "colorAccent": "Cold Blue/Indigo",
+        
+        "typography": {
+          "hero": "YOU",
+          "heroStyle": {
+            "size": "h1 scale",
+            "animation": "Scanner effect - linear gradient sweeps across text horizontally",
+            "effect": "Letters occasionally highlight/brighten as if being recorded",
+            "color": "Primary text with cold blue highlights"
+          },
+          "orbitalWords": ["WATCHING", "TRACKING", "RECORDING", "MONITORING", "LOGGING"],
+          "orbitalAnimation": "Orbit around hero text in elliptical paths, varying speeds (10-20s durations)"
+        },
+        
+        "layout": {
+          "desktop": "Hero text center, orbital words circling it, proper spacing from header/footer",
+          "mobile": "Hero text center, fewer orbital words (3 max) in smaller circular pattern"
+        },
+        
+        "background": {
+          "base": "Cold blue-gray gradient",
+          "animation": {
+            "type": "CIRCULAR scanning animation (NOT square) + grid pattern",
+            "description": "Background with grid pattern (CSS repeating linear gradients). CIRCULAR scanning rings sweep across continuously - multiple circles expanding outward from different points. Blue spotlight effects follow mouse with slight delay.",
+            "critical": "MUST be circular scanning, not square. MUST be clearly visible.",
+            "intensity": "Medium-high - clinical and invasive feeling",
+            "technical": "CSS radial gradients for circular scans, transform: scale for expansion, repeating-linear-gradient for grid"
+          }
+        },
+        
+        "glass": {
+          "used": true,
+          "style": "Minimal glass effect on hero text container - surveillance should feel exposed"
+        },
+        
+        "spacing": {
+          "heroToOrbital": "150px radius minimum",
+          "orbitalToEdge": "100px minimum",
+          "headerClearance": "120px from top",
+          "footerClearance": "100px from bottom"
+        }
+      },
+      
+      {
+        "number": 3,
+        "name": "Restrictions and Censorship",
+        "emotion": "Frustration, Confinement, Limitation",
+        "colorAccent": "Purple/Violet",
+        
+        "typography": {
+          "attemptedWords": ["FREEDOM", "ACCESS", "CONNECT", "EXPLORE"],
+          "wordAnimation": "Words appear but are immediately covered with black bars (CSS pseudo-elements). Some words pixelate and fade before becoming readable.",
+          "stamps": ["BLOCKED", "DENIED", "RESTRICTED", "FORBIDDEN"],
+          "stampAnimation": "Stamp across screen with heavy impact effect (scale + opacity)"
+        },
+        
+        "layout": {
+          "desktop": "Attempted words center-left, stamps appearing over them, censor bars overlaying, all within viewport",
+          "mobile": "Vertical arrangement, fewer words (2-3), stamps smaller but still impactful, ALL content visible",
+          "critical": "MUST be fully responsive, NO overlapping content. Redesign from scratch if needed."
+        },
+        
+        "background": {
+          "base": "Dark gray with purple undertones",
+          "animation": {
+            "type": "Closing barriers and fog",
+            "description": "Overlapping translucent gray rectangles create foggy, restricted view. In distance (using blur and scale), bright colorful gradients represent freedom but are out of reach. Heavy vignette closes in from edges.",
+            "intensity": "Medium - oppressive and confined",
+            "technical": "Multiple div layers with low opacity, CSS blur filter, radial-gradient vignette, transform: scale for depth"
+          }
+        },
+        
+        "glass": {
+          "used": false,
+          "reason": "Page should feel blocked and opaque, not transparent"
+        },
+        
+        "spacing": {
+          "wordToStamp": "60px minimum",
+          "elementSpacing": "40px between each word/stamp",
+          "headerClearance": "120px from top",
+          "footerClearance": "100px from bottom"
+        }
+      },
+      
+      {
+        "number": 4,
+        "name": "Affordable for All",
+        "emotion": "Hope, Curiosity, First Light",
+        "colorAccent": "Warm Orange/Gold",
+        
+        "typography": {
+          "question": "?",
+          "questionStyle": {
+            "size": "hero scale",
+            "animation": "Gentle pulsing scale (0.95 to 1.05), soft glow effect",
+            "color": "Transitions from gray to warm gold"
+          },
+          "followUp": "WHAT IF...",
+          "followUpAnimation": "Fade in below question mark (1s delay), letter-by-letter reveal"
+        },
+        
+        "layout": {
+          "desktop": "Question mark center-top, 'what if' center-bottom, ample spacing between",
+          "mobile": "Vertical center alignment, responsive sizing, ALL content visible",
+          "critical": "MUST be fully responsive, NO overlapping. Redesign from scratch if needed."
+        },
+        
+        "background": {
+          "base": "Transitioning from dark to lighter tones",
+          "animation": {
+            "type": "Emerging warm light",
+            "description": "Small warm light source appears in center (CSS radial gradient in gold/yellow). Pulses gently. Oppressive elements from previous pages recede. Vignette loosens. Subtle path of light extends from center using gradient transparency.",
+            "intensity": "Low-medium - gentle and inviting",
+            "technical": "Radial gradient with animation, vignette with reducing opacity, linear-gradient for light path"
+          }
+        },
+        
+        "glass": {
+          "used": true,
+          "style": "Light glass effect beginning to form - transition to protection"
+        },
+        
+        "spacing": {
+          "questionToFollowUp": "120px minimum",
+          "headerClearance": "120px from top",
+          "footerClearance": "100px from bottom"
+        }
+      },
+      
+      {
+        "number": 5,
+        "name": "VPN Solution",
+        "emotion": "Understanding, Confidence, Clarity",
+        "colorAccent": "Cyan/Teal",
+        
+        "typography": {
+          "buildingWords": ["ENCRYPT", "TUNNEL", "PROTECT", "PRIVATE"],
+          "wordAnimation": "Appear in sequence (500ms apart), building understanding. Each word scales in with satisfying weight (scale 0 to 1).",
+          "arrangement": "Words arrange in pleasing structure - could be vertical list, horizontal flow, or geometric pattern",
+          "style": {
+            "fontWeight": "Strong, confident weight",
+            "color": "Gradient from primary to cyan accent",
+            "spacing": "Generous letter-spacing for clarity"
+          }
+        },
+        
+        "layout": {
+          "desktop": "Words arranged in clear hierarchy, centered or left-aligned, all visible within viewport",
+          "mobile": "Vertical list, proper spacing, ALL content visible",
+          "critical": "MUST be fully responsive, NO overlapping. Redesign from scratch if needed."
+        },
+        
+        "background": {
+          "base": "Clean gradient from dark to teal tones",
+          "animation": {
+            "type": "Flowing protective aurora",
+            "description": "Beautiful flowing aurora-like waves (CSS animated gradients with hue rotation) form protective dome around center. Waves shimmer and flow smoothly in blues, teals, purples. Inside aurora, everything calm and protected. Soft, beautiful lighting.",
+            "intensity": "Medium - soothing and protective",
+            "technical": "Linear gradients with hue-rotate animation, multiple layers with different speeds, backdrop-filter for glow"
+          }
+        },
+        
+        "glass": {
+          "used": true,
+          "style": "Prominent glass containers for words - showcasing protection"
+        },
+        
+        "spacing": {
+          "wordSpacing": "60px between each word",
+          "containerPadding": "40px inside glass containers",
+          "headerClearance": "120px from top",
+          "footerClearance": "100px from bottom"
+        }
+      },
+      
+      {
+        "number": 6,
+        "name": "Open Source Philosophy",
+        "emotion": "Trust, Empowerment, Transparency",
+        "colorAccent": "Green/Emerald",
+        
+        "typography": {
+          "hero": "OPEN SOURCE",
+          "heroAnimation": "Builds letter by letter, each letter different color from green gradient spectrum",
+          "orbitalWords": ["TRANSPARENT", "COMMUNITY", "VERIFIED", "TRUSTWORTHY"],
+          "orbitalAnimation": "Arrange in orbital pattern around hero, connected by subtle lines showing relationships"
+        },
+        
+        "iconCloud": {
+          "icons": [
+            { "file": "v2rayV.png", "label": "V2Ray V" },
+            { "file": "v2rayng.svg", "label": "V2RayNG" },
+            { "file": "v2rayN.svg", "label": "V2RayN" },
+            { "file": "v2rayA.png", "label": "V2RayA" },
+            { "file": "Sing-box.svg", "label": "Sing-box" },
+            { "file": "qv2ray.svg", "label": "Qv2ray" },
+            { "file": "hiddify.svg", "label": "Hiddify" }
+          ],
+          "animation": "Icons float gently, rotating slowly, interconnected with subtle lines forming network pattern",
+          "arrangement": "Cloud/constellation formation below or around typography"
+        },
+        
+        "layout": {
+          "desktop": "Typography top-center, icon cloud below with generous spacing, nothing overlapping",
+          "mobile": "Vertical layout, fewer visible icons at once (4-5), scrollable if needed, ALL essential content visible",
+          "critical": "Pages 6 and 7 had overlap issues - MUST be redesigned from scratch ensuring NO overlap"
+        },
+        
+        "background": {
+          "base": "Deep blue-green gradient",
+          "animation": {
+            "type": "Glass cathedral with refractions",
+            "description": "Glass-like surface (backdrop-filter) with geometric light refractions creating rainbow prisms. Light beams intersect forming clear, transparent patterns. Multiple translucent colored planes overlap, each representing technology layer. Complex but clear - nothing hidden.",
+            "intensity": "Medium - complex but elegant",
+            "technical": "Multiple backdrop-filter layers, linear gradients for light beams, transform: rotate for prisms, opacity layers"
+          }
+        },
+        
+        "glass": {
+          "used": true,
+          "style": "Maximum glass effect - full transparency and trust visualization"
+        },
+        
+        "spacing": {
+          "heroToIcons": "100px minimum",
+          "iconSpacing": "40px between icons",
+          "headerClearance": "120px from top",
+          "footerClearance": "100px from bottom"
+        }
+      },
+      
+      {
+        "number": 7,
+        "name": "Product and Pricing",
+        "emotion": "Joy, Freedom, Celebration",
+        "colorAccent": "Warm Gold/Yellow",
+        
+        "typography": {
+          "hero": "FREE!",
+          "heroAnimation": "Explodes onto screen with burst effect (scale + particles)",
+          "scatteredWords": ["SAFE", "PRIVATE", "UNLIMITED", "GLOBAL", "ANONYMOUS"],
+          "scatteredAnimation": "Bounce and rotate playfully across screen, some forming smile shapes or dancing",
+          "style": {
+            "gradient": "Rainbow gradient flowing through text",
+            "expression": "Expressive, dynamic, full of energy"
+          }
+        },
+        
+        "pricingCards": [
+          {
+            "name": "Starter",
+            "price": "$2.50",
+            "bandwidth": "50 GB",
+            "features": ["Unlimited connections", "Multi-user support", "Germany & Netherlands", "No logs saved"]
+          },
+          {
+            "name": "Pro",
+            "price": "$5.99",
+            "bandwidth": "100 GB",
+            "features": ["Unlimited connections", "Multi-user support", "Germany & Netherlands", "No logs saved"],
+            "popular": true
+          },
+          {
+            "name": "Premium",
+            "price": "$7.99",
+            "bandwidth": "150 GB",
+            "features": ["Unlimited connections", "Multi-user support", "Germany & Netherlands", "No logs saved"]
+          },
+          {
+            "name": "Ultimate",
+            "price": "$9.99",
+            "bandwidth": "200 GB",
+            "features": ["Unlimited connections", "Multi-user support", "Germany & Netherlands", "No logs saved", "Priority support"]
+          }
+        ],
+        
+        "layout": {
+          "desktop": "Typography top, pricing cards in horizontal row below, all within viewport without overlap",
+          "mobile": "Typography top, cards stack vertically OR horizontal scroll, ALL content accessible",
+          "critical": "Page 7 had major overlap issues - MUST be completely redesigned from scratch ensuring everything visible"
+        },
+        
+        "background": {
+          "base": "Vibrant warm gradients",
+          "animation": {
+            "type": "Radiant celebration with particles",
+            "description": "Entire screen bursts with warm vibrant gradients - golds, pinks, oranges, purples flowing and mixing. Soft light particles (small divs with glow) float upward like embers or fireflies. Background cycles through beautiful sunset-like color transitions. Gentle pulsing with joy. Occasional subtle firework bursts (expanding circles with fade).",
+            "intensity": "High - celebratory and free",
+            "technical": "Multiple gradient layers with animation, particle system with transform: translateY, radial gradients for bursts"
+          }
+        },
+        
+        "glass": {
+          "used": true,
+          "style": "Glass cards for pricing - elegant and modern"
+        },
+        
+        "spacing": {
+          "typographyToPricing": "80px minimum",
+          "cardSpacing": "30px between cards",
+          "cardPadding": "40px internal padding",
+          "headerClearance": "120px from top",
+          "footerClearance": "100px from bottom"
+        }
+      }
+    ],
+  
+    "animations": {
+      "themeToggle": {
+        "icon": "Animated transition between sun and moon icons (rotate + scale)",
+        "ripple": "Ripple effect spreading from toggle button position across entire page",
+        "colorTransition": "Colors change with ripple wave, not instantly",
+        "duration": "500ms",
+        "timing": "ease-in-out"
+      },
+      
+      "pageTransition": {
+        "type": "Smooth slide between pages",
+        "duration": "800ms",
+        "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "fadeEffect": "Outgoing page fades while new page slides in"
+      },
+      
+      "mobileGestures": {
+        "swipeUp": "Navigate to next page",
+        "swipeDown": "Navigate to previous page",
+        "threshold": "50px minimum swipe distance",
+        "velocity": "Consider swipe velocity for smoother UX"
+      }
+    },
+  
+    "accessibility": {
+      "contrast": {
+        "textNormal": "Minimum 4.5:1 contrast ratio",
+        "textLarge": "Minimum 3:1 contrast ratio",
+        "uiComponents": "Minimum 3:1 contrast ratio"
+      },
+      "motion": {
+        "reducedMotion": "Respect prefers-reduced-motion media query",
+        "fallback": "Provide static alternatives for all animations"
+      },
+      "keyboard": {
+        "navigation": "Full keyboard navigation support",
+        "focusIndicators": "Clear visible focus states on all interactive elements"
+      }
+    },
+  
+    "implementation": {
+      "buildOrder": [
+        "1. Create comprehensive theme.json with all colors, spacing, typography",
+        "2. Research design inspiration using Perplexity Search (dribbble, awwwards, etc.)",
+        "3. Analyze inspiring designs using image_analysis tool",
+        "4. Use Sequential Thinking (10+ steps, multiple sessions) to plan architecture",
+        "5. Build theme system with CSS custom properties",
+        "6. Create reusable Shadcn-based components (with custom enhancements)",
+        "7. Build page 1 completely, test both themes, test mobile responsiveness",
+        "8. Build remaining pages 2-7 following same quality standards",
+        "9. Implement all animations (test performance)",
+        "10. Final responsive testing on all screen sizes",
+        "11. Theme toggle implementation with ripple effect",
+        "12. Mobile gesture support (swipe up/down)",
+        "13. Language dropdown functionality",
+        "14. Final QA - check all 'lessonsLearned' are addressed"
+      ],
+      
+      "qualityChecklist": [
+        "✓ All 7 pages tell cohesive story through typography",
+        "✓ Each page has UNIQUE background animation",
+        "✓ NO overlapping content on any page, any screen size",
+        "✓ Proper spacing between ALL elements",
+        "✓ Header and footer don't mask page content",
+        "✓ Theme toggle with ripple effect works perfectly",
+        "✓ Both light and dark themes look appealing",
+        "✓ Language dropdown supports all 6 languages",
+        "✓ Footer includes Blog, Privacy, Policy, About Us links",
+        "✓ Page indicator is VERTICAL",
+        "✓ Scroll indicator follows through ALL pages",
+        "✓ Real icons used on open source page",
+        "✓ Actual logo used in header",
+        "✓ Mobile hamburger menu has close button and proper opacity",
+        "✓ Mobile supports swipe gestures",
+        "✓ Storyline visible on BOTH desktop and mobile",
+        "✓ Scanning animation on page 2 is circular and visible",
+        "✓ Pages 3, 4, 5, 6, 7 fully responsive with no overlap",
+        "✓ Header and footer have proper horizontal margins"
+      ]
+    }
+  }
+  

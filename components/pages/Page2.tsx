@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 'use client';
 
-import React, { useEffect, useRef, useCallback, memo, useState } from 'react';
+import React, { useEffect, useRef, useCallback, memo, useState, useMemo } from 'react';
 import {
   motion,
   useMotionValue,
@@ -28,6 +28,9 @@ interface Entity {
   id: string;
   color: string;
   label: string;
+  trackingSpeed: number; // How fast it tracks (higher = more aggressive)
+  offsetRadius: number; // How close it follows (pixels)
+  glitchIntensity: number; // Animation intensity
 }
 
 // Character pools for Matrix rain
@@ -142,14 +145,14 @@ const TrackingReticle = memo(({ x, y, isDark }: { x: any; y: any; isDark: boolea
 
 TrackingReticle.displayName = 'TrackingReticle';
 
-// Matrix-style Binary Rain Component
+// Matrix-style Binary Rain Component with RANDOM positioning
 const MatrixRain = memo(({ isDark }: { isDark: boolean }) => {
   const columns = 15; // Number of falling columns
   
   return (
     <div className="absolute inset-0 pointer-events-none z-5 overflow-hidden">
       {Array.from({ length: columns }).map((_, colIndex) => (
-        <MatrixColumn key={colIndex} index={colIndex} isDark={isDark} />
+        <MatrixColumn key={colIndex} isDark={isDark} />
       ))}
     </div>
   );
@@ -157,16 +160,16 @@ const MatrixRain = memo(({ isDark }: { isDark: boolean }) => {
 
 MatrixRain.displayName = 'MatrixRain';
 
-// Single Matrix column component with random positioning
-const MatrixColumn = memo(({ index, isDark }: { index: number; isDark: boolean }) => {
+// Single Matrix column component with TRULY RANDOM positioning for chaos
+const MatrixColumn = memo(({ isDark }: { isDark: boolean }) => {
   const [chars, setChars] = useState(() => 
     Array.from({ length: 8 }, () => getRandomChar())
   );
   
-  // Random X position across entire screen width for chaotic effect
-  const columnX = Math.random() * 100; // 0-100% random position
-  const duration = 3 + Math.random() * 2; // Random fall speed
-  const delay = Math.random() * 2; // Random start delay
+  // RANDOM X position - memoized to prevent recalculation but different per instance
+  const columnX = useMemo(() => Math.random() * 100, []); // Random 0-100%
+  const duration = useMemo(() => 3 + Math.random() * 2, []); // Random fall speed
+  const delay = useMemo(() => Math.random() * 2, []); // Random start delay
 
   // Rapidly change characters
   useEffect(() => {
@@ -282,14 +285,25 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   const followY = useSpring(mainTextY, { stiffness: 100, damping: 20 });
   const glitchX = useMotionValue(0);
   const glitchY = useMotionValue(0);
-  const rotation = useMotionValue(0);
+  const rotation = useMotionValue(0); // For standard dots orbital rotation
   const wiggleX = useMotionValue(0);
   const wiggleY = useMotionValue(0);
 
-  // Motion values for smooth entity following
-  const entity0Angle = useMotionValue(0);
-  const entity1Angle = useMotionValue(120);
-  const entity2Angle = useMotionValue(240);
+  // Motion values for TRACKING entities - they follow standard dots
+  const entity0TargetX = useMotionValue(50);
+  const entity0TargetY = useMotionValue(45);
+  const entity1TargetX = useMotionValue(50);
+  const entity1TargetY = useMotionValue(45);
+  const entity2TargetX = useMotionValue(50);
+  const entity2TargetY = useMotionValue(45);
+
+  // Spring-based smooth tracking for each entity (FAST tracking speeds)
+  const entity0X = useSpring(entity0TargetX, { stiffness: 150, damping: 15 }); // Police - aggressive
+  const entity0Y = useSpring(entity0TargetY, { stiffness: 150, damping: 15 });
+  const entity1X = useSpring(entity1TargetX, { stiffness: 120, damping: 18 }); // ISP - steady
+  const entity1Y = useSpring(entity1TargetY, { stiffness: 120, damping: 18 });
+  const entity2X = useSpring(entity2TargetX, { stiffness: 180, damping: 12 }); // Hacker - chaotic fast
+  const entity2Y = useSpring(entity2TargetY, { stiffness: 180, damping: 12 });
 
   // Refs for animation control
   const isCenterRef = useRef(true);
@@ -327,7 +341,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
     }
   }, []);
 
-  // Calculate orbital position
+  // Calculate orbital position for standard dots
   const calculateOrbitPosition = useCallback(
     (angle: number, radius: number, centerX: number, centerY: number): Position => {
       const radians = (angle * Math.PI) / 180;
@@ -342,23 +356,21 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
   // Calculate minimum distance from entities to main text
   const calculateMinDistance = useCallback(
     (textX: number, textY: number) => {
-      const entityAngles = [
-        entity0Angle.get(),
-        entity1Angle.get(),
-        entity2Angle.get(),
+      const entityPositions = [
+        { x: entity0X.get(), y: entity0Y.get() },
+        { x: entity1X.get(), y: entity1Y.get() },
+        { x: entity2X.get(), y: entity2Y.get() },
       ];
       let minDist = 100;
 
-      entityAngles.forEach((angle) => {
-        const radius = 18;
-        const entityPos = calculateOrbitPosition(angle, radius, followX.get(), followY.get());
-        const dist = Math.sqrt(Math.pow(entityPos.x - textX, 2) + Math.pow(entityPos.y - textY, 2));
+      entityPositions.forEach((pos) => {
+        const dist = Math.sqrt(Math.pow(pos.x - textX, 2) + Math.pow(pos.y - textY, 2));
         minDist = Math.min(minDist, dist);
       });
 
       return minDist;
     },
-    [followX, followY, calculateOrbitPosition, entity0Angle, entity1Angle, entity2Angle]
+    [entity0X, entity0Y, entity1X, entity1Y, entity2X, entity2Y]
   );
 
   // Consolidated animation loop using single rAF
@@ -407,7 +419,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
       }, holdDuration);
     };
 
-    // Continuous rotation and wiggle
+    // Continuous rotation, wiggle, and entity tracking
     const animate = (time: number) => {
       if (time - lastTime < fpsInterval) {
         animationFrameId = requestAnimationFrame(animate);
@@ -416,12 +428,49 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
 
       lastTime = time;
 
-      // Update rotation
-      rotation.set((rotation.get() + 0.5) % 360);
+      // Update rotation for standard orbital dots
+      const currentRotation = (rotation.get() + 1) % 360; // Smooth rotation speed
+      rotation.set(currentRotation);
 
       // Update wiggle
       wiggleX.set(Math.sin(Date.now() / 500) * 3);
       wiggleY.set(Math.cos(Date.now() / 700) * 3);
+
+      // Get current center position
+      const centerX = followX.get();
+      const centerY = followY.get();
+
+      // Calculate target positions for tracking entities
+      // Each entity follows a different standard dot position with unique offset
+      const radius = 18; // Same radius as standard dots orbit
+
+      // Police tracks position at angle 0° + rotation (follows first third of orbit)
+      const policeAngle = (currentRotation + 30) % 360;
+      const policeBasePos = calculateOrbitPosition(policeAngle, radius, centerX, centerY);
+      const policeOffset = 2.5; // Close aggressive tracking
+      const policeOffsetAngle = (policeAngle + 180) % 360; // Offset outward
+      const policeOffsetRadians = (policeOffsetAngle * Math.PI) / 180;
+      entity0TargetX.set(policeBasePos.x + Math.cos(policeOffsetRadians) * policeOffset);
+      entity0TargetY.set(policeBasePos.y + Math.sin(policeOffsetRadians) * policeOffset);
+
+      // ISP tracks position at angle 120° + rotation (follows second third)
+      const ispAngle = (currentRotation + 150) % 360;
+      const ispBasePos = calculateOrbitPosition(ispAngle, radius, centerX, centerY);
+      const ispOffset = 4.5; // Medium steady distance
+      const ispOffsetAngle = (ispAngle + 180) % 360;
+      const ispOffsetRadians = (ispOffsetAngle * Math.PI) / 180;
+      entity1TargetX.set(ispBasePos.x + Math.cos(ispOffsetRadians) * ispOffset);
+      entity1TargetY.set(ispBasePos.y + Math.sin(ispOffsetRadians) * ispOffset);
+
+      // Hacker tracks position at angle 240° + rotation (follows third third)
+      const hackerAngle = (currentRotation + 270) % 360;
+      const hackerBasePos = calculateOrbitPosition(hackerAngle, radius, centerX, centerY);
+      // Chaotic varying offset for hacker
+      const hackerOffset = 3 + Math.sin(Date.now() / 300) * 2; // 3-5% oscillating
+      const hackerOffsetAngle = (hackerAngle + 180 + Math.sin(Date.now() / 200) * 30) % 360; // Chaotic angle
+      const hackerOffsetRadians = (hackerOffsetAngle * Math.PI) / 180;
+      entity2TargetX.set(hackerBasePos.x + Math.cos(hackerOffsetRadians) * hackerOffset);
+      entity2TargetY.set(hackerBasePos.y + Math.sin(hackerOffsetRadians) * hackerOffset);
 
       // Calculate and update minimum distance
       const dist = calculateMinDistance(mainTextX.get(), mainTextY.get());
@@ -430,21 +479,12 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    // Entity smooth orbital motion - continuous rotation at different speeds
-    const entityInterval = setInterval(() => {
-      // Each entity rotates at different speeds for unique following patterns
-      entity0Angle.set((entity0Angle.get() + 0.8) % 360); // Police - faster, more aggressive
-      entity1Angle.set((entity1Angle.get() + 0.5) % 360); // ISP - steady monitoring
-      entity2Angle.set((entity2Angle.get() + 1.2) % 360); // Hacker - chaotic, fastest
-    }, 50); // Smooth 20fps updates
-
     // Start animations
     runCycle();
     animationFrameId = requestAnimationFrame(animate);
 
     return () => {
       clearInterval(glitchInterval);
-      clearInterval(entityInterval);
       cancelAnimationFrame(animationFrameId);
     };
   }, [
@@ -452,24 +492,57 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
     shouldReduceMotion,
     mainTextX,
     mainTextY,
+    followX,
+    followY,
     glitchX,
     glitchY,
     rotation,
     wiggleX,
     wiggleY,
+    entity0TargetX,
+    entity0TargetY,
+    entity1TargetX,
+    entity1TargetY,
+    entity2TargetX,
+    entity2TargetY,
+    entity0X,
+    entity0Y,
+    entity1X,
+    entity1Y,
+    entity2X,
+    entity2Y,
     orbitalWords.length,
     generateNextPosition,
     calculateMinDistance,
-    entity0Angle,
-    entity1Angle,
-    entity2Angle,
+    calculateOrbitPosition,
   ]);
 
-  // Entities data
+  // Entities data with unique characteristics
   const entities: Entity[] = [
-    { id: 'police', color: isDark ? '#EF4444' : '#DC2626', label: policeText },
-    { id: 'hacker', color: isDark ? '#10B981' : '#059669', label: hackerText },
-    { id: 'isp', color: isDark ? '#F59E0B' : '#D97706', label: ispText },
+    { 
+      id: 'police', 
+      color: isDark ? '#EF4444' : '#DC2626', 
+      label: policeText,
+      trackingSpeed: 1.5, // Fast aggressive
+      offsetRadius: 2.5,
+      glitchIntensity: 1.3,
+    },
+    { 
+      id: 'isp', 
+      color: isDark ? '#F59E0B' : '#D97706', 
+      label: ispText,
+      trackingSpeed: 1.0, // Steady
+      offsetRadius: 4.5,
+      glitchIntensity: 1.0,
+    },
+    { 
+      id: 'hacker', 
+      color: isDark ? '#10B981' : '#059669', 
+      label: hackerText,
+      trackingSpeed: 2.0, // Chaotic fast
+      offsetRadius: 4.0,
+      glitchIntensity: 1.5,
+    },
   ];
 
   return (
@@ -504,7 +577,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
         }}
       />
 
-      {/* Matrix Binary Rain */}
+      {/* Matrix Binary Rain - NOW WITH RANDOM POSITIONS */}
       {!shouldReduceMotion && <MatrixRain isDark={isDark} />}
 
       {/* Scanlines Overlay */}
@@ -566,7 +639,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           </motion.h1>
         </motion.div>
 
-        {/* Orbital Words - Desktop */}
+        {/* STANDARD ORBITAL DOTS - Desktop (All same color, smooth orbit) */}
         <div className="hidden md:block">
           {orbitalWords.map((word, index) => {
             const angle = useTransform(rotation, (r) => ((index / orbitalWords.length) * 360 + r) % 360);
@@ -595,7 +668,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                   className={`text-lg lg:text-xl font-semibold ${wordColor} whitespace-nowrap text-center flex flex-col items-center gap-2`}
                 >
                   <span>{word}</span>
-                  {/* Blinking dot */}
+                  {/* Blinking dot - standard color */}
                   <motion.div
                     className="w-2 h-2 rounded-full"
                     style={{ backgroundColor: isDark ? '#6366F1' : '#4F46E5' }}
@@ -621,7 +694,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           })}
         </div>
 
-        {/* Orbital Words - Mobile */}
+        {/* STANDARD ORBITAL DOTS - Mobile */}
         <div className="md:hidden">
           {orbitalWords.map((word, index) => {
             const angle = useTransform(rotation, (r) => ((index / orbitalWords.length) * 360 + r) % 360);
@@ -669,20 +742,12 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           })}
         </div>
 
-        {/* Moving Entities - Desktop */}
+        {/* TRACKING ENTITIES - Desktop (Unique colors, follow standard dots) */}
         <div className="hidden md:block">
           {entities.map((entity, entityIndex) => {
-            // Get the appropriate angle motion value for this entity
-            const angleMotionValue = entityIndex === 0 ? entity0Angle : entityIndex === 1 ? entity1Angle : entity2Angle;
-            const radius = 18;
-            const posX = useTransform([angleMotionValue, followX], ([a, fx]) => {
-              const radians = ((a as number) * Math.PI) / 180;
-              return (fx as number) + Math.cos(radians) * radius;
-            });
-            const posY = useTransform([angleMotionValue, followY], ([a, fy]) => {
-              const radians = ((a as number) * Math.PI) / 180;
-              return (fy as number) + Math.sin(radians) * radius;
-            });
+            // Get position motion values for this entity
+            const posX = entityIndex === 0 ? entity0X : entityIndex === 1 ? entity1X : entity2X;
+            const posY = entityIndex === 0 ? entity0Y : entityIndex === 1 ? entity1Y : entity2Y;
 
             // Unique glitch effects for each entity
             const getEntityGlitchEffect = () => {
@@ -746,7 +811,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                     }}
                     animate={glitchEffect.animation}
                     transition={{
-                      duration: entityIndex === 2 ? 1.5 : 2, // Hacker faster
+                      duration: entityIndex === 2 ? 1.0 : entityIndex === 0 ? 1.3 : 1.8, // Hacker fastest, Police fast, ISP steady
                       repeat: Infinity,
                       ease: 'easeInOut',
                     }}
@@ -767,7 +832,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                       ],
                     }}
                     transition={{
-                      duration: entityIndex === 2 ? 0.8 : 1.2, // Hacker faster pulse
+                      duration: entityIndex === 2 ? 0.6 : entityIndex === 0 ? 0.9 : 1.2, // Hacker fastest pulse
                       repeat: Infinity,
                       ease: 'easeInOut',
                     }}
@@ -781,7 +846,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                         opacity: [0.8, 0],
                       }}
                       transition={{
-                        duration: entityIndex === 0 ? 1.2 : entityIndex === 1 ? 1.8 : 1.0, // Different speeds
+                        duration: entityIndex === 0 ? 1.0 : entityIndex === 1 ? 1.5 : 0.8, // Different speeds
                         repeat: Infinity,
                         ease: 'easeOut',
                       }}
@@ -793,20 +858,11 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           })}
         </div>
 
-        {/* Moving Entities - Mobile */}
+        {/* TRACKING ENTITIES - Mobile */}
         <div className="md:hidden">
           {entities.map((entity, entityIndex) => {
-            // Get the appropriate angle motion value for this entity
-            const angleMotionValue = entityIndex === 0 ? entity0Angle : entityIndex === 1 ? entity1Angle : entity2Angle;
-            const radius = 25;
-            const posX = useTransform([angleMotionValue, followX], ([a, fx]) => {
-              const radians = ((a as number) * Math.PI) / 180;
-              return (fx as number) + Math.cos(radians) * radius;
-            });
-            const posY = useTransform([angleMotionValue, followY], ([a, fy]) => {
-              const radians = ((a as number) * Math.PI) / 180;
-              return (fy as number) + Math.sin(radians) * radius;
-            });
+            const posX = entityIndex === 0 ? entity0X : entityIndex === 1 ? entity1X : entity2X;
+            const posY = entityIndex === 0 ? entity0Y : entityIndex === 1 ? entity1Y : entity2Y;
 
             // Unique glitch effects for mobile (simplified)
             const getEntityGlitchEffect = () => {
@@ -856,7 +912,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                     }}
                     animate={glitchEffect.animation}
                     transition={{
-                      duration: entityIndex === 2 ? 1.5 : 2, // Hacker faster
+                      duration: entityIndex === 2 ? 1.0 : entityIndex === 0 ? 1.3 : 1.8,
                       repeat: Infinity,
                       ease: 'easeInOut',
                     }}
@@ -871,7 +927,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                       scale: [0.8, 1.4, 0.8],
                     }}
                     transition={{
-                      duration: entityIndex === 2 ? 0.8 : 1.2, // Hacker faster pulse
+                      duration: entityIndex === 2 ? 0.6 : entityIndex === 0 ? 0.9 : 1.2,
                       repeat: Infinity,
                       ease: 'easeInOut',
                     }}
@@ -882,13 +938,13 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           })}
         </div>
 
-        {/* CTA Button - Fixed at bottom center with single line text */}
+        {/* CTA Button - Fixed at bottom center with SINGLE LINE text on all screens */}
         <div className="absolute bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 z-20">
           <motion.button
             onClick={onScrollToPage7}
             className={`
               relative z-20 px-6 py-3 md:px-10 md:py-5 
-              text-lg md:text-2xl lg:text-3xl font-bold 
+              text-base sm:text-lg md:text-2xl lg:text-3xl font-bold 
               text-white rounded-full 
               transition-all duration-300
               whitespace-nowrap
@@ -909,7 +965,7 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
           >
             {/* Shield Icon */}
             <svg 
-              className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10" 
+              className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -921,8 +977,9 @@ export default function Page2({ isActive = true, onScrollToPage7 }: Page2Props) 
                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" 
               />
             </svg>
-            {/* Single line text across all screen sizes */}
-            <span>{ctaButtonMobileText}</span>
+            {/* Single line text - use mobile text for small screens */}
+            <span className="block sm:hidden">{ctaButtonMobileText}</span>
+            <span className="hidden sm:block">{ctaButtonText}</span>
           </motion.button>
         </div>
       </div>
